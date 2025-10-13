@@ -1,25 +1,23 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import '~/App.css';
+import { Outlet, useLocation } from 'react-router-dom';
+import { UserProvider } from './context/useAuth';
+import Navbar from './components/Navbar/Navbar';
+import Footer from './components/Footer/Footer';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
+  const location = useLocation();
+  const showNavbar = location.pathname !== '/login';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserProvider>
+      {showNavbar && <Navbar/>}
+      <Outlet/>
+      <Footer/>
+      <ToastContainer />
+    </UserProvider>
   );
 }
 

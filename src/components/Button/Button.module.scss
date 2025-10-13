@@ -1,0 +1,77 @@
+.wrapper {
+    // min-width: 100px;
+    font-size: 1.7rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--white);
+    border: 1px solid transparent;
+
+    + .wrapper {         // đứng cạnh nhau sẽ margin đứng 1 mình ko cách
+        margin-left: 8px;
+    }
+
+    &.disabled {
+        user-select: none;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+
+.primary {
+    background: linear-gradient(135deg, #6a11cb, #2575fc); // tím -> xanh dương
+    color: #ffffff; // chữ trắng
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+}
+
+
+
+
+.text {
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.icon + .title, 
+.title + .icon {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.icon {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+a{
+    display: inline-block;
+}

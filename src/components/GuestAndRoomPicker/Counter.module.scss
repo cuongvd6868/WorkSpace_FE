@@ -1,0 +1,41 @@
+.counter-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.control-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    cursor: pointer;
+    font-size: 14px;
+    
+    background-color: transparent;
+    border: 1px solid var(--primary-color, #0071c2); 
+    color: var(--primary-color, #0071c2);
+    transition: all 0.2s ease;
+
+    &:hover:not([disabled]) {
+        background-color: #f0f0f0;
+    }
+    
+    &.disabled {
+        border-color: #e0e0e0;
+        color: #e0e0e0;
+        cursor: not-allowed;
+        background-color: transparent;
+    }
+}
+
+.value {
+    width: 20px; 
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #333;
+}
