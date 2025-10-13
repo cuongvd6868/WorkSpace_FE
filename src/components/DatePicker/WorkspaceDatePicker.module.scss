@@ -1,0 +1,748 @@
+/* WorkspaceDatePicker.module.scss - Fixed Height */
+
+:root {
+  --primary-color1: #3A6A55;
+  --primary-light: #dbeafe;
+  --primary-dark: #3A6A55;
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --error-color: #ef4444;
+  --error-light: #fee2e2;
+  --warning-color: #f59e0b;
+  --warning-light: #fef3c7;
+  
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --text-white: #ffffff;
+  
+  --background-white: #ffffff;
+  --background-light: #f8fafc;
+  --background-lighter: #f1f5f9;
+  --background-gray: #f9fafb;
+  
+  --border-light: #e5e7eb;
+  --border-medium: #d1d5db;
+  --border-dark: #9ca3af;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* QUAN TRỌNG: Overlay full height */
+.date-picker-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 9999 !important;
+  padding: 20px;
+  animation: overlayFadeIn 0.3s ease-out;
+
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+      backdrop-filter: blur(0px);
+    }
+    to {
+      opacity: 1;
+      backdrop-filter: blur(4px);
+    }
+  }
+}
+
+/* Modal với height cố định và scroll */
+.date-picker-modal {
+  position: relative !important;
+  background: var(--background-white) !important;
+  border-radius: var(--radius-2xl) !important;
+  padding: 0 !important;
+  max-width: 900px !important; /* Tăng width */
+  width: 100% !important;
+  height: auto !important;
+  max-height: 90vh !important; /* Tăng max-height */
+  min-height: 600px !important; /* Thêm min-height */
+  overflow: hidden !important;
+  box-shadow: var(--shadow-xl) !important;
+  border: 1px solid var(--border-light) !important;
+  animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 10000 !important;
+
+  @keyframes modalSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+/* Content area với scroll */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: var(--background-white);
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0; /* Không bị co lại */
+
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .close-button {
+    background: var(--background-light);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+
+    &:hover {
+      background: var(--primary-light);
+      color: var(--primary-color1);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* Main content - có thể scroll */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Booking Type Selector */
+.booking-type-selector {
+  display: flex;
+  gap: 12px;
+  margin: 0 0px 24px;
+  background: var(--background-light);
+  padding: 6px;
+//   border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+
+  .type-button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    // border-radius: var(--radius-md);
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+
+    &.active {
+      background: var(--background-white);
+      color: var(--primary-color1);
+      box-shadow: var(--shadow-sm);
+    }
+
+    &:hover:not(.active) {
+      color: var(--primary-color1);
+    }
+  }
+}
+
+/* Selection Display */
+.selection-display {
+  padding: 0 32px 24px;
+  border-bottom: 1px solid var(--border-light);
+
+  .selected-info {
+    .label {
+      display: block;
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .value {
+      display: block;
+      font-size: 1.1rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      padding: 12px 16px;
+      background: var(--background-light);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+/* Quick Selection */
+.quick-selection {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border-light);
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+
+  .quick-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+
+    .quick-option {
+      padding: 14px 16px;
+      background: var(--background-white);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: center;
+
+      &:hover {
+        border-color: var(--primary-color1);
+        color: var(--primary-color);
+        background: var(--primary-light);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* Time Picker Section */
+.time-picker-section {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border-light);
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+  }
+
+  .time-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+
+    .time-input-group {
+      text-align: center;
+      min-width: 120px;
+
+      .time-label {
+        display: block;
+        font-size: 1.3rem;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+
+      .time-selectors {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+
+        .time-select {
+          padding: 12px;
+          border: 1px solid var(--border-light);
+          border-radius: var(--radius-md);
+          background: var(--background-white);
+          font-size: 1rem;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: var(--transition);
+          min-width: 80px;
+          text-align: center;
+
+          &:hover {
+            border-color: var(--primary-color1);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: var(--primary-color1);
+            box-shadow: 0 0 0 3px var(--primary-light);
+          }
+        }
+
+        .time-separator {
+          color: var(--text-secondary);
+          font-weight: 600;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    .time-to {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0 8px;
+    }
+  }
+}
+
+/* Calendar Section */
+.calendar-section {
+  padding: 20px 32px; /* Giảm padding top/bottom */
+  min-height: 80px; /* Giảm min-height */
+
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px; /* Giảm margin-bottom */
+  }
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* Giảm margin-bottom */
+  
+  .nav-button {
+    background: var(--background-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    width: 40px; /* Nhỏ hơn */
+    height: 40px; /* Nhỏ hơn */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    font-size: 1.1rem; /* Nhỏ hơn */
+
+    &:hover:not(:disabled) {
+      background: var(--primary-light);
+      border-color: var(--primary-color1);
+      color: var(--primary-color1);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .month-display {
+    display: flex;
+    justify-content: space-around;
+    flex: 1;
+    gap: 30px; /* Giảm gap */
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem; /* Nhỏ hơn */
+    margin: 0 10px; /* Thêm margin nhỏ */
+  }
+}
+
+.calendars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px; /* Giảm gap */
+  min-height: 180px; /* Giảm min-height */
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px; /* Giảm gap */
+  }
+}
+
+.calendar-view {
+  min-height: 240px; /* Giảm min-height */
+
+  .week-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 8px; /* Giảm margin-bottom */
+    
+    .week-day-cell {
+      text-align: center;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.75rem; /* Nhỏ hơn */
+      padding: 8px 2px; /* Giảm padding */
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--background-lighter);
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    min-height: 160px; /* Giảm min-height */
+  }
+}
+
+/* Day Cell Styles - Compact hơn */
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  font-weight: 500;
+  min-height: 36px; /* Nhỏ hơn */
+  background: var(--background-white);
+  border: 1px solid transparent; /* Viền mỏng hơn */
+  font-size: 0.85rem; /* Nhỏ hơn */
+
+  &.selectable {
+    &:hover {
+      background: var(--primary-light);
+      color: var(--primary-color1);
+      border-color: var(--primary-color1);
+      transform: scale(1.02); /* Hiệu ứng nhẹ hơn */
+    }
+  }
+
+  &.other-month {
+    color: var(--text-tertiary);
+    cursor: default;
+    background: var(--background-gray);
+    
+    &:hover {
+      background: var(--background-gray);
+      color: var(--text-tertiary);
+      border-color: transparent;
+      transform: none;
+    }
+  }
+
+  &.today {
+    border: 1px solid var(--success-color); /* Viền mỏng hơn */
+    color: var(--success-color);
+    font-weight: 600; /* Nhẹ hơn */
+    background: var(--success-light);
+  }
+
+  &.selected {
+    background: var(--primary-color1);
+    color: var(--text-white);
+    font-weight: 600; /* Nhẹ hơn */
+    transform: scale(1.02); /* Hiệu ứng nhẹ hơn */
+  }
+
+  &.disabled {
+    color: var(--text-tertiary);
+    background: var(--background-gray);
+    cursor: not-allowed;
+    opacity: 0.5;
+    
+    &:hover {
+      background: var(--background-gray);
+      color: var(--text-tertiary);
+      border-color: transparent;
+      transform: none;
+    }
+  }
+
+  &.multi-day {
+    background: var(--primary-light);
+    color: var(--primary-color1);
+    font-weight: 600;
+    
+    &.selected {
+      background: var(--primary-color1);
+      color: var(--text-white);
+    }
+  }
+
+  .today-indicator {
+    position: absolute;
+    bottom: 2px; /* Cao hơn */
+    width: 3px; /* Nhỏ hơn */
+    height: 3px; /* Nhỏ hơn */
+    background: var(--success-color);
+    border-radius: 50%;
+  }
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .calendar-section {
+    padding: 16px 20px; /* Giảm thêm trên mobile */
+    min-height: 240px;
+  }
+
+  .calendars-grid {
+    gap: 20px;
+    min-height: 150px;
+  }
+
+  .calendar-view {
+    min-height: 200px;
+
+    .week-days {
+      margin-bottom: 6px;
+      
+      .week-day-cell {
+        padding: 6px 1px;
+        font-size: 0.7rem;
+      }
+    }
+
+    .days-grid {
+      min-height: 140px;
+    }
+  }
+
+  .day-cell {
+    min-height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .month-display {
+    gap: 20px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Footer với action buttons - LUÔN HIỆN Ở DƯỚI */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: var(--background-white);
+  border-top: 1px solid var(--border-light);
+  flex-shrink: 0; /* QUAN TRỌNG: Không bị co lại */
+  margin-top: auto; /* Đẩy footer xuống dưới cùng */
+
+  .selection-summary {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    
+    span {
+      background: var(--primary-light);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      color: var(--primary-color1);
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+
+    .cancel-button {
+      padding: 12px 28px;
+      background: var(--background-white);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      min-width: 100px;
+
+      &:hover {
+        background: var(--background-light);
+        border-color: var(--text-secondary);
+      }
+    }
+
+    .confirm-button {
+      padding: 12px 32px;
+      background: #3A6A55;
+      color: var(--text-white);
+      border: none;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: var(--transition);
+      min-width: 120px;
+
+      &:hover:not(:disabled) {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      &:disabled {
+        background: var(--text-tertiary);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .date-picker-overlay {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .date-picker-modal {
+    margin-top: 10px;
+    max-height: 95vh !important;
+    min-height: 500px !important;
+  }
+
+  .header,
+  .selection-display,
+  .quick-selection,
+  .time-picker-section,
+  .calendar-section,
+  .footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .calendars-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .month-display {
+    flex-direction: column;
+    gap: 8px !important;
+    text-align: center;
+    font-size: 1rem !important;
+  }
+
+  .time-picker {
+    flex-direction: column;
+    gap: 20px !important;
+    
+    .time-to {
+      margin: 0;
+    }
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 20px;
+
+    .selection-summary {
+      order: 2;
+    }
+
+    .action-buttons {
+      order: 1;
+      width: 100%;
+      justify-content: stretch;
+
+      .cancel-button,
+      .confirm-button {
+        flex: 1;
+        min-width: auto;
+      }
+    }
+  }
+
+  .quick-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  .booking-type-selector {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .day-cell {
+    min-height: 40px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Scrollbar cho content */
+.main-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: var(--background-lighter);
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #688578;
+  border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Đảm bảo modal không bị ảnh hưởng bởi global styles */
+.date-picker-modal {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.date-picker-modal * {
+  box-sizing: border-box;
+}
