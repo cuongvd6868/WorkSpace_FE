@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
 import { Link } from "react-router-dom";
-import GuestAndRoomPicker from "../GuestAndRoomPicker/GuestAndRoomPicker";
+import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
 
 const cx = classNames.bind(styles);
 
@@ -16,25 +16,18 @@ const Navbar: React.FC = () => {
     displayText: "Chọn thời gian làm việc"
   });
 
-  // --- State cho Guest/Room Picker ---
-  const [isGuestsPickerOpen, setIsGuestsPickerOpen] = useState(false);
-  const [guestDetails, setGuestDetails] = useState({
-    adults: 1,
-    children: 0,
-    rooms: 1
-  });
+  // --- State cho Participant Picker ---
+  const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
+  const [participants, setParticipants] = useState(3);
 
-  // Helper để tạo chuỗi hiển thị Guest/Room
-  const getGuestDisplayText = (): string => {
-    const { adults, children, rooms } = guestDetails;
-    let text = `${adults} người`;
-    if (children > 0) text += `, ${children} trẻ em`;
-    return text;
+  // Hàm xử lý chọn số người tham gia từ Modal
+  const handleParticipantsSelect = (participantsCount: number) => {
+    setParticipants(participantsCount);
   };
 
-  // Hàm xử lý chọn Guest/Room từ Modal
-  const handleGuestSelect = (adults: number, children: number, rooms: number) => {
-    setGuestDetails({ adults, children, rooms });
+  // Helper để tạo chuỗi hiển thị số người tham gia
+  const getParticipantsDisplayText = (): string => {
+    return `${participants} người`;
   };
 
   // 🎯 Hàm xử lý chọn thời gian mới cho Workspace
@@ -92,7 +85,7 @@ const Navbar: React.FC = () => {
                 <p className={cx('search-box_label')}>Địa điểm</p>
                 <input 
                   type="text" 
-                  placeholder="Nhập địa điểm, thành phố..." 
+                  placeholder="Nhập tên phường..." 
                   className={cx('search-box-input')} 
                 />
               </div>
@@ -109,15 +102,15 @@ const Navbar: React.FC = () => {
                 />
               </div>
               
-              {/* guest pick - CẬP NHẬT LABEL */}
-              <div className={cx('search-input', 'guests')} onClick={() => setIsGuestsPickerOpen(true)}>
-                <p className={cx('search-box_label')}>Số người</p>
+              {/* participants pick - ĐÃ ĐƯỢC ĐƠN GIẢN HÓA */}
+              <div className={cx('search-input', 'participants')} onClick={() => setIsParticipantsPickerOpen(true)}>
+                <p className={cx('search-box_label')}>Số người tham gia</p>
                 <input 
                   type="text" 
                   readOnly 
-                  value={getGuestDisplayText()} 
+                  value={getParticipantsDisplayText()} 
                   className={cx('search-box-input')}
-                  placeholder="Chọn số lượng người"
+                  placeholder="Chọn số người tham gia"
                 />
               </div>
 
@@ -129,21 +122,19 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* 🎯 WORKSPACE DATE PICKER MỚI */}
+      {/* 🎯 WORKSPACE DATE PICKER */}
       <WorkspaceDatePicker 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
         onTimeSelect={handleWorkspaceTimeSelect}
       />
 
-      {/* Guest & Room Picker Modal */}
-      <GuestAndRoomPicker
-        isOpen={isGuestsPickerOpen}
-        onClose={() => setIsGuestsPickerOpen(false)}
-        onSelect={handleGuestSelect}
-        initialAdults={guestDetails.adults}
-        initialChildren={guestDetails.children}
-        initialRooms={guestDetails.rooms}
+      {/* Meeting Participant Picker Modal */}
+      <MeetingParticipantPicker
+        isOpen={isParticipantsPickerOpen}
+        onClose={() => setIsParticipantsPickerOpen(false)}
+        onSelect={handleParticipantsSelect}
+        initialParticipants={participants}
       />
     </>
   );

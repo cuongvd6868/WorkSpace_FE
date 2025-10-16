@@ -728,12 +728,12 @@
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background: #688578;
+  background: #808583;
   border-radius: 3px;
 }
 
 .main-content::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
+  background: #6b8379;
 }
 
 /* Đảm bảo modal không bị ảnh hưởng bởi global styles */
