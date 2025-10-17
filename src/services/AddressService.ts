@@ -14,9 +14,9 @@ export const getAllLocations = async () => {
     }
 }
 
-export const getLocationsByName = async (name:string) => {
+export const getLocationsByName = async (query:string) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}location/search?name=${name}`);
+        const response = await axios.get(`${API_BASE_URL}v1/search/locations/suggest?query=${query}`);
         return response.data
     } catch (error: any) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {

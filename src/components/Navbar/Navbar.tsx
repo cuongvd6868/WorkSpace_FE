@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
@@ -7,13 +7,68 @@ import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingPartici
 import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleQuestion, faCoins, faEarthAsia, faGear, faKeyboard, faPersonCircleCheck, faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { faCircleQuestion, faCoins, faEarthAsia, faGear, faKeyboard, faLocationDot, faPersonCircleCheck, faSignOut } from "@fortawesome/free-solid-svg-icons";
+import { getLocationsByName } from "~/services/AddressService";
+import HeadlessTippy from '@tippyjs/react/headless';
+import Popper from "../Popper/Popper";
 
 const cx = classNames.bind(styles);
 
 const Navbar: React.FC = () => {
 
+  const [searchWardResult, setSearchWardResult] = useState<string[]>([]);
+  const [showWardResult, setShowWardResult] = useState(false);
+  const [inputWardValue, setInputWardValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string|null>(null);
 
+  const handleHideResult = () => {
+    setShowWardResult(false);
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputWardValue(value);
+    
+    if (value.trim() !== '') {
+      setShowWardResult(true);
+    } else {
+      setShowWardResult(false);
+      setSearchWardResult([]);
+    }
+  }
+
+  const handleLocationSelect = (selectedName: string) => {
+    setInputWardValue(selectedName)
+    setShowWardResult(false)
+  }
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      if (!inputWardValue.trim()) {
+        setSearchWardResult([]);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const apiResponse = await getLocationsByName(inputWardValue);
+        const safeResult = apiResponse ?? [];
+        console.log('API Response:', apiResponse);
+        setSearchWardResult(safeResult);
+      } catch (error) {
+        console.log('Lỗi không lấy được dữ liệu:', error);
+        setError('Lỗi không lấy được dữ liệu, vui lòng thử lại sau');
+        setSearchWardResult([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    const timeoutId = setTimeout(fetchLocations, 300);
+    return () => clearTimeout(timeoutId);
+  }, [inputWardValue])
 
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState({
@@ -26,21 +81,17 @@ const Navbar: React.FC = () => {
   const token = localStorage.getItem('token');
   const isLoggedIn = token && isToken() && !isTokenExpired(token);
 
-  // --- State cho Participant Picker ---
   const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
   const [participants, setParticipants] = useState(3);
 
-  // Hàm xử lý chọn số người tham gia từ Modal
   const handleParticipantsSelect = (participantsCount: number) => {
     setParticipants(participantsCount);
   };
 
-  // Helper để tạo chuỗi hiển thị số người tham gia
   const getParticipantsDisplayText = (): string => {
     return `${participants} người`;
   };
 
-  // 🎯 Hàm xử lý chọn thời gian mới cho Workspace
   const handleWorkspaceTimeSelect = (startTime: Date, endTime: Date) => {
     const formatTime = (date: Date) => {
       return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
@@ -85,7 +136,6 @@ const Navbar: React.FC = () => {
                 <Link to={'/login'} className={cx('top-nav-item')}>Đăng nhập</Link>
               </div>
             }
-
           </div>
         </div>
 
@@ -99,16 +149,55 @@ const Navbar: React.FC = () => {
             </p>
 
             {/* search box */}
+              <HeadlessTippy
+                interactive
+                visible={showWardResult && (searchWardResult.length > 0 || loading || !!error)}
+                placement="bottom-start"
+                offset={[0, 5]}
+                render={attrs => (
+                  <div className={cx('search-result')} tabIndex={-1} {...attrs}>
+                    <Popper>
+                      {loading ? (
+                        <div className={cx('loading')}>Đang tải...</div>
+                      ) : error ? (
+                        <div className={cx('error')}>{error}</div>
+                      ) : searchWardResult.length > 0 ? (
+                        searchWardResult.map((location, index) => (
+                          <div 
+                            key={index} 
+                            className={cx('location-item')}
+                            onClick={() => handleLocationSelect(location)}
+                          >
+                            <FontAwesomeIcon icon={faLocationDot} className={cx('location-icon')} />
+                            <span className={cx('location-text')}>{location}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className={cx('no-results')}>Không tìm thấy kết quả</div>
+                      )}
+                    </Popper>
+                  </div>
+                )}
+                onClickOutside={handleHideResult}
+              >
             <div className={cx('search-box')}>
-              {/* location pick*/}
-              <div className={cx('search-input', 'location')}>
-                <p className={cx('search-box_label')}>Địa điểm</p>
-                <input 
-                  type="text" 
-                  placeholder="Nhập tên phường..." 
-                  className={cx('search-box-input')} 
-                />
-              </div>
+              {/* location pick */}
+                <div className={cx('search-input', 'location')}>
+                  <p className={cx('search-box_label')}>Địa điểm</p>
+                  <input 
+                    type="text" 
+                    placeholder="Nhập tên phường..." 
+                    className={cx('search-box-input')} 
+                    value={inputWardValue}
+                    onChange={handleInputChange}
+                    onFocus={() => {
+                      if (inputWardValue.trim() && searchWardResult.length > 0) {
+                        setShowWardResult(true);
+                      }
+                    }}
+                  />
+                </div>
+              
               
               {/* time pick */}
               <div className={cx('search-input', 'time')} onClick={() => setIsDatePickerOpen(true)}>
@@ -138,11 +227,12 @@ const Navbar: React.FC = () => {
                  Tìm kiếm
               </button>
             </div>
+            </HeadlessTippy>
           </div>
         </div>
       </header>
 
-      {/*  WORKSPACE DATE PICKER */}
+      {/* WORKSPACE DATE PICKER */}
       <WorkspaceDatePicker 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}

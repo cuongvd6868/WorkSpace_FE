@@ -353,12 +353,60 @@ $gradient-bg: linear-gradient(to right, #0F172A, #1A202C);
 }
 
 
+.search-result {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
 
+.location-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
 
+.location-icon {
+  color: #666;
+  margin-right: 10px;
+  font-size: 14px;
+  width: 16px;
+}
 
+.location-text {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  flex: 1;
+}
 
+.loading, .error, .no-results {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
 
+.error {
+  color: #ff4444;
+}
 
-
-
-
+// Đảm bảo Popper chiếm toàn bộ chiều rộng
+.popper-wrapper {
+  width: 100%;
+}
