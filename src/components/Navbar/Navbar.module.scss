@@ -325,4 +325,40 @@ $gradient-bg: linear-gradient(to right, #0F172A, #1A202C);
   color: #666867;
 }
 
+.username {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0 0.75rem;
+  transition: color 0.2s ease-in-out;
+  font-size: 1.4rem;
+
+  &:hover {
+    color: $primary-blue;
+  }
+}
+
+.flag {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 5px;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
 

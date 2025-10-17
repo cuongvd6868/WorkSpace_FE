@@ -1,7 +1,7 @@
 export type UserProfileToken = {
     userName: string,
     email: string,
-    token: string
+    jwtToken: string
 }
 
 export type UserProfile = {

@@ -20,46 +20,46 @@ export function isTokenExpired(token: string) {
     return decodedToken.exp < currentTime;
 }
 
- export function getAvatarByToken(){
-    const token = localStorage.getItem('token');
-    if(token){
-        const decodedToken = jwtDecode(token) as JwtPayload;
-        return decodedToken.avatar;
-    }
-}
+//  export function getAvatarByToken(){
+//     const token = localStorage.getItem('token');
+//     if(token){
+//         const decodedToken = jwtDecode(token) as JwtPayload;
+//         return decodedToken.avatar;
+//     }
+// }
 
-export function getFirstNameByToken(){
-    const token = localStorage.getItem('token');
-    if(token){
-        const decodedToken = jwtDecode(token) as JwtPayload;
-        return decodedToken.firstName
-    }
-}
+// export function getFirstNameByToken(){
+//     const token = localStorage.getItem('token');
+//     if(token){
+//         const decodedToken = jwtDecode(token) as JwtPayload;
+//         return decodedToken.firstName
+//     }
+// }
 
 export function getRoleByToken(){
     const token = localStorage.getItem('token');
     if(token){
         const decodedToken = jwtDecode(token) as JwtPayload;
-        return decodedToken.role;
+        return decodedToken.roles;
     }
 }
 
-export function isActiveByToken(){
-    const token = localStorage.getItem('token');
-    if(token){
-        const decodedToken = jwtDecode(token) as JwtPayload;
-        if(decodedToken.active){
-            return true;
-        }
-        return false;
-    }
-}
+// export function isActiveByToken(){
+//     const token = localStorage.getItem('token');
+//     if(token){
+//         const decodedToken = jwtDecode(token) as JwtPayload;
+//         if(decodedToken.active){
+//             return true;
+//         }
+//         return false;
+//     }
+// }
 
 export function getUserIDByToken(){
     const token = localStorage.getItem('token');
     if(token){
         const decodedToken = jwtDecode(token) as JwtPayload;
-        return decodedToken.id
+        return decodedToken.jti;
     }
 }
 

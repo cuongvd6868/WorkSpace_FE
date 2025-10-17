@@ -21,6 +21,7 @@ const LoginPage: React.FC = () => {
     const [registerUsername, setRegisterUsername] = useState('');
     const [registerEmail, setRegisterEmail] = useState('');
     const [registerPassword, setRegisterPassword] = useState('');
+    const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('');
 
     // Handle login form submission
     const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -39,7 +40,7 @@ const LoginPage: React.FC = () => {
             toast.error("Please fill in all fields.");
             return;
         }
-        await registerUser(registerEmail, registerUsername, registerPassword);
+        await registerUser(registerEmail, registerUsername, registerPassword, registerPasswordConfirm);
     };
 
     return (
@@ -119,6 +120,16 @@ const LoginPage: React.FC = () => {
                                     placeholder="Mật khẩu"
                                     value={registerPassword}
                                     onChange={(e) => setRegisterPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                                                        <div className={cx('input-field')}>
+                                <i className="fas fa-lock"></i>
+                                <input
+                                    type="password"
+                                    placeholder="Nhập lại mật khẩu"
+                                    value={registerPasswordConfirm}
+                                    onChange={(e) => setRegisterPasswordConfirm(e.target.value)}
                                     required
                                 />
                             </div>

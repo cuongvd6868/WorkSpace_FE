@@ -4,10 +4,17 @@ import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
 import { Link } from "react-router-dom";
 import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
+import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
+import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleQuestion, faCoins, faEarthAsia, faGear, faKeyboard, faPersonCircleCheck, faSignOut } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
 const Navbar: React.FC = () => {
+
+
+
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState({
     date: null as Date | null,
@@ -15,6 +22,9 @@ const Navbar: React.FC = () => {
     endTime: null as Date | null,
     displayText: "Chọn thời gian làm việc"
   });
+
+  const token = localStorage.getItem('token');
+  const isLoggedIn = token && isToken() && !isTokenExpired(token);
 
   // --- State cho Participant Picker ---
   const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
@@ -62,10 +72,20 @@ const Navbar: React.FC = () => {
                 <div className={cx('logo')}>CSB</div>
               </Link>
             </div>
-            <div className={cx('right-section')}>
-              <a href="#" className={cx('top-nav-item')}>Hoạt động</a>
-              <Link to={'/login'} className={cx('top-nav-item')}>Đăng nhập</Link>
-            </div>
+            {isLoggedIn ? (
+               <div className={cx('right-section')}>
+                <img src={flagImg} alt="" className={cx('flag')}/>
+                <a href="#" className={cx('top-nav-item')}>Hoạt động</a>
+                <Link to={'/login'} className={cx('username')}>{getUsernameByToken()}</Link>
+              </div>
+            ): 
+              <div className={cx('right-section')}>
+                <img src={flagImg} alt="" className={cx('flag')}/>
+                <a href="#" className={cx('top-nav-item')}>Hoạt động</a>
+                <Link to={'/login'} className={cx('top-nav-item')}>Đăng nhập</Link>
+              </div>
+            }
+
           </div>
         </div>
 
@@ -90,7 +110,7 @@ const Navbar: React.FC = () => {
                 />
               </div>
               
-              {/* time pick - ĐÃ CẬP NHẬT */}
+              {/* time pick */}
               <div className={cx('search-input', 'time')} onClick={() => setIsDatePickerOpen(true)}>
                 <p className={cx('search-box_label')}>Thời gian làm việc</p>
                 <input 
@@ -102,7 +122,7 @@ const Navbar: React.FC = () => {
                 />
               </div>
               
-              {/* participants pick - ĐÃ ĐƯỢC ĐƠN GIẢN HÓA */}
+              {/* participants pick*/}
               <div className={cx('search-input', 'participants')} onClick={() => setIsParticipantsPickerOpen(true)}>
                 <p className={cx('search-box_label')}>Số người tham gia</p>
                 <input 
@@ -122,7 +142,7 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* 🎯 WORKSPACE DATE PICKER */}
+      {/*  WORKSPACE DATE PICKER */}
       <WorkspaceDatePicker 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}

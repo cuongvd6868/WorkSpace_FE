@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 export interface JwtPayload {
-	id: any;
-	role: string;
+	jti: any;
+	roles: string;
 	avatar: string;
 	firstName: string;
 	active: boolean;
@@ -26,7 +26,7 @@ const RequireAdmin = <P extends object>(WrappedComponent: React.ComponentType<P>
 			// Giải mã token
 			const decodedToken = jwtDecode(token) as JwtPayload;
 			// Lấy thông tin từ token đó
-			const role = decodedToken.role;
+			const role = decodedToken.roles;
 			// Kiểm tra quyền
 			if (role !== "ADMIN") {
 				navigate("/login");

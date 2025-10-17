@@ -8,7 +8,7 @@ import { UserProfile } from "~/types/User";
 type UserContextType = {
     user: UserProfile | null;
     token: string | null;
-    registerUser: (email: string, username: string, password: string) => Promise<void>;
+    registerUser: (email: string, username: string, password: string, confirmPassword: string) => Promise<void>;
     loginUser: (username: string, password: string) => Promise<void>;
     logout: () => void;
     isLoggedIn: () => boolean;
@@ -41,9 +41,9 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
         setIsReady(true);
     }, []);
 
-    const registerUser = async (email: string, username: string, password: string) => {
+    const registerUser = async (email: string, username: string, password: string, confirmPassword: string) => {
         try {
-            const res = await registerAPI(email, username, password);
+            const res = await registerAPI(email, username, password, confirmPassword);
             if (res?.data) {
                 handleAuthSuccess(res.data);
                 toast.success("Register successful!");
@@ -54,9 +54,9 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
         }
     };
 
-    const loginUser = async (username: string, password: string) => {
+    const loginUser = async (email: string, password: string) => {
         try {
-            const res = await loginAPI(username, password);
+            const res = await loginAPI(email, password);
             if (res?.data) {
                 handleAuthSuccess(res.data);
                 toast.success("Login successful!");
@@ -73,11 +73,11 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
             email: data.email,
         };
 
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.jwToken);
         localStorage.setItem("user", JSON.stringify(userObj));
 
-        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-        setToken(data.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.jwToken}`;
+        setToken(data.jwToken);
         setUser(userObj);
     };
 

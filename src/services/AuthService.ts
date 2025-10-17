@@ -4,12 +4,13 @@ import { API_BASE_URL } from "~/utils/API";
 import { handleError } from "~/utils/handleError";
 
 
-export const registerAPI = async (email:string, username: string, password: string) => {
+export const registerAPI = async (email:string, username: string, password: string, confirmPassword: string) => {
     try {
-        const data = await axios.post<UserProfileToken>(API_BASE_URL + "account/register", {
+        const data = await axios.post<UserProfileToken>(API_BASE_URL + "accounts/register", {
             email: email,   
             username: username,
-            password: password 
+            password: password,
+            confirmPassword: confirmPassword
         });
         return data;
     } catch (error) {
@@ -18,10 +19,10 @@ export const registerAPI = async (email:string, username: string, password: stri
 };
 
 
-export const loginAPI = async (username: string, password: string) => {
+export const loginAPI = async (email: string, password: string) => {
     try {
-        const data = await axios.post<UserProfileToken>(API_BASE_URL + "account/login", { 
-            username: username,
+        const data = await axios.post<UserProfileToken>(API_BASE_URL + "accounts/login", { 
+            email: email,
             password: password 
         });
         return data;
