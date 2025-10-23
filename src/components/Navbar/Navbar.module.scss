@@ -68,7 +68,7 @@ $search-button-hover: #3182CE;
 .top-nav-item {
   color: #fff;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 500;
   // padding: 0 0.75rem;
   margin-right: 8px;
@@ -98,7 +98,7 @@ $search-button-hover: #3182CE;
 .nav_btn {
   color: #005461;
   font-weight: 500;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   background-color: #fff;
   padding: 0.6rem 1.5rem;
   border-radius: 3px;
@@ -309,7 +309,7 @@ $search-button-hover: #3182CE;
   color: white;
   padding: 0.6rem 1rem;
   border-radius: 20px;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 600;
   display: inline-block;
   margin-bottom: 1rem;
@@ -379,7 +379,7 @@ $search-button-hover: #3182CE;
 }
 
 .cover_title {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -394,7 +394,7 @@ $search-button-hover: #3182CE;
 }
 
 .cover_subtitle {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 1.5rem;
   opacity: 0.9;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -524,12 +524,12 @@ $search-button-hover: #3182CE;
 }
 
 .search-button {
-  background-color: #05616f;
-  color: #fff;
+  background-color: #FFCC00;
+  color: black;
   border: none;
   border-radius: 8px;
   padding: 2rem 2rem;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -538,8 +538,9 @@ $search-button-hover: #3182CE;
   flex-shrink: 0;
 
   &:hover {
-    background-color: $search-button-hover;
+    background-color: #FFCC00;
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   }
 
   .icon {

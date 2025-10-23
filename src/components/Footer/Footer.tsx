@@ -1,61 +1,54 @@
 import React from "react";
 import styles from './Footer.module.scss';
 import classNames from "classnames/bind";
+import footer_banner from '~/assets/img/footer/footer_banner_img.svg';
+import footer_check from '~/assets/img/footer/footer_check_img.svg';
+import instagram from '~/assets/img/footer/instagram.svg'
+import linkedin from '~/assets/img/footer/linkedin.svg'
+import facebook from '~/assets/img/footer/facebook.svg'
 
 const cx = classNames.bind(styles);
 
 const Footer: React.FC = () => {
   return (
-    <footer className={cx('footer')}>
-      <div className={cx('container')}>
-        <div className={cx('info-section')}>
-          <div className={cx('logo')}>Booking.com</div>
-          <p className={cx('slogan')}>
-            Khám phá những trải nghiệm du lịch đáng nhớ, bắt đầu từ những kỳ nghỉ hoàn hảo.
-          </p>
-          <div className={cx('social-icons')}>
-            <a href="#" aria-label="Facebook"><i className="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-            <a href="#" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-            <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin-in"></i></a>
+    <div className={cx('wrapper')}>
+      <div className={cx('footer_container')}>
+        <div className={cx('footer_banner')}>
+          <div className={cx('left')}>
+            <h2 className={cx('title')}>Tận hưởng không gian làm việc lý tưởng!</h2>
+            <button className={cx('booking_btn')}>Đặt chỗ ngay</button>
+            <div className={cx('sub_title')}>
+              <img src={footer_check} alt="" />
+              <p>Không cần cài đặt, sử dụng ngay.</p>
+            </div>
+            <div className={cx('sub_title')}>
+              <img src={footer_check} alt="" />
+              <p>Hỗ trợ mọi loại không gian làm việc.</p>
+            </div>
+          </div>
+          <div className={cx('right')}>
+            <img src={footer_banner} alt="footer banner"/>
           </div>
         </div>
-        
-        <div className={cx('links-section')}>
-          <div className={cx('column')}>
-            <h3 className={cx('ks')}>Khách sạn</h3>
-            <ul>
-              <li><a href="#">Khách sạn Việt Nam</a></li>
-              <li><a href="#">Khách sạn quốc tế</a></li>
-              <li><a href="#">Resort và Villas</a></li>
-              <li><a href="#">Khuyến mãi</a></li>
-            </ul>
+        <div className={cx('footer_info')}>
+          <div className={cx('logo')}>
+            <p>CSB</p>
           </div>
-          <div className={cx('column')}>
-            <h3 className={cx('ks')}>Hỗ trợ</h3>
-            <ul>
-              <li><a href="#">Trung tâm trợ giúp</a></li>
-              <li><a href="#">Liên hệ chúng tôi</a></li>
-              <li><a href="#">Chính sách bảo mật</a></li>
-              <li><a href="#">Điều khoản sử dụng</a></li>
-            </ul>
+          <div className={cx('us')}>
+            <a href="">Pricing</a>
+            <a href="">Space</a>
+            <a href="">Company</a>
+            <a href="">Contact us</a>
           </div>
-          <div className={cx('column')}>
-            <h3 className={cx('ks')}>Công ty</h3>
-            <ul>
-              <li><a href="#">Về chúng tôi</a></li>
-              <li><a href="#">Tuyển dụng</a></li>
-              <li><a href="#">Cộng đồng đối tác</a></li>
-              <li><a href="#">Tin tức & blog</a></li>
-            </ul>
+          <div className={cx('social')}>
+              <img src={instagram} alt="instagram" />
+              <img src={linkedin} alt="linkedin" />
+              <img src={facebook} alt="facebook" />
           </div>
         </div>
       </div>
-      
-      <div className={cx('copyright')}>
-        © 2024 Booking.com. Tất cả quyền được bảo lưu.
-      </div>
-    </footer>
+    </div>
+
   );
 };
 
