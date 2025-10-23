@@ -136,7 +136,7 @@ form {
 
 .btn {
   width: 150px;
-  background-color: #4a766a;
+  background-color: #005461;
   border: none;
   outline: none;
   height: 49px;
@@ -150,7 +150,7 @@ form {
 }
 
 .btn:hover {
-  background-color: #4d84e2;
+  background-color: #024a55;
 }
 .panels-container {
   position: absolute;
@@ -170,10 +170,8 @@ form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #134E5E, #71B280);
-// // background: linear-gradient(180deg, #00FFC2, #4900FF);
-// background: linear-gradient(90deg, #F93B3B, #FFA07A);
-// // background: linear-gradient(45deg, #A1C4FD, #C2E9FB);
+  background: linear-gradient(135deg, #005461, #00a3a3);
+
   transition: 1.8s ease-in-out;
   border-radius: 50%;
   z-index: 6;

@@ -11,7 +11,8 @@ const HomePage : React.FC = () => {
         <div className={cx('wrapper')}>
             <div className={cx('home')}>
                 {/* <LocationList/> */}
-                <LoadingSpinner/>
+                {/* <LoadingSpinner/> */}
+                s
             </div>
         </div>
     )
