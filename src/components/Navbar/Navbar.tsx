@@ -135,7 +135,7 @@ const Navbar: React.FC = () => {
                 <p className={cx('flag_payment')}>VND</p>
                 <img src={flagImg} alt="" className={cx('flag')}/>
                 <Link to={'/'} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></Link>
-                <Link to={'/'} className={cx('top-nav-item')}>Đăng không gian của Quý vị</Link>
+                <Link to={'/'} className={cx('top-nav-item')}>Đăng không gian của quý vị</Link>
                 <Link to={'/login'} className={cx('nav_btn')}>Đăng Ký</Link>
                 <Link to={'/login'} className={cx('nav_btn')}>Đăng nhập</Link>
               </div>
