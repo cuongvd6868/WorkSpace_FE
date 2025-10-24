@@ -11,11 +11,9 @@
   height: 100%; 
   transition: box-shadow 0.25s ease-in-out, transform 0.2s ease-in-out;
 
-  /* 🔹 Bóng mặc định – nhẹ hơn nhưng vẫn thấy rõ */
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 
   &:hover {
-    /* 🔹 Bóng đậm hơn và nhấn nổi nhẹ khi hover */
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
     transform: translateY(-3px);
   }
