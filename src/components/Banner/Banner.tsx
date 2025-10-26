@@ -5,7 +5,7 @@ import banner_left from '~/assets/img/banner/banner_left.svg';
 import banner_right from '~/assets/img/banner/banner_right.svg';
 import vector from '~/assets/img/banner/rectangle.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBriefcase, faBuilding } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase } from "@fortawesome/free-solid-svg-icons";
 
 
 const cx = classNames.bind(styles);

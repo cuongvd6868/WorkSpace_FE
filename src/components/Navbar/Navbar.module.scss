@@ -17,20 +17,18 @@ $search-button-hover: #3182CE;
   background: transparent;
   position: relative;
   width: 100%;
-  // margin-bottom: 100px;
-  // padding-top: 65px;
 }
 
 .top-nav-bar {
   background-color: $dark-bg;
-  padding: 1.6rem 0;
-  position: fixed; /* Giữ cố định khi cuộn */
+  padding: 1.8rem 0;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100; /* Đảm bảo nằm trên các phần khác */
+  z-index: 100; 
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(6px); /* Tùy chọn: nếu nền mờ trong suốt */
+  backdrop-filter: blur(6px); 
 }
 
 
@@ -44,7 +42,7 @@ $search-button-hover: #3182CE;
 }
 
 .top-nav-item_i {
-    color: #fff;
+  color: #fff;
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -256,22 +254,6 @@ $search-button-hover: #3182CE;
   display: block;
 }
 
-// .cover_overlay {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   right: 0;
-//   bottom: 0;
-//   background: linear-gradient(
-//     90deg,
-//     rgba(0, 0, 0, 0.95) 0%,
-//     rgba(0, 0, 0, 0.7) 10%,
-//     rgba(0, 0, 0, 0.4) 50%,
-//     rgba(0, 0, 0, 0.7) 90%,
-//     rgba(0, 0, 0, 0.95) 100%
-//   );
-//   z-index: 1;
-// }
 
 .cover_overlay {
   position: absolute;
@@ -584,8 +566,9 @@ $search-button-hover: #3182CE;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
-  // margin-right: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 
 .right-section {
   display: flex;
