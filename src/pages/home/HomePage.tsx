@@ -4,6 +4,7 @@ import styles from './HomePage.module.scss';
 import PromotionList from "~/components/Promotions/PromotionList";
 import Banner from "~/components/Banner/Banner";
 import WorkSpaceByType from "~/components/WorkSpaceType/WorkSpaceByType";
+import Reason from "~/components/Reason/Reason";
 
 
 const cx = classNames.bind(styles);
@@ -15,6 +16,7 @@ const HomePage : React.FC = () => {
                 <PromotionList/>
                 <Banner/>
                 <WorkSpaceByType/>
+                <Reason/>
             </div>
         </div>
     )

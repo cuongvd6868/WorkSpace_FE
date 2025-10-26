@@ -96,3 +96,7 @@ const PromotionList: React.FC = () => {
 }
 
 export default PromotionList;
+            // <div className={cx('title_container')}>
+            //     <FontAwesomeIcon icon={faHandshake} className={cx('icon')}/>
+            //     <h2>Vì sao bạn lại chọn CSB?</h2>
+            // </div>
