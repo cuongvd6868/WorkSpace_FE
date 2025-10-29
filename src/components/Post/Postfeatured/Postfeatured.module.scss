@@ -1,0 +1,26 @@
+.wrapper {
+    margin-top: 60px;
+
+    .title_container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    
+        .icon {
+            color: #073E68;
+            font-size: 2.5rem;
+            padding-bottom: 5px;
+        }
+
+        h2 {
+            color: dark;
+        }
+
+    }   
+
+    .post_container {
+        h3 {
+            margin: 100px 0;
+        }
+    }
+}

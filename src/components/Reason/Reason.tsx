@@ -21,10 +21,10 @@ interface Feature {
 const features: Feature[] = [
     { id: 1, title: "Làm việc nhóm dễ dàng", detail: "Tạo nhóm, chia sẻ không gian và cùng nhau lựa chọn nơi phù hợp nhất.", initialOpen: true },
     { id: 2, title: "Tích hợp đặt phòng & tiện ích", detail: "Đặt phòng họp, bàn làm việc hoặc văn phòng riêng — tất cả trong một nền tảng.", initialOpen: false },
-    { id: 3, title: "Tối ưu thời gian & chi phí", detail: "Tìm được không gian gần bạn nhất, phù hợp ngân sách và mục đích làm việc.", initialOpen: false },
+    { id: 3, title: "Gợi ý không gian phù hợp", detail: "CSB tự động đề xuất địa điểm theo vị trí, thói quen và ngân sách của bạn.", initialOpen: false },
     { id: 4, title: "Quản lý đặt chỗ thông minh", detail: "Theo dõi lịch sử, chỉnh sửa hoặc hủy đặt chỗ nhanh chóng ngay trên hệ thống.", initialOpen: false },
-    { id: 5, title: "Thanh toán linh hoạt & an toàn", detail: "Hỗ trợ nhiều phương thức thanh toán, đảm bảo nhanh chóng và bảo mật.", initialOpen: false },
-    { id: 6, title: "Gợi ý không gian phù hợp", detail: "CSB tự động đề xuất địa điểm theo vị trí, thói quen và ngân sách của bạn.", initialOpen: false },
+    { id: 5, title: "Tối ưu thời gian & chi phí", detail: "Tìm được không gian gần bạn nhất, phù hợp ngân sách và mục đích làm việc.", initialOpen: false },
+    { id: 6, title: "Thanh toán linh hoạt & an toàn", detail: "Hỗ trợ nhiều phương thức thanh toán, đảm bảo nhanh chóng và bảo mật.", initialOpen: false },
 ];
 
 interface FeatureItemProps {

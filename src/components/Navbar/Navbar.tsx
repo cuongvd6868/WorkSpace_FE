@@ -2,34 +2,55 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
 import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
+import { searchWorkspaces } from "~/services/WorkSpaceService"; // Import Service
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
 import coverImg from '~/assets/img/bg_img/cover.avif';
+
+// === IMPORT useSearch hook TỪ CONTEXT ===
+import { useSearch, SelectedTimeState } from '~/context/SearchContext'; 
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
 const Navbar: React.FC = () => {
 
+  // === DÙNG CONTEXT HOOK VÀ NAVIGATE ===
+  const { 
+    searchState, 
+    setLocation, 
+    setParticipants
+  } = useSearch();
+  const navigate = useNavigate();
+  // =====================================
+
+  // Các state cục bộ
   const [searchWardResult, setSearchWardResult] = useState<string[]>([]);
   const [showWardResult, setShowWardResult] = useState(false);
-  const [inputWardValue, setInputWardValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string|null>(null);
 
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
+
+  const locationRouter = useLocation();
+  const isHomePage = locationRouter.pathname === '/';
+
+  
   const handleHideResult = () => {
     setShowWardResult(false);
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputWardValue(value);
+    setLocation(value); // Cập nhật location vào Context
     
     if (value.trim() !== '') {
       setShowWardResult(true);
@@ -40,13 +61,14 @@ const Navbar: React.FC = () => {
   }
 
   const handleLocationSelect = (selectedName: string) => {
-    setInputWardValue(selectedName)
+    setLocation(selectedName) // Cập nhật location vào Context
     setShowWardResult(false)
   }
 
+  // Effect gọi API tìm kiếm địa điểm với debounce
   useEffect(() => {
     const fetchLocations = async () => {
-      if (!inputWardValue.trim()) {
+      if (!searchState.location.trim()) {
         setSearchWardResult([]);
         return;
       }
@@ -54,9 +76,8 @@ const Navbar: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const apiResponse = await getLocationsByName(inputWardValue);
+        const apiResponse = await getLocationsByName(searchState.location);
         const safeResult = apiResponse ?? [];
-        console.log('API Response:', apiResponse);
         setSearchWardResult(safeResult);
       } catch (error) {
         console.log('Lỗi không lấy được dữ liệu:', error);
@@ -69,54 +90,71 @@ const Navbar: React.FC = () => {
 
     const timeoutId = setTimeout(fetchLocations, 300);
     return () => clearTimeout(timeoutId);
-  }, [inputWardValue])
-
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState({
-    date: null as Date | null,
-    startTime: null as Date | null,
-    endTime: null as Date | null,
-    displayText: "Chọn thời gian làm việc"
-  });
+  }, [searchState.location])
 
   const token = localStorage.getItem('token');
   const isLoggedIn = token && isToken() && !isTokenExpired(token);
 
-  const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
-  const [participants, setParticipants] = useState(3);
-
   const handleParticipantsSelect = (participantsCount: number) => {
-    setParticipants(participantsCount);
+    setParticipants(participantsCount); // Cập nhật participants vào Context
   };
 
   const getParticipantsDisplayText = (): string => {
-    return `${participants} người`;
+    return `${searchState.participants} người`;
   };
 
-  const handleWorkspaceTimeSelect = (startTime: Date, endTime: Date) => {
-    const formatTime = (date: Date) => {
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    };
+  // === HÀM XỬ LÝ TÌM KIẾM CHÍNH (GỌI API HOẶC ĐIỀU HƯỚNG) ===
+  const handleSearchClick = () => {
+      const { location, selectedTime, participants } = searchState;
 
-    const formatDate = (date: Date) => {
-      return date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit'
-      });
-    };
+      // 1. Kiểm tra điều kiện
 
-    setSelectedTime({
-      date: startTime,
-      startTime,
-      endTime,
-      displayText: `${formatDate(startTime)} • ${formatTime(startTime)} - ${formatTime(endTime)}`
-    });
-  };
+      if (!location || !selectedTime.startTime || !selectedTime.endTime) {
+          toast.warn("Vui lòng chọn đầy đủ Địa điểm, Ngày và Giờ làm việc.");
+          return;
+      }
 
+
+      // 2. Định dạng Date và tạo Query String (Dùng logic tương tự Service)
+      // Lấy hàm formatToISOStringForApi từ WorkspaceService.ts (hoặc định nghĩa lại ở đây)
+      // Để đơn giản, ta dùng logic Date.toISOString() và điều chỉnh
+      const formatToISOStringForApi = (date: Date): string => {
+          return date.toISOString().replace(/\.\d{3}Z$/, ''); 
+      };
+      
+      const starttimeISO = formatToISOStringForApi(selectedTime.startTime);
+      const endtimeISO = formatToISOStringForApi(selectedTime.endTime);
+
+      const queryString = new URLSearchParams({
+          ward: location,
+          starttime: starttimeISO,
+          endtime: endtimeISO,
+          capacity: participants.toString(),
+      }).toString();
+
+      // 3. Điều hướng sang trang kết quả tìm kiếm
+      // Bạn có thể dùng Link hoặc useNavigate, ở đây ta dùng useNavigate
+      navigate(`/search-results?${queryString}`);
+
+      // *Nếu muốn gọi API ngay trên Navbar, bạn có thể uncomment code này:
+      /*
+      // searchWorkspaces(searchState)
+      //     .then(results => {
+      //         console.log('Search API Success:', results);
+      //         navigate('/search-results', { state: { results } }); // Truyền kết quả
+      //     })
+      //     .catch(err => {
+      //         alert('Đã xảy ra lỗi khi tìm kiếm không gian làm việc.');
+      //         console.error(err);
+      //     });
+      */
+  }
+  // ====================================================================
+  
   return (
     <>
       <header className={cx('wrapper')}>
-        {/* Top navigation bar */}
+        {/* Top navigation bar (Giữ nguyên) */}
         <div className={cx('top-nav-bar')}>
           <div className={cx('top-nav-content')}>
             <div className={cx('left-section')}>
@@ -143,20 +181,34 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Cover image với overlay và text */}
-        <div className={cx('cover_container')}>
-          <img src={coverImg} alt="Cover" className={cx('cover_img')}/>
-          <div className={cx('cover_overlay')}></div>
-          <div className={cx('cover_content')}>
-            <div className={cx('promo_badge')}>Giảm đến 15% khi đặt chỗ</div>
-            <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
-            <p className={cx('cover_subtitle')}>
-              Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
-              phù hợp với mọi quy mô đội nhóm của bạn...
-            </p>
-            <button className={cx('cover_button')}>Đặt chỗ ngay</button>
+        {/* Cover image với overlay và text (Giữ nguyên) */}
+        {/* Hiển thị cover khác nhau tùy theo trang */}
+        {isHomePage ? (
+          <div className={cx('cover_container')}>
+            <img src={coverImg} alt="Cover" className={cx('cover_img')} />
+            <div className={cx('cover_overlay')}></div>
+            <div className={cx('cover_content')}>
+              <div className={cx('promo_badge')}>Giảm đến 15% khi đặt chỗ</div>
+              <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
+              <p className={cx('cover_subtitle')}>
+                Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
+                phù hợp với mọi quy mô đội nhóm của bạn...
+              </p>
+              <button className={cx('cover_button')}>Đặt chỗ ngay</button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className={cx('cover_container2')}>
+            <div className={cx('cover_content')}>
+              <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
+              <p className={cx('cover_subtitle')}>
+                Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
+                phù hợp với mọi quy mô đội nhóm của bạn...
+              </p>
+            </div>
+          </div>
+        )}
+
 
         {/* Search section */}
         <div className={cx('search-section')}>
@@ -200,10 +252,10 @@ const Navbar: React.FC = () => {
                     type="text" 
                     placeholder="Nhập tên phường..." 
                     className={cx('search-box-input')} 
-                    value={inputWardValue}
+                    value={searchState.location}
                     onChange={handleInputChange}
                     onFocus={() => {
-                      if (inputWardValue.trim() && searchWardResult.length > 0) {
+                      if (searchState.location.trim() && searchWardResult.length > 0) {
                         setShowWardResult(true);
                       }
                     }}
@@ -216,7 +268,7 @@ const Navbar: React.FC = () => {
                   <input 
                     type="text" 
                     readOnly 
-                    value={selectedTime.displayText} 
+                    value={searchState.selectedTime.displayText} 
                     placeholder="Chọn ngày và giờ làm việc" 
                     className={cx('search-box-input')}
                   />
@@ -234,7 +286,10 @@ const Navbar: React.FC = () => {
                   />
                 </div>
 
-                <button className={cx('search-button')}>
+                <button 
+                    className={cx('search-button')}
+                    onClick={handleSearchClick} // GỌI HÀM XỬ LÝ TÌM KIẾM
+                >
                   Tìm kiếm
                 </button>
               </div>
@@ -247,7 +302,6 @@ const Navbar: React.FC = () => {
       <WorkspaceDatePicker 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
-        onTimeSelect={handleWorkspaceTimeSelect}
       />
 
       {/* Meeting Participant Picker Modal */}
@@ -255,7 +309,7 @@ const Navbar: React.FC = () => {
         isOpen={isParticipantsPickerOpen}
         onClose={() => setIsParticipantsPickerOpen(false)}
         onSelect={handleParticipantsSelect}
-        initialParticipants={participants}
+        initialParticipants={searchState.participants}
       />
     </>
   );

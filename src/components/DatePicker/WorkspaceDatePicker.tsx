@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+// File: src/components/DatePicker/WorkspaceDatePicker.tsx
+
+import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
 import styles from './WorkspaceDatePicker.module.scss';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendarAlt, faClock } from "@fortawesome/free-solid-svg-icons";
+
+// === IMPORT useSearch HOOK VÀ TYPES TỪ CONTEXT ===
+import { useSearch, BookingType, SelectedTimeState } from '~/context/SearchContext'; 
 
 const cx = classNames.bind(styles);
 
 interface WorkspaceDatePickerProps {
   isOpen: boolean;
   onClose: () => void;
-  onTimeSelect: (startTime: Date, endTime: Date, bookingType: 'hourly' | 'daily') => void;
 }
 
 const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
@@ -16,18 +22,53 @@ const MINUTES = [0, 15, 30, 45];
 
 const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({ 
   isOpen, 
-  onClose, 
-  onTimeSelect
+  onClose
 }) => {
+  // === SỬ DỤNG useSearch HOOK ===
+  const { searchState, setSelectedTime, setBookingType: setGlobalBookingType } = useSearch();
+
+  // State nội bộ
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [bookingType, setBookingType] = useState<'hourly' | 'daily'>('hourly');
-  
+  const [bookingType, setLocalBookingType] = useState<BookingType>(searchState.bookingType);
+
   // State cho giờ bắt đầu và kết thúc (dùng cho hourly)
   const [startTime, setStartTime] = useState({ hour: 9, minute: 0 });
   const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
+  
+  // === ĐỒNG BỘ STATE KHI MODAL MỞ ===
+  useEffect(() => {
+    if (isOpen) {
+      setLocalBookingType(searchState.bookingType);
+      
+      const { date, startTime: contextStartTime, endTime: contextEndTime } = searchState.selectedTime;
+      
+      // Khôi phục SelectedDates
+      if (date) {
+        // Tạm thời chỉ khôi phục ngày đầu tiên. (Cần logic phức tạp hơn cho daily multi-date)
+        setSelectedDates([date]); 
+      } else {
+        setSelectedDates([]);
+      }
+      
+      // Khôi phục Giờ
+      if (contextStartTime && contextEndTime) {
+          setStartTime({ 
+              hour: contextStartTime.getHours(), 
+              minute: contextStartTime.getMinutes() 
+          });
+          setEndTime({ 
+              hour: contextEndTime.getHours(), 
+              minute: contextEndTime.getMinutes() 
+          });
+      } else {
+        // Mặc định nếu chưa chọn
+        setStartTime({ hour: 9, minute: 0 });
+        setEndTime({ hour: 17, minute: 0 });
+      }
+    }
+  }, [isOpen, searchState.bookingType, searchState.selectedTime]);
 
-  // Early return
   if (!isOpen) return null;
 
   // Kiểm tra ngày có thể chọn được (không cho chọn ngày đã qua)
@@ -58,42 +99,83 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
       }
     }
   };
-
-  // Hàm xác nhận và lưu thông tin
-  const handleConfirm = () => {
-    if (bookingType === 'hourly') {
-      // Xử lý cho booking theo giờ
-      if (selectedDates.length === 0) {
-        alert("Vui lòng chọn ngày làm việc");
-        return;
+  
+  // Hàm chuyển đổi loại hình
+  const handleChangeBookingType = (newType: BookingType) => {
+      setLocalBookingType(newType);
+      // Giới hạn selectedDates nếu chuyển sang hourly
+      if (newType === 'hourly') {
+          setSelectedDates(selectedDates.slice(0, 1));
       }
+  }
 
-      const startDateTime = new Date(selectedDates[0]);
+  // === HÀM XÁC NHẬN VÀ LƯU THÔNG TIN VÀO CONTEXT ===
+  const handleConfirm = () => {
+    if (selectedDates.length === 0) {
+      alert("Vui lòng chọn ngày làm việc");
+      return;
+    }
+
+    let startDateTime: Date;
+    let endDateTime: Date;
+    let displayText: string;
+
+    if (bookingType === 'hourly') {
+      const selectedDate = selectedDates[0];
+      
+      // TẠO DATE OBJECT CHÍNH XÁC (bao gồm cả giờ, phút)
+      startDateTime = new Date(selectedDate);
       startDateTime.setHours(startTime.hour, startTime.minute, 0, 0);
       
-      const endDateTime = new Date(selectedDates[0]);
+      endDateTime = new Date(selectedDate);
       endDateTime.setHours(endTime.hour, endTime.minute, 0, 0);
 
       if (endDateTime <= startDateTime) {
         alert("Thời gian kết thúc phải sau thời gian bắt đầu");
         return;
       }
+      
+      const startStr = `${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}`;
+      const endStr = `${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}`;
+      displayText = `${selectedDate.toLocaleDateString('vi-VN')} (${startStr} - ${endStr})`;
 
-      onTimeSelect(startDateTime, endDateTime, 'hourly');
-    } else {
-      // Xử lý cho booking theo ngày
-      if (selectedDates.length === 0) {
-        alert("Vui lòng chọn ít nhất 1 ngày");
-        return;
+      setGlobalBookingType('hourly');
+      const timeState: SelectedTimeState = {
+        date: selectedDate,
+        startTime: startDateTime, // LƯU DATE OBJECT
+        endTime: endDateTime,     // LƯU DATE OBJECT
+        displayText: displayText,
+      }
+      setSelectedTime(timeState);
+
+    } else { // bookingType === 'daily'
+      const sortedDates = selectedDates.sort((a, b) => a.getTime() - b.getTime());
+      const firstDate = sortedDates[0];
+      const lastDate = sortedDates[sortedDates.length - 1];
+
+      // TẠO DATE OBJECT CHO DAILY (Đầu ngày và Cuối ngày)
+      startDateTime = new Date(firstDate);
+      startDateTime.setHours(0, 0, 0, 0); 
+      
+      endDateTime = new Date(lastDate);
+      endDateTime.setHours(23, 59, 59, 999); 
+      
+      const numDays = sortedDates.length;
+      
+      if (numDays === 1) {
+        displayText = `1 ngày (${firstDate.toLocaleDateString('vi-VN')})`;
+      } else {
+        displayText = `${firstDate.getDate()}/${firstDate.getMonth() + 1} - ${lastDate.getDate()}/${lastDate.getMonth() + 1} (${numDays} ngày)`;
       }
 
-      const startDate = new Date(selectedDates[0]);
-      startDate.setHours(0, 0, 0, 0);
-      
-      const endDate = new Date(selectedDates[selectedDates.length - 1]);
-      endDate.setHours(23, 59, 59, 999);
-
-      onTimeSelect(startDate, endDate, 'daily');
+      setGlobalBookingType('daily');
+      const timeState: SelectedTimeState = {
+        date: firstDate, 
+        startTime: startDateTime, // LƯU DATE OBJECT
+        endTime: endDateTime,     // LƯU DATE OBJECT
+        displayText: displayText,
+      }
+      setSelectedTime(timeState);
     }
     
     onClose();
@@ -107,23 +189,25 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
 
   // Hàm chọn nhanh số ngày (cho daily)
   const handleQuickDaySelect = (days: number) => {
-    const startDate = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const dates = Array.from({ length: days }, (_, i) => {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
       return date;
     });
     setSelectedDates(dates);
   };
 
-  // Hàm tạo lịch
+  // Hàm tạo lịch (Giữ nguyên)
   const generateCalendar = (month: Date) => {
     const year = month.getFullYear();
     const monthIndex = month.getMonth();
     const firstDay = new Date(year, monthIndex, 1);
-    const firstDayOfWeek = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+    const firstDayOfWeek = firstDay.getDay() === 0 ? 7 : firstDay.getDay(); 
     const startDay = new Date(firstDay);
-    startDay.setDate(firstDay.getDate() - (firstDayOfWeek - 1));
+    startDay.setDate(firstDay.getDate() - (firstDayOfWeek === 1 ? 0 : firstDayOfWeek - 1));
     
     const calendar = [];
     const currentDate = new Date(startDay);
@@ -141,15 +225,12 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(currentMonth.getMonth() + direction);
     
-    // Không cho điều hướng đến tháng đã qua
     const today = new Date();
     today.setDate(1);
     today.setHours(0, 0, 0, 0);
     
     if (direction === -1) {
-      const minDate = new Date(today);
-      minDate.setMonth(today.getMonth() - 1);
-      if (newMonth >= minDate) {
+      if (newMonth.getFullYear() >= today.getFullYear() && newMonth.getMonth() >= today.getMonth()) {
         setCurrentMonth(newMonth);
       }
     } else {
@@ -178,12 +259,14 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     } else {
       if (selectedDates.length === 0) return "Chọn ngày";
       
-      if (selectedDates.length === 1) {
-        return `${selectedDates[0].getDate()}/${selectedDates[0].getMonth() + 1} (1 ngày)`;
+      const sortedDates = selectedDates.sort((a, b) => a.getTime() - b.getTime());
+
+      if (sortedDates.length === 1) {
+        return `${sortedDates[0].getDate()}/${sortedDates[0].getMonth() + 1} (1 ngày)`;
       } else {
-        const start = selectedDates[0];
-        const end = selectedDates[selectedDates.length - 1];
-        return `${start.getDate()}/${start.getMonth() + 1} - ${end.getDate()}/${end.getMonth() + 1} (${selectedDates.length} ngày)`;
+        const start = sortedDates[0];
+        const end = sortedDates[sortedDates.length - 1];
+        return `${start.getDate()}/${start.getMonth() + 1} - ${end.getDate()}/${end.getMonth() + 1} (${sortedDates.length} ngày)`;
       }
     }
   };
@@ -191,7 +274,7 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
   // Kiểm tra xem có thể confirm không
   const canConfirm = selectedDates.length > 0 && 
     (bookingType === 'daily' || 
-     (endTime.hour > startTime.hour || 
+      (endTime.hour > startTime.hour || 
       (endTime.hour === startTime.hour && endTime.minute > startTime.minute)));
 
   return (
@@ -210,18 +293,17 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
         <div className={cx('booking-type-selector')}>
           <button 
             className={cx('type-button', { active: bookingType === 'hourly' })}
-            onClick={() => {
-              setBookingType('hourly');
-              setSelectedDates(selectedDates.slice(0, 1)); // Chỉ giữ lại 1 ngày
-            }}
+            onClick={() => handleChangeBookingType('hourly')}
           >
-            ⏰ Theo giờ
+            <FontAwesomeIcon icon={faClock} style={{ marginRight: "5px" }} />
+            Theo giờ
           </button>
           <button 
             className={cx('type-button', { active: bookingType === 'daily' })}
-            onClick={() => setBookingType('daily')}
+            onClick={() => handleChangeBookingType('daily')}
           >
-            📅 Theo ngày
+            <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: "5px" }} />
+            Theo ngày
           </button>
         </div>
         
@@ -407,10 +489,11 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
                 </div>
                 <div className={cx('days-grid')}>
                   {calendar.map((date, index) => {
-                    const isCurrentMonth = date.getMonth() === (calIndex === 0 ? currentMonth.getMonth() : nextMonth.getMonth());
+                    const monthToCheck = calIndex === 0 ? currentMonth : nextMonth;
+                    const isCurrentDisplayMonth = date.getMonth() === monthToCheck.getMonth() && date.getFullYear() === monthToCheck.getFullYear();
                     const isToday = new Date().toDateString() === date.toDateString();
                     const selected = isDateSelected(date);
-                    const selectable = isDateSelectable(date) && isCurrentMonth;
+                    const selectable = isDateSelectable(date) && isCurrentDisplayMonth; 
 
                     return (
                       <div
@@ -418,8 +501,8 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
                         className={cx(
                           'day-cell',
                           {
-                            'other-month': !isCurrentMonth,
-                            'today': isToday,
+                            'other-month': !isCurrentDisplayMonth,
+                            'today': isToday && isCurrentDisplayMonth, 
                             'selected': selected,
                             'selectable': selectable,
                             'disabled': !selectable,
@@ -429,7 +512,7 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
                         onClick={() => selectable && handleDateClick(date)}
                       >
                         {date.getDate()}
-                        {isToday && <div className={cx('today-indicator')}></div>}
+                        {isToday && isCurrentDisplayMonth && <div className={cx('today-indicator')}></div>}
                       </div>
                     );
                   })}
