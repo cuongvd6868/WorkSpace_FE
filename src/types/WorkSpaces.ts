@@ -11,5 +11,7 @@ export type WorkSpaceSearch = {
     ward: string,
     street: string,
     hostName: string,
-    amenities?: string[]
+    amenities?: string[],
+    latitude: number,
+    longitude: number
 }

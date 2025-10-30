@@ -1,8 +1,3 @@
-/* File: src/pages/SearchResults/SearchResults.module.scss */
-
-// ------------------------------------------------------------------
-// Bố cục cơ bản
-// ------------------------------------------------------------------
 .wrapper {
     width: 68%;
     margin: 0 auto;
@@ -49,7 +44,7 @@
 .filter-sidebar {
     width: 250px;
     background-color: #fff;
-    padding: 20px;
+    padding: 0 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     flex-shrink: 0; 
@@ -64,7 +59,8 @@
 // ------------------------------------------------------------------
 
 .price-filter-section {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
+    margin-top: 20px;
 }
 
 .price-range-display {
@@ -303,9 +299,92 @@
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
-    align-self: flex-start; /* Để nút không bị giãn rộng */
+    align-self: flex-start;
 
     &:hover {
         background-color: #0056b3;
+    }
+}
+
+.map-container {
+    height: 400px; 
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #ccc; 
+    overflow: hidden;
+
+    > div {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+
+.filter-sidebar {
+    position: relative; 
+}
+
+
+.map-button-container {
+    width: 100%;
+    
+    display: flex;
+    align-items: flex-end; /* Đảm bảo nút nằm ở cuối container */
+    justify-content: center;
+    padding: 20px 0 10px 0; /* Giữ 20px trên, giảm còn 10px dưới */
+    // ===================================
+    
+    background-image: url('https://newhomeland.com.vn/wp-content/uploads/2023/04/ban-do-hanh-chinh-thanh-pho-da-nang.jpg');
+    
+    background-size: cover;      
+    background-position: center; 
+    background-repeat: no-repeat;
+    min-height: 120px;           
+    border-radius: 8px;          
+    overflow: hidden;            
+    position: relative;          
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+
+    // Lớp phủ (Overlay)
+    // &::before {
+    //     content: "";
+    //     position: absolute;
+    //     top: 0;
+    //     left: 0;
+    //     right: 0;
+    //     bottom: 0;
+    //     background-color: rgba(0, 0, 0, 0.45); 
+    //     z-index: 1; 
+    // }
+}
+
+.view-map-button {
+    background-color: var(--primary-color, #007bff); 
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    z-index: 2; 
+    position: relative; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    
+    &:hover:not(:disabled) {
+        background-color: var(--primary-darker-color, #0056b3);
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        color: #666;
     }
 }

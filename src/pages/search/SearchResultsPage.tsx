@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'; 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; 
 import classNames from 'classnames/bind';
 import styles from './SearchResultsPage.module.scss'; 
 import { searchWorkspaces } from '~/services/WorkSpaceService';
@@ -10,14 +10,16 @@ import { BookingType } from '~/context/SearchContext';
 import { 
     faSpinner, 
     faExclamationCircle, 
-    faCheckCircle 
+    faCheckCircle,
+    faMapMarkedAlt 
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// === [SỬA LỖI RUNTIME: Dùng Default Export và ÉP KIỂU] RANGE SLIDER IMPORTS ===
-// Giữ nguyên cách import cuối cùng để tránh lỗi runtime nếu không thể cập nhật thư viện
+// === RANGE SLIDER IMPORTS ===
 import Slider from 'rc-slider'; 
 import 'rc-slider/assets/index.css'; 
+// Giả định LoadingSpinner đã có sẵn (hoặc dùng giao diện loading nội bộ)
+// import LoadingSpinner from '~/components/LoadingSpinner/LoadingSpinner'; 
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -37,6 +39,8 @@ const formatCurrency = (amount: number) => {
 
 const SearchResultsPage: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate(); 
+    
     const [results, setResults] = useState<WorkSpaceSearch[]>([]);
     const [availableAmenities, setAvailableAmenities] = useState<Amenity[]>([]); 
     const [loading, setLoading] = useState(false);
@@ -60,6 +64,28 @@ const SearchResultsPage: React.FC = () => {
     }, [minPriceFromUrl, maxPriceFromUrl]);
 
     const summaryText = `Tìm kiếm: ${ward} | ${capacity} người | Từ ${new Date(starttime).toLocaleTimeString('vi-VN')} ngày ${new Date(starttime).toLocaleDateString('vi-VN')} đến ${new Date(endtime).toLocaleDateString('vi-VN')}`;
+
+    // === LOGIC XỬ LÝ CHUYỂN TRANG BẢN ĐỒ RIÊNG ===
+    const handleViewMapClick = () => {
+        navigate('/map-view', { 
+            state: { 
+                results: results
+            } 
+        });
+    };
+    // ===========================================
+
+    // === LOGIC TẠO MARKERS (Vẫn giữ để có results.length) ===
+    const mapMarkers = useMemo(() => {
+        return results
+            .filter(ws => ws.latitude !== undefined && ws.longitude !== undefined)
+            .map(ws => ({
+                id: ws.id.toString(), 
+                position: [ws.latitude, ws.longitude] as [number, number],
+                title: ws.title,
+            }));
+    }, [results]);
+    // ========================================================
 
     useEffect(() => {
         const fetchData = async () => {
@@ -94,7 +120,6 @@ const SearchResultsPage: React.FC = () => {
                 const amenitiesData = await getAllAmenities(); 
                 setAvailableAmenities(amenitiesData);
 
-
                 if (data.length === 0) {
                     const baseError = `Không tìm thấy không gian làm việc nào tại ${ward} phù hợp với yêu cầu.`;
                     setError(selectedAmenitiesFromUrl.length > 0 || minPriceFromUrl > DEFAULT_MIN_PRICE || maxPriceFromUrl < DEFAULT_MAX_PRICE ? 
@@ -115,9 +140,7 @@ const SearchResultsPage: React.FC = () => {
     }, [location.search]); 
     
     
-    // ĐỊNH NGHĨA LẠI: Chấp nhận number | number[] để khớp với thư viện
     const handlePriceChange = (value: number | number[]) => {
-        // Chỉ xử lý nếu nó là mảng (như trường hợp Range Slider)
         if (!Array.isArray(value)) {
             return; 
         }
@@ -188,13 +211,16 @@ const SearchResultsPage: React.FC = () => {
             
             <hr className={cx('divider')} />
 
+            {/* HIỂN THỊ TRẠNG THÁI LOADING */}
             {loading && (
                 <div className={cx('loading-state')}>
+                    {/* Sử dụng FontAwesomeIcon nếu không muốn import LoadingSpinner */}
                     <FontAwesomeIcon icon={faSpinner} spin className={cx('spinner-icon')} />
                     <p>Đang tải kết quả và tiện ích...</p>
                 </div>
             )}
             
+            {/* HIỂN THỊ TRẠNG THÁI LỖI */}
             {error && !loading && (
                 <div className={cx('error-state')}>
                     <FontAwesomeIcon icon={faExclamationCircle} className={cx('error-icon')} />
@@ -216,7 +242,24 @@ const SearchResultsPage: React.FC = () => {
                 <div className={cx('main-content')}>
                     <div className={cx('filter-sidebar')}>
                         
+                        {/* === KHỐI NÚT XEM BẢN ĐỒ CÓ HÌNH NỀN === */}
+                        {results.length > 0 && mapMarkers.length > 0 && (
+                            <>
+                                <div className={cx('map-button-container')}>
+                                    <button 
+                                        onClick={handleViewMapClick} 
+                                        className={cx('view-map-button')}
+                                    >
+                                        <FontAwesomeIcon icon={faMapMarkedAlt} /> 
+                                        Xem {mapMarkers.length} vị trí trên Bản Đồ
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        {/* =========================================== */}
+
                         <div className={cx('price-filter-section')}>
+                            {/* ... Lọc theo Giá */}
                             <h3 className={cx('filter-title')}>Lọc theo Giá (VNĐ/giờ)</h3>
                             <div className={cx('price-range-display')}>
                                 <span className={cx('price-min')}>{formatCurrency(currentPriceRange[0])} VNĐ</span>
@@ -226,18 +269,16 @@ const SearchResultsPage: React.FC = () => {
 
                             <div className={cx('price-slider-container')}>
                                 <Range 
-                                    range={true} // Giữ lại vì bạn đang dùng Default Export (Slider)
+                                    range={true} 
                                     min={DEFAULT_MIN_PRICE}
                                     max={DEFAULT_MAX_PRICE}
                                     step={PRICE_STEP}
                                     value={currentPriceRange}
-                                    // SỬA LỖI TS2322: Khai báo kiểu tham số là number | number[]
                                     onChange={(value: number | number[]) => { 
                                         if (Array.isArray(value)) {
                                             setCurrentPriceRange(value as [number, number]);
                                         }
                                     }} 
-                                    // SỬA LỖI TS2322: onAfterChange cũng phải chấp nhận kiểu number | number[]
                                     onAfterChange={handlePriceChange} 
                                     allowCross={false}
                                     className={cx('custom-range-slider')}
@@ -245,8 +286,9 @@ const SearchResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <hr className={cx('filter-divider')} />
+                        {/* <hr className={cx('filter-divider')} /> */}
                         
+                        {/* ... Lọc theo Tiện ích */}
                         <h3 className={cx('filter-title')}>Lọc theo Tiện ích</h3>
                         
                         <div className={cx('amenities-list')}>
@@ -269,6 +311,7 @@ const SearchResultsPage: React.FC = () => {
                     </div>
                     
                     <div className={cx('results-area')}>
+                        {/* ... Hiển thị Kết quả */}
                         <h2 className={cx('results-count')}>
                             Tìm thấy {results.length} không gian làm việc 
                             {(selectedAmenitiesFromUrl.length > 0 || minPriceFromUrl !== DEFAULT_MIN_PRICE || maxPriceFromUrl !== DEFAULT_MAX_PRICE) && ` (Đã lọc)`}:
@@ -277,7 +320,12 @@ const SearchResultsPage: React.FC = () => {
                         {results.length > 0 ? (
                             <div className={cx('results-list')}>
                                 {results.map((workspace) => (
-                                    <div key={workspace.id} className={cx('workspace-card')}>
+                                    // Chuyển hướng đến trang chi tiết khi click vào card
+                                    <div 
+                                        key={workspace.id} 
+                                        className={cx('workspace-card')} 
+                                        onClick={() => navigate(`/workspace/${workspace.id}`)}
+                                    >
                                         <div className={cx('card-content')}>
                                             <h3 className={cx('card-title')}>{workspace.title}</h3>
                                             <p className={cx('card-description')}>{workspace.description}</p>
@@ -286,7 +334,7 @@ const SearchResultsPage: React.FC = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className={cx('no-results')}>
+                             <div className={cx('no-results')}>
                                 <p>Không tìm thấy bất kỳ không gian làm việc nào phù hợp với tiêu chí của bạn.</p>
                                 {(selectedAmenitiesFromUrl.length > 0 || minPriceFromUrl !== DEFAULT_MIN_PRICE || maxPriceFromUrl !== DEFAULT_MAX_PRICE) && (
                                     <button onClick={() => {
