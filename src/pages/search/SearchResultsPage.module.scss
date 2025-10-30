@@ -1,5 +1,8 @@
 /* File: src/pages/SearchResults/SearchResults.module.scss */
 
+// ------------------------------------------------------------------
+// Bố cục cơ bản
+// ------------------------------------------------------------------
 .wrapper {
     width: 68%;
     margin: 0 auto;
@@ -33,104 +36,9 @@
     margin-bottom: 30px;
 }
 
-.loading-state, .error-state, .no-results {
-    text-align: center;
-    padding: 50px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-top: 30px;
-}
-
-.spinner-icon {
-    font-size: 2rem;
-    color: #007bff;
-    margin-bottom: 15px;
-}
-
-.error-icon {
-    font-size: 2rem;
-    color: #dc3545;
-    margin-bottom: 15px;
-}
-
-.results-count {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    color: #495057;
-    font-weight: 600;
-}
-
-.workspace-card {
-    display: flex;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.card-image {
-    width: 30%;
-    min-height: 200px;
-    background-color: #adb5bd; /* Placeholder */
-    // Tùy chỉnh để hiển thị ảnh thực tế
-}
-
-.card-content {
-    width: 70%;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.card-title {
-    font-size: 1.75rem;
-    color: #007bff;
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.card-description {
-    color: #495057;
-    margin-bottom: 15px;
-}
-
-.card-details {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.detail-item {
-    font-size: 0.95rem;
-    color: #6c757d;
-    margin-bottom: 5px;
-}
-
-.detail-icon {
-    margin-right: 8px;
-    color: #4CAF50;
-}
-
-.view-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-}
-/* File: src/pages/search/SearchResults.module.scss (Bổ sung) */
-
-/* ... (Các CSS cũ) ... */
+// ------------------------------------------------------------------
+// Bố cục chính: Sidebar và Results Area
+// ------------------------------------------------------------------
 
 .main-content {
     display: flex;
@@ -144,8 +52,76 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0; /* Đảm bảo Sidebar không bị co lại */
+    flex-shrink: 0; 
 }
+
+.results-area {
+    flex-grow: 1;
+}
+
+// ------------------------------------------------------------------
+// Lọc Giá (Price Filter) - PHẦN BỔ SUNG
+// ------------------------------------------------------------------
+
+.price-filter-section {
+    margin-bottom: 20px;
+}
+
+.price-range-display {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.price-slider-container {
+    padding: 0 5px; /* Khoảng cách cho handles */
+}
+
+/* TÙY CHỈNH RC-SLIDER */
+.custom-range-slider {
+    .rc-slider-rail {
+        background-color: #dee2e6; /* Màu nền thanh trượt (rail) */
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    .rc-slider-track {
+        background-color: #007bff; /* Màu của thanh đã chọn */
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    .rc-slider-handle {
+        border: solid 2px #007bff; /* Viền handle */
+        background-color: #fff;
+        width: 18px;
+        height: 18px;
+        margin-top: -5px; /* Căn giữa handle với track */
+        opacity: 1;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        transition: box-shadow 0.2s, transform 0.2s;
+        cursor: grab;
+
+        &:active {
+            box-shadow: 0 0 0 5px rgba(0, 123, 255, 0.2); 
+            transform: scale(1.1);
+            cursor: grabbing;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+    }
+}
+/* KẾT THÚC TÙY CHỈNH RC-SLIDER */
+
+// ------------------------------------------------------------------
+// Lọc Tiện ích (Amenities Filter)
+// ------------------------------------------------------------------
 
 .filter-title {
     font-size: 1.2rem;
@@ -195,12 +171,27 @@
 }
 
 
-.results-area {
-    flex-grow: 1;
+// ------------------------------------------------------------------
+// Trạng thái (Loading, Error, No Results)
+// ------------------------------------------------------------------
+.loading-state, .error-state, .no-results {
+    text-align: center;
+    padding: 50px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 30px;
 }
 
-.results-list {
-    // ... (Giữ nguyên)
+.spinner-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.error-icon {
+    font-size: 2rem;
+    color: #dc3545;
+    margin-bottom: 15px;
 }
 
 .no-results-filter {
@@ -219,5 +210,102 @@
         margin-top: 10px;
         cursor: pointer;
         font-weight: 600;
+
+        &:hover {
+            background-color: #e0a800;
+        }
+    }
+}
+
+
+// ------------------------------------------------------------------
+// Kết quả tìm kiếm (Results List)
+// ------------------------------------------------------------------
+
+.results-count {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #495057;
+    font-weight: 600;
+}
+
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.workspace-card {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+}
+
+.card-image {
+    width: 30%;
+    min-height: 200px;
+    background-color: #adb5bd; /* Placeholder */
+    // object-fit: cover;
+}
+
+.card-content {
+    width: 70%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 1.75rem;
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.card-description {
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.card-details {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.detail-icon {
+    margin-right: 8px;
+    color: #4CAF50;
+}
+
+.view-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    align-self: flex-start; /* Để nút không bị giãn rộng */
+
+    &:hover {
+        background-color: #0056b3;
     }
 }
