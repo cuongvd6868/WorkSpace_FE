@@ -200,10 +200,9 @@ const Navbar: React.FC = () => {
         ) : (
           <div className={cx('cover_container2')}>
             <div className={cx('cover_content')}>
-              <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
+              <h1 className={cx('cover_title')}>Không gian làm việc cho hiệu suất tối đa</h1>
               <p className={cx('cover_subtitle')}>
-                Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
-                phù hợp với mọi quy mô đội nhóm của bạn...
+                Trải nghiệm đa dạng không gian làm việc – từ bàn cá nhân linh hoạt đến phòng họp chuyên nghiệp, đáp ứng mọi nhu cầu và quy mô đội nhóm của bạn.
               </p>
             </div>
           </div>

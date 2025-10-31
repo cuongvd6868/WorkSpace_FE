@@ -15,16 +15,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// === RANGE SLIDER IMPORTS ===
 import Slider from 'rc-slider'; 
 import 'rc-slider/assets/index.css'; 
-// Giả định LoadingSpinner đã có sẵn (hoặc dùng giao diện loading nội bộ)
-// import LoadingSpinner from '~/components/LoadingSpinner/LoadingSpinner'; 
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+import WorkSpaceSearchItem from '~/components/WorkSpaces/search/WorkSpaceSearchItem';
 const Range = Slider;
-// ============================================
 
 
 const cx = classNames.bind(styles);
@@ -63,7 +57,7 @@ const SearchResultsPage: React.FC = () => {
         setCurrentPriceRange([minPriceFromUrl, maxPriceFromUrl]);
     }, [minPriceFromUrl, maxPriceFromUrl]);
 
-    const summaryText = `Tìm kiếm: ${ward} | ${capacity} người | Từ ${new Date(starttime).toLocaleTimeString('vi-VN')} ngày ${new Date(starttime).toLocaleDateString('vi-VN')} đến ${new Date(endtime).toLocaleDateString('vi-VN')}`;
+    const summaryText = `Tìm kiếm: ${ward} | ${capacity} người | Từ ngày ${new Date(starttime).toLocaleDateString('vi-VN')} đến ${new Date(endtime).toLocaleDateString('vi-VN')}`;
 
     // === LOGIC XỬ LÝ CHUYỂN TRANG BẢN ĐỒ RIÊNG ===
     const handleViewMapClick = () => {
@@ -211,7 +205,6 @@ const SearchResultsPage: React.FC = () => {
             
             <hr className={cx('divider')} />
 
-            {/* HIỂN THỊ TRẠNG THÁI LOADING */}
             {loading && (
                 <div className={cx('loading-state')}>
                     {/* Sử dụng FontAwesomeIcon nếu không muốn import LoadingSpinner */}
@@ -241,7 +234,6 @@ const SearchResultsPage: React.FC = () => {
             {!loading && !error && (
                 <div className={cx('main-content')}>
                     <div className={cx('filter-sidebar')}>
-                        
                         {/* === KHỐI NÚT XEM BẢN ĐỒ CÓ HÌNH NỀN === */}
                         {results.length > 0 && mapMarkers.length > 0 && (
                             <>
@@ -256,11 +248,11 @@ const SearchResultsPage: React.FC = () => {
                                 </div>
                             </>
                         )}
-                        {/* =========================================== */}
+                        
 
                         <div className={cx('price-filter-section')}>
                             {/* ... Lọc theo Giá */}
-                            <h3 className={cx('filter-title')}>Lọc theo Giá (VNĐ/giờ)</h3>
+                            <h3 className={cx('filter-title')}>Lọc theo Giá (VNĐ)</h3>
                             <div className={cx('price-range-display')}>
                                 <span className={cx('price-min')}>{formatCurrency(currentPriceRange[0])} VNĐ</span>
                                 <span> - </span>
@@ -286,8 +278,6 @@ const SearchResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* <hr className={cx('filter-divider')} /> */}
-                        
                         {/* ... Lọc theo Tiện ích */}
                         <h3 className={cx('filter-title')}>Lọc theo Tiện ích</h3>
                         
@@ -304,7 +294,7 @@ const SearchResultsPage: React.FC = () => {
                                         icon={faCheckCircle} 
                                         className={cx('check-icon')}
                                     />
-                                    <span>{amenity.name}</span>
+                                    <span className={cx('amenity-name')}>{amenity.name}</span>
                                 </div>
                             ))}
                         </div>
@@ -320,17 +310,13 @@ const SearchResultsPage: React.FC = () => {
                         {results.length > 0 ? (
                             <div className={cx('results-list')}>
                                 {results.map((workspace) => (
-                                    // Chuyển hướng đến trang chi tiết khi click vào card
-                                    <div 
-                                        key={workspace.id} 
-                                        className={cx('workspace-card')} 
-                                        onClick={() => navigate(`/workspace/${workspace.id}`)}
-                                    >
-                                        <div className={cx('card-content')}>
-                                            <h3 className={cx('card-title')}>{workspace.title}</h3>
-                                            <p className={cx('card-description')}>{workspace.description}</p>
-                                        </div>
-                                    </div>
+                                    // <div key={workspace.id} className={cx('workspace-card')} onClick={() => navigate(`/workspace/${workspace.id}`)}>
+                                    //     <div className={cx('card-content')}>
+                                    //         <h3 className={cx('card-title')}>{workspace.title}</h3>
+                                    //         <p className={cx('card-description')}>{workspace.description}</p>
+                                    //     </div>
+                                    // </div>
+                                    <WorkSpaceSearchItem workspace={workspace} key={workspace.id}/>
                                 ))}
                             </div>
                         ) : (

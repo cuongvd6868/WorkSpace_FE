@@ -1,9 +1,9 @@
 .wrapper {
     width: 68%;
     margin: 0 auto;
-    background-color: #f8f9fa;
+    // background-color: #f8f9fa;
     min-height: 80vh;
-    padding-top: 30px;
+    padding-top: 20px;
 }
 
 .header {
@@ -17,12 +17,13 @@
 }
 
 .summary {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #6c757d;
     background-color: #e9ecef;
     padding: 10px;
     border-radius: 4px;
     margin-top: 10px;
+    font-weight: 500;
 }
 
 .divider {
@@ -37,14 +38,14 @@
 
 .main-content {
     display: flex;
-    gap: 30px;
+    gap: 10px;
     align-items: flex-start;
 }
 
 .filter-sidebar {
-    width: 250px;
+    width: 230px;
     background-color: #fff;
-    padding: 0 15px;
+    padding: 0 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     flex-shrink: 0; 
@@ -120,11 +121,18 @@
 // ------------------------------------------------------------------
 
 .filter-title {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #333;
     margin-bottom: 15px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
+}
+
+.price-min {
+    font-size: 1.2rem;
+}
+.price-max {
+    font-size: 1.2rem;
 }
 
 .amenities-list {
@@ -154,6 +162,11 @@
         border-color: #007bff;
         font-weight: 600;
         color: #007bff;
+    }
+
+    .amenity-name {
+        font-size: 1.1rem;
+        font-weight: 500;
     }
 }
 
@@ -219,8 +232,8 @@
 // ------------------------------------------------------------------
 
 .results-count {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+    font-size: 1.7rem;
+    margin-bottom: 15px;
     color: #495057;
     font-weight: 600;
 }
@@ -228,7 +241,7 @@
 .results-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
 }
 
 .workspace-card {
@@ -306,18 +319,6 @@
     }
 }
 
-.map-container {
-    height: 400px; 
-    width: 100%;
-    margin-bottom: 20px;
-    border: 1px solid #ccc; 
-    overflow: hidden;
-
-    > div {
-        height: 100%;
-        width: 100%;
-    }
-}
 
 
 .filter-sidebar {
@@ -326,15 +327,18 @@
 
 
 .map-button-container {
-    width: 100%;
+    // width: 100%;
+    width: calc(100% + 20px);
+    margin-left: -10px;
+    margin-right: -10px;
+    height: 160px;
     
     display: flex;
-    align-items: flex-end; /* Đảm bảo nút nằm ở cuối container */
+    align-items: flex-end; 
     justify-content: center;
-    padding: 20px 0 10px 0; /* Giữ 20px trên, giảm còn 10px dưới */
-    // ===================================
+    padding: 20px 0 10px 0; 
     
-    background-image: url('https://newhomeland.com.vn/wp-content/uploads/2023/04/ban-do-hanh-chinh-thanh-pho-da-nang.jpg');
+    background-image: url('../../assets/img/map/mapImg.png');
     
     background-size: cover;      
     background-position: center; 
@@ -343,19 +347,7 @@
     border-radius: 8px;          
     overflow: hidden;            
     position: relative;          
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-
-    // Lớp phủ (Overlay)
-    // &::before {
-    //     content: "";
-    //     position: absolute;
-    //     top: 0;
-    //     left: 0;
-    //     right: 0;
-    //     bottom: 0;
-    //     background-color: rgba(0, 0, 0, 0.45); 
-    //     z-index: 1; 
-    // }
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .view-map-button {
@@ -365,7 +357,7 @@
     padding: 12px 25px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.2s ease;
     

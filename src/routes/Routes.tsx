@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "~/App";
 import HomePage from "~/pages/home/HomePage";
 import LoginPage from "~/pages/login/LoginPage";
-import MapPageView from "~/pages/MapPageView/MapPageView";
+import MapPageView from "~/pages/map/MapPageView";
 import SearchResults from "~/pages/search/SearchResultsPage";
 
 export const router = createBrowserRouter([{
