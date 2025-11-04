@@ -2,20 +2,18 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Thêm useNavigate
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
 import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
-import { searchWorkspaces } from "~/services/WorkSpaceService"; // Import Service
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
 import coverImg from '~/assets/img/bg_img/cover.avif';
 
-// === IMPORT useSearch hook TỪ CONTEXT ===
-import { useSearch, SelectedTimeState } from '~/context/SearchContext'; 
+import { useSearch } from '~/context/SearchContext'; 
 import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
@@ -29,9 +27,7 @@ const Navbar: React.FC = () => {
     setParticipants
   } = useSearch();
   const navigate = useNavigate();
-  // =====================================
 
-  // Các state cục bộ
   const [searchWardResult, setSearchWardResult] = useState<string[]>([]);
   const [showWardResult, setShowWardResult] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -114,10 +110,6 @@ const Navbar: React.FC = () => {
           return;
       }
 
-
-      // 2. Định dạng Date và tạo Query String (Dùng logic tương tự Service)
-      // Lấy hàm formatToISOStringForApi từ WorkspaceService.ts (hoặc định nghĩa lại ở đây)
-      // Để đơn giản, ta dùng logic Date.toISOString() và điều chỉnh
       const formatToISOStringForApi = (date: Date): string => {
           return date.toISOString().replace(/\.\d{3}Z$/, ''); 
       };
@@ -132,29 +124,12 @@ const Navbar: React.FC = () => {
           capacity: participants.toString(),
       }).toString();
 
-      // 3. Điều hướng sang trang kết quả tìm kiếm
-      // Bạn có thể dùng Link hoặc useNavigate, ở đây ta dùng useNavigate
       navigate(`/search-results?${queryString}`);
-
-      // *Nếu muốn gọi API ngay trên Navbar, bạn có thể uncomment code này:
-      /*
-      // searchWorkspaces(searchState)
-      //     .then(results => {
-      //         console.log('Search API Success:', results);
-      //         navigate('/search-results', { state: { results } }); // Truyền kết quả
-      //     })
-      //     .catch(err => {
-      //         alert('Đã xảy ra lỗi khi tìm kiếm không gian làm việc.');
-      //         console.error(err);
-      //     });
-      */
   }
-  // ====================================================================
   
   return (
     <>
       <header className={cx('wrapper')}>
-        {/* Top navigation bar (Giữ nguyên) */}
         <div className={cx('top-nav-bar')}>
           <div className={cx('top-nav-content')}>
             <div className={cx('left-section')}>
@@ -166,7 +141,8 @@ const Navbar: React.FC = () => {
                <div className={cx('right-section')}>
                 <img src={flagImg} alt="" className={cx('flag')}/>
                 <a href="#" className={cx('top-nav-item')}>Hoạt động</a>
-                <Link to={'/login'} className={cx('username')}>{getUsernameByToken()}</Link>
+                <Link to={'/'} className={cx('top-nav-item')}>Đăng không gian của quý vị</Link>
+                <Link to={'/login'} className={cx('nav_btn')}>{getUsernameByToken()}</Link>
               </div>
             ): 
               <div className={cx('right-section')}>
@@ -181,8 +157,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Cover image với overlay và text (Giữ nguyên) */}
-        {/* Hiển thị cover khác nhau tùy theo trang */}
         {isHomePage ? (
           <div className={cx('cover_container')}>
             <img src={coverImg} alt="Cover" className={cx('cover_img')} />
@@ -297,13 +271,11 @@ const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* WORKSPACE DATE PICKER */}
       <WorkspaceDatePicker 
         isOpen={isDatePickerOpen}
         onClose={() => setIsDatePickerOpen(false)}
       />
 
-      {/* Meeting Participant Picker Modal */}
       <MeetingParticipantPicker
         isOpen={isParticipantsPickerOpen}
         onClose={() => setIsParticipantsPickerOpen(false)}

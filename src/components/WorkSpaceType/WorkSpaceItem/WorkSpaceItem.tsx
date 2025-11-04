@@ -38,6 +38,7 @@ const WorkSpaceItem: React.FC<WorkSpaceItemProps> = ({ workSpace }) => {
                             <p className={cx('description')}>
                                 {workSpace.description}
                             </p>
+                            <p className={cx('promo')}>Ưu đãi có hạn</p>
                             
                         </div>
                     </div>

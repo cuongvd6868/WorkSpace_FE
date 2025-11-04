@@ -83,7 +83,6 @@ const WorkSpaceByType: React.FC = () => {
                 setWorkSpaceError(null);
                 const apiResponse = await GetAllWorkSpaceByType(id);
                 setWorkSpace(apiResponse)
-                console.log(apiResponse)
             } catch (error) {
                 console.log('lỗi khi lấy dữ liệu', error);
                 setWorkSpaceError('Không tải được dữ liệu, vui lòng thử lại sau');

@@ -1,13 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Postfeatured.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import PostItem from "../PostItem/PostItem";
+import { Post } from "~/types/Posts";
+import { getAllFeaturedPost } from "~/services/PostService";
 
 const cx = classNames.bind(styles);
 
 
 const Postfeatured: React.FC = () => {
+
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const apiResponse = await getAllFeaturedPost();
+                if (Array.isArray(apiResponse)) {
+                    setPosts(apiResponse);
+                } else {
+                    setError("Dữ liệu không hợp lệ");
+                }
+            } catch (error) {
+                console.error(error);
+                setError("Không thể tải bài viết nổi bật.");
+            }finally{
+                setLoading(false)
+            }
+        }
+        fetchPost();
+    },[])
+
+
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('title_container')}>
@@ -15,7 +46,9 @@ const Postfeatured: React.FC = () => {
                 <h2>Bài viết nổi bật</h2>
             </div>
             <div className={cx('post_container')}>
-                <h3>Hiện chưa có bài viết nổi bật nào</h3>
+                {posts.map((p) => (
+                    <PostItem post={p} key={p.id}/>
+                ))}
             </div>
         </div>
     )

@@ -199,7 +199,13 @@ const SearchResultsPage: React.FC = () => {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('header')}>
-                <h1 className={cx('title')}>Kết Quả Tìm Kiếm</h1>
+                <h1 className={cx('title')}>
+                Tìm Thấy {results.length} không gian làm việc
+                {(selectedAmenitiesFromUrl.length > 0 ||
+                    minPriceFromUrl !== DEFAULT_MIN_PRICE ||
+                    maxPriceFromUrl !== DEFAULT_MAX_PRICE) && ' (Đã lọc)'}
+                </h1>
+
                 <p className={cx('summary')}>{summaryText}</p>
             </div>
             
@@ -302,20 +308,9 @@ const SearchResultsPage: React.FC = () => {
                     
                     <div className={cx('results-area')}>
                         {/* ... Hiển thị Kết quả */}
-                        <h2 className={cx('results-count')}>
-                            Tìm thấy {results.length} không gian làm việc 
-                            {(selectedAmenitiesFromUrl.length > 0 || minPriceFromUrl !== DEFAULT_MIN_PRICE || maxPriceFromUrl !== DEFAULT_MAX_PRICE) && ` (Đã lọc)`}:
-                        </h2>
-                        
                         {results.length > 0 ? (
                             <div className={cx('results-list')}>
                                 {results.map((workspace) => (
-                                    // <div key={workspace.id} className={cx('workspace-card')} onClick={() => navigate(`/workspace/${workspace.id}`)}>
-                                    //     <div className={cx('card-content')}>
-                                    //         <h3 className={cx('card-title')}>{workspace.title}</h3>
-                                    //         <p className={cx('card-description')}>{workspace.description}</p>
-                                    //     </div>
-                                    // </div>
                                     <WorkSpaceSearchItem workspace={workspace} key={workspace.id}/>
                                 ))}
                             </div>

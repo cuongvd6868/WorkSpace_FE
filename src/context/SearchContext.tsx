@@ -1,16 +1,12 @@
-// File: src/context/SearchContext.tsx (Đã sửa)
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-// === TYPES ===
 export type BookingType = 'hourly' | 'daily';
 
 export interface SelectedTimeState {
-    date: Date | null;     
+    date: Date | null; 
     startTime: Date | null; 
-    endTime: Date | null;   
-    displayText: string;     
-    // Thêm thuộc tính dates? cho daily booking nếu bạn chưa thêm
+    endTime: Date | null; 
+    displayText: string; 
     dates?: Date[]; 
 }
 
@@ -20,7 +16,6 @@ export interface SearchState {
     participants: number;
     bookingType: BookingType;
     selectedAmenities: string[]; 
-    // === [ĐÃ THÊM] PRICE FILTERS ===
     minPrice: number; 
     maxPrice: number; 
 }
@@ -32,7 +27,6 @@ export interface SearchContextType {
     setParticipants: (participants: number) => void;
     setBookingType: (type: BookingType) => void;
     setSelectedAmenities: (amenities: string[]) => void;
-    // === [ĐÃ THÊM] Set Price Filters ===
     setMinMaxPrice: (min: number, max: number) => void;
     resetSearch: () => void;
 }
@@ -70,8 +64,6 @@ interface SearchProviderProps {
 export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     const [searchState, setSearchState] = useState<SearchState>(defaultSearchState);
 
-    // ... (Các hàm set khác giữ nguyên)
-
     const setLocation = (location: string) => {
         setSearchState(prev => ({ ...prev, location }));
     };
@@ -92,7 +84,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
         setSearchState(prev => ({ ...prev, selectedAmenities: amenities }));
     };
     
-    // === [MỚI] HÀM SET MIN/MAX PRICE ===
     const setMinMaxPrice = (min: number, max: number) => {
         setSearchState(prev => ({ ...prev, minPrice: min, maxPrice: max }));
     };
@@ -108,7 +99,7 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
         setParticipants,
         setBookingType,
         setSelectedAmenities,
-        setMinMaxPrice, // <== THÊM VÀO CONTEXT VALUE
+        setMinMaxPrice, 
         resetSearch,
     };
 
@@ -119,7 +110,6 @@ export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
     );
 };
 
-// === CUSTOM HOOK ===
 export const useSearch = (): SearchContextType => {
     const context = useContext(SearchContext);
     if (context === undefined) {

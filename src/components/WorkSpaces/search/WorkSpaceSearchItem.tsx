@@ -3,7 +3,8 @@ import classNames from "classnames/bind";
 import styles from './WorkSpaceSearchItem.module.scss';
 import { WorkSpaceSearch } from "~/types/WorkSpaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faMap } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faHeart, faMap } from "@fortawesome/free-solid-svg-icons";
+import { Link, useNavigate } from "react-router-dom";
 
 interface WorkSpaceProp {
     workspace: WorkSpaceSearch;
@@ -12,11 +13,21 @@ interface WorkSpaceProp {
 const cx = classNames.bind(styles);
 
 const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
+    const navigate = useNavigate();
+
+    const handleDetailClick = (workspaceId: number) => {
+        navigate(`/workspace/${workspaceId}`); 
+    };
+
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('item')}>
                 <div className={cx('thumb')}>
                     <img src="https://plus.unsplash.com/premium_photo-1684769161054-2fa9a998dcb6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1504" alt=""  className={cx('thumb-img')}/>
+                    <div className={cx('heart')}>
+                        <FontAwesomeIcon icon={faHeart} className={cx('heart-icon')}/>
+                    </div>
                 </div>
                 <div className={cx('description')}>
                     <div className={cx('description-top')}>
@@ -52,7 +63,7 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
                                 <p>Xem trên bản đồ</p>
                             </div>
                         </div>
-                        <button className={cx('more-btn')}>Xem chỗ trống</button>
+                        <button className={cx('more-btn')} onClick={() => handleDetailClick(workspace.id)}>Xem chỗ trống</button>
                     </div>
                 </div>
             </div>
@@ -61,12 +72,3 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
 };
 
 export default WorkSpaceSearchItem;
-    // id: number,
-    // title: string,
-    // description: string,
-    // ward: string,
-    // street: string,
-    // hostName: string,
-    // amenities?: string[],
-    // latitude: number,
-    // longitude: number
