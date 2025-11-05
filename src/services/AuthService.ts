@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { UserProfileToken } from "../types/User";
 import { API_BASE_URL } from "~/utils/API";
 import { handleError } from "~/utils/handleError";
@@ -105,4 +105,23 @@ export const isTokenValid = (): boolean => {
 
   // Check expiration (payload.exp is in seconds)
   return Date.now() < payload.exp * 1000;
+};
+
+export const getAuthHeaders = (): AxiosRequestConfig => {
+    const token = localStorage.getItem('token'); 
+    
+    // Nếu token không tồn tại, trả về cấu hình không có Authorization header.
+    // Các hàm service sẽ kiểm tra sự tồn tại của token.
+    if (!token) {
+        // Trong môi trường React, thường bạn nên kiểm tra isLoggedIn() ở component
+        // trước khi gọi service. Tuy nhiên, đây là một lớp bảo vệ an toàn.
+        return {}; 
+    }
+    
+    return {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    };
 };

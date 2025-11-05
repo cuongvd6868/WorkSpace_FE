@@ -178,33 +178,71 @@
         border-radius: 7px;
     }
 
+
+
 .heart {
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: 7px;
-    left: 7px;
-    display: flex;               
-    align-items: center;        
-    justify-content: center;     
-    width: 30px;                
-    height: 30px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  .heart-icon {
+    font-size: 1.7rem;
+    color: #cccccc;
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    background-color: #fff5f5;
+
     .heart-icon {
-        color: #FF3B66;
-        font-size: 1.7rem;
-        transition: transform 0.2s ease;
-
-        color: #cccccc;
-
+      transform: scale(1.15);
+      color: #ff4d4f;
     }
+  }
 
-    &:hover .heart-icon {
-        transform: scale(1.1); 
-    }    
+  /* ✅ Khi đã yêu thích */
+  &.favorited {
+    background-color: #ffeaea;
+
+    .heart-icon {
+        
+      color: #FF3B66;
+    //   color: #ff4d4f;
+      animation: heartbeat 0.4s ease;
+    }
+  }
 }
+
+/* Hiệu ứng nhịp tim nhẹ */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 
 }
 

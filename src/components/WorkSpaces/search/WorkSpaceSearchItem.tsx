@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './WorkSpaceSearchItem.module.scss';
 import { WorkSpaceSearch } from "~/types/WorkSpaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faHeart, faMap } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
+import { 
+    getFavoriteWorkSpaceIds, 
+    addToFavorites, 
+    removeFromFavorites 
+} from "~/services/WorkSpaceFavoriteService"; // Import các service cần thiết
+import { isToken } from "~/services/JwtService";
+import { toast } from "react-toastify";
+import Tippy from "@tippyjs/react";
 
 interface WorkSpaceProp {
     workspace: WorkSpaceSearch;
@@ -13,19 +21,77 @@ interface WorkSpaceProp {
 const cx = classNames.bind(styles);
 
 const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
+    // State để theo dõi trạng thái yêu thích của item hiện tại
+    const [isItemFavorite, setIsItemFavorite] = useState(false);
     const navigate = useNavigate();
 
     const handleDetailClick = (workspaceId: number) => {
-        navigate(`/workspace/${workspaceId}`); 
+        navigate(`/workspace/${workspaceId}`);
     };
+
+    useEffect(() => {
+        const fetchIdFavorite = async () => {
+            if (!isToken()) {
+                setIsItemFavorite(false);
+                return;
+            }
+
+            try {
+                const apiResponse = await getFavoriteWorkSpaceIds();
+                if (apiResponse.includes(workspace.id)) {
+                    setIsItemFavorite(true);
+                } else {
+                    setIsItemFavorite(false);
+                }
+            } catch (error) {
+                console.log('Error fetching favorite status:', error);
+                setIsItemFavorite(false); 
+            }
+        };
+        fetchIdFavorite();
+    }, [workspace.id]); // Chạy lại khi workSpace.id thay đổi
+
+    const handleFavorite = async (e: React.MouseEvent) => {
+        // Ngăn chặn sự kiện click lan truyền lên phần tử cha (nếu có)
+        e.stopPropagation();
+        e.preventDefault(); 
+
+        if (!isToken()) {
+            toast.info("Vui lòng đăng nhập để thêm vào danh sách yêu thích.");
+            return;
+        }
+
+        try {
+            if (isItemFavorite) {
+                // Xóa khỏi yêu thích
+                const message = await removeFromFavorites(workspace.id);
+                setIsItemFavorite(false);
+                toast.success(message);
+            } else {
+                // Thêm vào yêu thích
+                const message = await addToFavorites(workspace.id);
+                setIsItemFavorite(true);
+                toast.success(message);
+            }
+        } catch (error) {
+            // Xử lý lỗi từ service
+            const errorMessage = error instanceof Error ? error.message : "Đã xảy ra lỗi không mong muốn.";
+            toast.error(errorMessage);
+            console.error("Favorite operation failed:", error);
+        }
+    }
 
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('item')}>
                 <div className={cx('thumb')}>
-                    <img src="https://plus.unsplash.com/premium_photo-1684769161054-2fa9a998dcb6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1504" alt=""  className={cx('thumb-img')}/>
-                    <div className={cx('heart')}>
+                    <img 
+                        src="https://plus.unsplash.com/premium_photo-1684769161054-2fa9a998dcb6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1504" 
+                        alt="" 
+                        className={cx('thumb-img')}
+                    />
+                    <div className={cx('heart', { 'favorited': isItemFavorite })} onClick={handleFavorite}>
                         <FontAwesomeIcon icon={faHeart} className={cx('heart-icon')}/>
                     </div>
                 </div>
@@ -33,7 +99,11 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
                     <div className={cx('description-top')}>
                         <div className={cx('left')}>
                             <h3 className={cx('title')}>{workspace.title}</h3>
-                            <p className={cx('sub-title')}>{workspace.street} <span style={{ margin: '0 1px', color: '#018294' }}>•</span> {workspace.ward} <span style={{ margin: '0 1px', color: '#018294' }}>•</span> Đà Nẵng</p>
+                            <p className={cx('sub-title')}>
+                                {workspace.street} <span style={{ margin: '0 1px', color: '#018294' }}>•</span> 
+                                {workspace.ward} <span style={{ margin: '0 1px', color: '#018294' }}>•</span> 
+                                Đà Nẵng
+                            </p>
                             <p className={cx('desc')}>{workspace.description}</p>
                             <div className={cx('promotion-container')}>
                                 <p className={cx('promotion')}>Ưu Đãi Trong Thời Gian Có Hạn</p>

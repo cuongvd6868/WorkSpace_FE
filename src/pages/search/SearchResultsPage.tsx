@@ -40,6 +40,8 @@ const SearchResultsPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+
+
     const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
     
     const ward = searchParams.get('ward') || '';
@@ -132,6 +134,8 @@ const SearchResultsPage: React.FC = () => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search]); 
+
+
     
     
     const handlePriceChange = (value: number | number[]) => {
