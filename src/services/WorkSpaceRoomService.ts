@@ -11,36 +11,45 @@ export type RoomSearchParams = {
 };
 
 export const searchRooms = async (params: RoomSearchParams): Promise<WorkSpaceRoom[] | null> => {
-    // Định dạng lại thời gian về chuỗi ISO 8601 theo yêu cầu của API (YYYY-MM-DDTHH:MM:SS)
-    // Lưu ý: encodeURIComponent được sử dụng để mã hóa ký tự ':' và '+'
-    const startTimeFormatted = encodeURIComponent(new Date(params.startTime).toISOString());
-    const endTimeFormatted = encodeURIComponent(new Date(params.endTime).toISOString());
 
-    // Xây dựng URL API với các tham số query
-    // URL mẫu: /api/v1/search/workspaces/{workspaceId}/search-rooms?starttime={...}&endtime={...}&capacity={...}
-    const endpoint = `/v1/search/workspaces/${params.workspaceId}/search-rooms`;
-    
+    // --- SỬA LỖI ĐỊNH DẠNG THỜI GIAN ---
+    //
+    // Input `params.startTime` từ form đang là 'YYYY-MM-DDTHH:MM'.
+    // API (theo mẫu của bạn) muốn 'YYYY-MM-DDTHH:MM:SS'.
+    // Chúng ta chỉ cần thêm giây vào.
+    //
+    // KHÔNG dùng encodeURIComponent hay toISOString() nữa.
+    // Axios sẽ tự động mã hóa (encode) các ký tự : thành %3A 1 lần duy nhất.
+    //
+    const startTimeFormatted = `${params.startTime}:00`;
+    const endTimeFormatted = `${params.endTime}:00`;
+
+    // --- SỬA LỖI DOUBLE SLASH (//) ---
+    //
+    // Bỏ dấu / ở đầu chuỗi `endpoint` để tránh lỗi ...api//v1...
+    // nếu API_BASE_URL của bạn đã có dấu / ở cuối.
+    //
+    const endpoint = `v1/search/workspaces/${params.workspaceId}/search-rooms`; // ĐÃ BỎ DẤU / Ở ĐẦU
+
     // Sử dụng chuỗi API_BASE_URL đã export
     const fullUrl = `${API_BASE_URL}${endpoint}`;
 
     try {
         const response = await axios.get<WorkSpaceRoom[]>(fullUrl, {
             params: {
+                // Truyền thẳng chuỗi đã định dạng
                 starttime: startTimeFormatted,
                 endtime: endTimeFormatted,
                 capacity: params.capacity,
             },
-            // Nếu API đang chạy ở https://localhost:7105/... và API_BASE_URL là https://localhost:7047/api/,
-            // bạn có thể cần ghi đè baseUrl ở đây, hoặc điều chỉnh API_BASE_URL trong tệp utils/API.ts
-            // Ví dụ: baseURL: "https://localhost:7105/api/"
         });
 
         // API trả về mảng các phòng
         return response.data;
     } catch (error) {
         // Gọi hàm xử lý lỗi chung (handleError)
-        handleError(error); 
+        handleError(error);
         // Trả về null hoặc mảng rỗng để React component biết là có lỗi
-        return null; 
+        return null;
     }
 };

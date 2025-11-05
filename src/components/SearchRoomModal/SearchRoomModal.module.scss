@@ -1,0 +1,224 @@
+/* Biến (Variables) */
+$primary-color: #007bff; // Màu xanh dương hiện đại (Blue Primary)
+$accent-color: #17a2b8; // Màu xanh ngọc (Cyan Accent)
+$success-color: #28a745; // Xanh lá cây cho Tìm kiếm
+$danger-color: #dc3545; // Đỏ cho Hủy/Đặt lại
+$text-color: #343a40; // Màu chữ tối
+$light-text-color: #6c757d; // Màu chữ phụ
+$secondary-color: #6c757d; // <<< ĐÃ THÊM: Biến này được dùng cho nút Hủy (clearButton)
+$background-color: #f8f9fa; // Nền sáng
+$modal-bg: #ffffff; // Nền modal trắng tinh
+$border-color: #e9ecef;
+$shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.15); // Bóng đổ sâu, mượt mà
+$transition-speed: 0.3s;
+$border-radius: 12px;
+
+/* --- Overlay và Modal --- */
+
+.searchModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); // Nền tối mờ nhẹ nhàng
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.searchModalContent {
+    background-color: $modal-bg;
+    border-radius: $border-radius;
+    width: 90%;
+    max-width: 550px;
+    box-shadow: $shadow-elevation;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    // Hiệu ứng nhẹ khi mở modal
+    transform: translateY(-10px);
+    opacity: 1;
+    transition: transform $transition-speed ease-out, opacity $transition-speed ease-out;
+}
+
+/* --- Header --- */
+
+.searchModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 2rem;
+}
+
+.searchModalTitle {
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0;
+
+    & > svg {
+        margin-right: 10px;
+        color: $primary-color; // Màu chủ đạo cho icon tiêu đề
+    }
+}
+
+.searchModalClose {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $light-text-color;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+        background-color: $background-color;
+        color: $danger-color; // Màu đỏ khi hover
+    }
+}
+
+/* --- Form Body --- */
+
+.searchModalBody {
+    flex-grow: 1;
+}
+
+.searchForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr; 
+    gap: 1.5rem 1rem; // Khoảng cách dọc và ngang
+
+    @media (min-width: 600px) {
+        grid-template-columns: repeat(2, 1fr); // 2 cột trên desktop
+    }
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+// Bắt đầu các thành phần của formGroup
+
+.formGroup > label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: $primary-color; 
+    font-size: 0.9rem;
+    
+    // Sử dụng class formLabel đã thêm trong JSX
+    &.formLabel > svg {
+        margin-right: 8px;
+        color: $accent-color; // Màu icon trong label
+    }
+}
+
+.formGroup > input {
+    padding: 1rem 1.25rem;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: $text-color;
+    background-color: $background-color;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+    width: 100%;
+
+    &:focus {
+        border-color: $success-color;
+        box-shadow: 0 0 0 4px rgba($success-color, 0.15);
+        background-color: #fff;
+        outline: none;
+    }
+    
+    // Tùy chỉnh riêng cho input type="number" (sử dụng class capacityInput)
+    &.capacityInput {
+      max-width: 150px;
+    }
+}
+
+
+/* --- Form Actions (Nút bấm) --- */
+
+.formActions {
+    // Sử dụng formActions đã có trong JSX
+    grid-column: 1 / -1; // Chiếm hết chiều ngang của formGrid
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap; 
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    min-width: 130px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    & > svg {
+        margin-right: 8px;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+}
+
+.searchButton {
+    background-color: $success-color;
+    color: $modal-bg;
+
+    &:hover:not(:disabled) {
+        background-color: darken($success-color, 5%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($success-color, 0.3);
+    }
+}
+
+.clearButton {
+    background-color: $secondary-color; // <<< SỬ DỤNG BIẾN ĐÃ THÊM
+    color: $modal-bg;
+
+    &:hover:not(:disabled) {
+        background-color: darken($secondary-color, 5%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($secondary-color, 0.3);
+    }
+}
+
+/* Loading Spinner Animation */
+.buttonLoader {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

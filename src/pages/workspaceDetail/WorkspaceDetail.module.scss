@@ -653,3 +653,285 @@ $hover-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         svg { margin-right: 8px; color: $accent-color; } /* Icon liên hệ màu accent */
     }
 }
+
+
+
+
+/* =========================================
+   ++ PHẦN TÌM KIẾM PHÒNG & TRẠNG THÁI ++
+   ========================================= */
+
+/* --- Container cho form tìm kiếm --- */
+.search-form-container {
+    padding: 24px;
+    background-color: #f8f9fa; // Màu nền xám rất nhạt
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.search-heading {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem; // 24px
+    // Giả sử bạn có biến --text-color, nếu không, dùng #212529
+    color: var(--text-color, #212529); 
+}
+
+/* --- Lưới layout của form --- */
+.form-grid {
+    display: grid;
+    // Tự động fit, mỗi cột tối thiểu 200px, và co giãn
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px 20px;
+    align-items: flex-end; // Quan trọng: Căn các mục xuống đáy
+}
+
+/* --- Từng nhóm input --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+        font-weight: 600;
+        font-size: 0.9rem; // 14.4px
+        color: #495057;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        // Căn chỉnh icon trong label
+        svg {
+            stroke-width: 2.5px;
+            opacity: 0.9;
+        }
+    }
+
+    input[type="datetime-local"],
+    input[type="number"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit; // Đảm bảo dùng font chung
+        background-color: #ffffff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+            // Giả sử bạn có biến --primary-color, nếu không, dùng màu xanh
+            border-color: var(--primary-color, #007bff);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+            outline: none;
+        }
+    }
+
+    // Style cho icon lịch của input datetime-local
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.7;
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+/* --- Nhóm các nút bấm --- */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    
+    // Trên mobile, cho các nút dãn ra
+    @media (max-width: 500px) {
+        grid-column: 1 / -1; // Chiếm toàn bộ chiều rộng
+        flex-direction: column;
+    }
+}
+
+/* --- Style chung cho các nút bấm trong form --- */
+.action-button {
+    flex-grow: 1; // Các nút tự động chia sẻ không gian
+    flex-basis: 0; // Giúp flex-grow hoạt động đúng
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px; // Hơi cao hơn input một chút
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    white-space: nowrap; // Không cho chữ xuống hàng
+
+    svg {
+        stroke-width: 2.5px;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+// Nút Tìm kiếm (Chính)
+.search-button {
+    background-color: var(--primary-color, #007bff);
+    color: white;
+
+    &:not(:disabled):hover {
+        background-color: var(--primary-hover-color, #0056b3); // Màu hover
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// Nút Xóa lọc (Phụ)
+.clear-button {
+    background-color: #f1f3f5;
+    color: #495057;
+
+    &:not(:disabled):hover {
+        background-color: #e9ecef;
+    }
+}
+
+/* --- Loader xoay trong nút --- */
+.button-loader {
+    animation: spin 1s linear infinite;
+}
+
+// Keyframes cho animation xoay
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+/* --- Thanh trạng thái tìm kiếm (Loading, Error, Result) --- */
+.search-status {
+    padding: 16px;
+    border-radius: 8px;
+    margin: 24px 0; // Khoảng cách trên dưới
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 1rem;
+
+    svg {
+        flex-shrink: 0; // Không co icon
+    }
+}
+
+.loading {
+    background-color: #e6f7ff;
+    border: 1px solid #91d5ff;
+    color: #030852;
+    .loader-icon { // Thêm animation cho icon loader
+        animation: spin 1s linear infinite;
+    }
+}
+
+.error {
+    background-color: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #a8071a;
+}
+
+.result-info {
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+    color: #234d00;
+}
+
+
+/* --- Thông báo khi không có phòng (trong bảng) --- */
+.no-rooms-message {
+    text-align: center;
+    padding: 48px 24px;
+    color: #6c757d; // Màu text xám
+    background-color: #fdfdfd;
+    border: 1px dashed #e0e0e0;
+    border-radius: 8px;
+    margin-top: 16px; // Nằm dưới h2 "Danh Sách Các Phòng Thuê"
+
+    svg {
+        stroke-width: 1.5px;
+        opacity: 0.6;
+        margin-bottom: 12px;
+    }
+    
+    p {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin: 0;
+    }
+}
+
+
+.search-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.open-search-modal-button {
+  background: #008234;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.search-status {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+
+  &.loading {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #dbeafe;
+  }
+
+  &.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+
+  &.result-info {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+}
