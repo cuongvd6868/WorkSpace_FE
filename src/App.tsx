@@ -7,6 +7,7 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import { ToastContainer } from 'react-toastify';
 import { SearchProvider } from './context/SearchContext';
+import { BookingProvider } from './context/BookingContext';
 
 function App() {
   const location = useLocation();
@@ -15,9 +16,11 @@ function App() {
   return (
     <UserProvider>
       <SearchProvider>
-      {showNavbar && <Navbar/>}
-      <Outlet/>
-      <Footer/>
+        <BookingProvider>
+          {showNavbar && <Navbar/>}
+          <Outlet/>
+          <Footer/>
+        </BookingProvider>
       </SearchProvider>
       <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnHover draggable theme="light"/>
     </UserProvider>

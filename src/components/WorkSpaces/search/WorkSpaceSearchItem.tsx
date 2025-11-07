@@ -9,10 +9,9 @@ import {
     getFavoriteWorkSpaceIds, 
     addToFavorites, 
     removeFromFavorites 
-} from "~/services/WorkSpaceFavoriteService"; // Import các service cần thiết
+} from "~/services/WorkSpaceFavoriteService"; 
 import { isToken } from "~/services/JwtService";
 import { toast } from "react-toastify";
-import Tippy from "@tippyjs/react";
 
 interface WorkSpaceProp {
     workspace: WorkSpaceSearch;
@@ -74,7 +73,6 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
                 toast.success(message);
             }
         } catch (error) {
-            // Xử lý lỗi từ service
             const errorMessage = error instanceof Error ? error.message : "Đã xảy ra lỗi không mong muốn.";
             toast.error(errorMessage);
             console.error("Favorite operation failed:", error);

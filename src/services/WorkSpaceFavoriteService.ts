@@ -106,30 +106,30 @@ export const removeFromFavorites = async (workSpaceId: number): Promise<string> 
  * 4. Lấy danh sách đầy đủ các WorkSpace yêu thích của người dùng hiện tại.
  * Endpoint: GET api/v1/workspacefavorite/userfavorites
  */
-// export const getFavoriteWorkSpaces = async (): Promise<WorkSpaceSearch[]> => {
-//     const config = getAuthHeaders();
-//     if (!config.headers?.Authorization) {
-//         throw new Error("User not authenticated. Please log in.");
-//     }
+export const getFavoriteWorkSpaces = async (): Promise<WorkSpaceSearch[]> => {
+    const config = getAuthHeaders();
+    if (!config.headers?.Authorization) {
+        throw new Error("User not authenticated. Please log in.");
+    }
 
-//     const url = `${WORKSPACE_FAVORITE_ENDPOINT}/userfavorites`;
+    const url = `${WORKSPACE_FAVORITE_ENDPOINT}/userfavorites`;
     
-//     try {
-//         const response: AxiosResponse<WorkSpaceSearch[]> = await axios.get(
-//             url, 
-//             config
-//         );
-//         return response.data;
-//     } catch (error) {
-//         if (axios.isAxiosError(error)) {
-//             if (error.response?.status === 401) {
-//                 throw new Error("User not authenticated. Please log in.");
-//             }
-//         }
-//         console.error("Error fetching favorite workspaces:", error);
-//         throw new Error("Failed to retrieve favorite workspaces.");
-//     }
-// };
+    try {
+        const response: AxiosResponse<WorkSpaceSearch[]> = await axios.get(
+            url, 
+            config
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401) {
+                throw new Error("User not authenticated. Please log in.");
+            }
+        }
+        console.error("Error fetching favorite workspaces:", error);
+        throw new Error("Failed to retrieve favorite workspaces.");
+    }
+};
 
 /**
  * 5. Lấy danh sách ID các WorkSpace yêu thích của người dùng hiện tại.

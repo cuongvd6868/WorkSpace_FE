@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "~/App";
+import BookingCheckout from "~/pages/booking/BookingCheckout/BookingCheckout";
 import HomePage from "~/pages/home/HomePage";
 import LoginPage from "~/pages/login/LoginPage";
 import MapPageView from "~/pages/map/MapPageView";
@@ -15,5 +16,6 @@ export const router = createBrowserRouter([{
         {path: "/search-results", element: <SearchResults/>},
         {path: "/map-view", element: <MapPageView/>},
         {path: "/workspace/:id", element: <WorkspaceDetail/>},
+        {path: "/booking/checkout", element: <BookingCheckout/>},
     ]
 }]);
