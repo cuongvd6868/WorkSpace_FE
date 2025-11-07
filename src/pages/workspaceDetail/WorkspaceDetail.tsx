@@ -8,16 +8,16 @@ import { GetWorkSpaceById } from "~/services/WorkSpaceService";
 import { RoomSearchParams } from '~/services/WorkSpaceRoomService'; 
 import { useSearchRooms } from "~/hooks/useSearchRooms";
 import SearchRoomModal from "~/components/SearchRoomModal/SearchRoomModal";
-import { useBooking, BookingData } from "~/context/BookingContext";
+import { useBooking, BookingData } from "~/context/BookingContext"; 
 import { 
     MapPin, Phone, Building, Users, Maximize, Clock, DollarSign, ChevronRight, 
     Loader, Sun, Wifi, Coffee, ParkingSquare, Snowflake, Calendar, ExternalLink,
-    Search
+    Search, ListTodo, Map
 } from 'lucide-react';
 
 const cx = classNames.bind(styles);
 
-// --- MOCK DATA --- (Giữ nguyên)
+// --- MOCK DATA --- 
 const MOCK_IMAGES: string[] = [
     'https://plus.unsplash.com/premium_photo-1682608388956-11f98495e165?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170',
     'https://plus.unsplash.com/premium_photo-1684769161054-2fa9a998dcb6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1504',
@@ -41,6 +41,16 @@ const MOCK_POLICIES = [
     'Có dịch vụ bảo vệ 24/7 và hệ thống camera giám sát an ninh.',
     'Hỗ trợ kỹ thuật IT tại chỗ cho mọi vấn đề liên quan đến kết nối và thiết bị.',
 ];
+
+// Hàm hỗ trợ tính tổng giờ từ 2 chuỗi ISO 8601 
+const calculateTotalHours = (start: string, end: string): number => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffMs = endDate.getTime() - startDate.getTime(); 
+    const diffHours = diffMs / (1000 * 60 * 60); 
+    return Math.max(0, diffHours); 
+};
+
 
 // --- SUB-COMPONENT: GALLERY ẢNH --- 
 interface ImageGalleryProps {
@@ -86,29 +96,53 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, limit }) => {
     );
 };
 
-// Hàm hỗ trợ tính tổng giờ từ 2 chuỗi ISO 8601 
-const calculateTotalHours = (start: string, end: string): number => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const diffMs = endDate.getTime() - startDate.getTime(); 
-    const diffHours = diffMs / (1000 * 60 * 60); 
-    return Math.max(0, diffHours); 
+
+// --- SUB-COMPONENT: HOST INFO ---
+interface HostInfoProps {
+    hostName: string;
+    hostPhone: string;
+    hostEmail: string;
+    hostAvatarUrl: string;
+    workspaceTitle: string;
+}
+
+const HostInfo: React.FC<HostInfoProps> = ({ hostName, hostPhone, hostEmail, hostAvatarUrl, workspaceTitle }) => {
+    return (
+        <section className={cx('host-section')}>
+            <h2 className={cx('section-heading')}>
+                <Users size={24} />
+                Liên Hệ Chủ Hộ
+            </h2>
+            <div className={cx('host-card')}>
+                <img src={hostAvatarUrl} alt={hostName} className={cx('host-avatar')} />
+                <div className={cx('host-details')}>
+                    <strong>{hostName}</strong>
+                    <p>Đại diện {workspaceTitle}</p>
+                </div>
+            </div>
+            <div className={cx('host-contact')}>
+                <p><Phone size={14} /> **Hotline:** {hostPhone}</p>
+                <p><ExternalLink size={14} /> **Email:** {hostEmail}</p>
+                <button className={cx('chat-button')}>Nhắn tin trực tiếp</button>
+            </div>
+        </section>
+    );
 };
 
 
-// --- SUB-COMPONENT: BẢNG PHÒNG (ĐÃ CẬP NHẬT PROPS VÀ LOGIC CONTEXT) ---
+// --- SUB-COMPONENT: BẢNG PHÒNG ---
 interface RoomTableProps {
     rooms: WorkSpaceRoom[];
     lastSearchTime: { startTimeUtc: string; endTimeUtc: string; numberOfParticipants: number } | null; 
-    workspaceName: string;          // <--- THÊM PROP
-    workspaceAddressLine: string;   // <--- THÊM PROP
+    workspaceName: string;          
+    workspaceAddressLine: string;   
 }
 
 const RoomTable: React.FC<RoomTableProps> = ({ 
     rooms, 
     lastSearchTime,
-    workspaceName,          // <--- DESTRUCTURE
-    workspaceAddressLine    // <--- DESTRUCTURE
+    workspaceName,          
+    workspaceAddressLine    
 }) => {
     const navigate = useNavigate(); 
     const { setBookingData } = useBooking(); 
@@ -138,7 +172,6 @@ const RoomTable: React.FC<RoomTableProps> = ({
             startTimeUtc: lastSearchTime.startTimeUtc,
             endTimeUtc: lastSearchTime.endTimeUtc,
             numberOfParticipants: lastSearchTime.numberOfParticipants,
-            // GÁN CÁC TRƯỜNG MỚI ĐỂ TRUYỀN ĐI
             workspaceName: workspaceName,
             workspaceAddressLine: workspaceAddressLine,
         };
@@ -219,14 +252,12 @@ const WorkspaceDetail: React.FC = () => {
     
     const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
-    // State MỚI: Lưu trữ thông tin thời gian tìm kiếm cuối cùng
     const [lastSearchTime, setLastSearchTime] = useState<{ 
         startTimeUtc: string; 
         endTimeUtc: string;   
         numberOfParticipants: number 
     } | null>(null);
 
-    // Hook tìm kiếm
     const {
         rooms: searchedRooms,
         isLoading: isSearchLoading,
@@ -236,7 +267,7 @@ const WorkspaceDetail: React.FC = () => {
 
     const [hasSearched, setHasSearched] = useState(false);
 
-    // Logic Fetch Data Workspace (Giữ nguyên)
+    // Logic Fetch Data Workspace 
     useEffect(() => {
         if (!id) {
             setError("ID Workspace không hợp lệ.");
@@ -280,7 +311,6 @@ const WorkspaceDetail: React.FC = () => {
             workspaceId: parseInt(id)
         };
 
-        // LƯU LẠI THÔNG TIN THỜI GIAN VÀ SỐ NGƯỜI DÙNG TÌM KIẾM
         setLastSearchTime({ 
             startTimeUtc: params.startTime, 
             endTimeUtc: params.endTime,     
@@ -324,9 +354,94 @@ const WorkspaceDetail: React.FC = () => {
 
     return (
         <div className={cx('wrapper')}>
+            <header className={cx('header')}>
+                <div className={cx('header-content')}>
+                    <h1>{workspace.title}</h1>
+                    <p className={cx('address')}><MapPin size={16} /> {workspace.addressLine}</p>
+                    <div className={cx('contact-info')}>
+                        <span><Phone size={14} /> {workspace.hostContactPhone}</span>
+                        <span><ExternalLink size={14} /> <a href={workspace.hostCompanyName} target="_blank" rel="noopener noreferrer">Website</a></span>
+                    </div>
+                </div>
+            </header>
+            
+            <section className={cx('gallery-section')}>
+                <ImageGallery images={MOCK_IMAGES} limit={4} />
+            </section>
+            
+            <div className={cx('main-content-grid')}>
+                
+                <div className={cx('left-column')}>
+                    
+                    {/* GIỚI THIỆU CHUNG */}
+                    <section className={cx('about-section')}>
+                        <h2 className={cx('section-heading')}>Về {workspace.title}</h2>
+                        <p className={cx('description')}>
+                            {workspace.description}
+                        </p>
+                    </section>
 
-            {/* ... (Các phần JSX khác giữ nguyên) ... */}
+                    {/* TIỆN ÍCH */}
+                    <section className={cx('amenities-section')}>
+                        <h2 className={cx('section-heading')}>Tiện Ích Nổi Bật</h2>
+                        <div className={cx('amenities-grid')}>
+                            {MOCK_AMENITIES.map((amenity, index) => (
+                                <div key={index} className={cx('amenity-item')}>
+                                    <amenity.icon size={28} className={cx('amenity-icon')} />
+                                    <div className={cx('amenity-details')}>
+                                        <strong>{amenity.label}</strong>
+                                        <p>{amenity.detail}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                    
+                    {/* CHÍNH SÁCH */}
+                    <section className={cx('policies-section')}>
+                        <h2 className={cx('section-heading')}>
+                            <ListTodo size={24} />
+                            Quy Tắc & Chính Sách
+                        </h2>
+                        <ul className={cx('policy-list')}>
+                            {MOCK_POLICIES.map((policy, index) => (
+                                <li key={index}><ChevronRight size={14} /> {policy}</li>
+                            ))}
+                        </ul>
+                    </section>
 
+                </div>
+
+                {/* RIGHT COLUMN (SIDEBAR) */}
+                <div className={cx('right-column')}>
+                    
+                    {/* THÔNG TIN CHỦ HỘ/HOST */}
+                    <HostInfo 
+                        hostName="Nguyễn Văn A"
+                        hostPhone="0901 234 567"
+                        hostEmail="van.a@host.com"
+                        hostAvatarUrl="https://i.pravatar.cc/150?img=1" // Mock Avatar
+                        workspaceTitle={workspace.title}
+                    />
+
+                    {/* BẢN ĐỒ */}
+                    <section className={cx('map-section')}>
+                        <h2 className={cx('section-heading')}>
+                            <Map size={24} />
+                            Vị Trí
+                        </h2>
+                        <div className={cx('map-placeholder')}>
+                            
+                            <p className={cx('map-address')}>{workspace.addressLine}</p>
+                            <a href={`https://maps.google.com/?q=${encodeURIComponent(workspace.addressLine)}`} target="_blank" rel="noopener noreferrer" className={cx('map-link')}>
+                                Mở trên Google Maps <ExternalLink size={12} />
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            {/* DANH SÁCH PHÒNG */}
             <section className={cx('room-section')}>
                 
                 <div className={cx('search-section-header')}>
@@ -340,17 +455,28 @@ const WorkspaceDetail: React.FC = () => {
                     </button>
                 </div>
 
-                {/* ... (Trạng thái tìm kiếm JSX giữ nguyên) ... */}
+                {searchError && (
+                    <div className={cx('error-message', 'search-error')}>
+                        Lỗi tìm kiếm: {searchError}
+                    </div>
+                )}
+                
+                {isSearchLoading && (
+                    <div className={cx('loading-message')}>
+                        <Loader className={cx('loader-icon')} size={24} /> Đang tìm phòng khả dụng...
+                    </div>
+                )}
 
-                {/* BẢNG PHÒNG - TRUYỀN THÊM THÔNG TIN WORKSPACE TỪ COMPONENT CHÍNH */}
+                {/* BẢNG PHÒNG */}
                 <RoomTable 
                     rooms={displayedRooms} 
                     lastSearchTime={lastSearchTime}
-                    workspaceName={workspace.title}             // <--- TRUYỀN THÔNG TIN
-                    workspaceAddressLine={workspace.addressLine} // <--- TRUYỀN THÔNG TIN
+                    workspaceName={workspace.title}             
+                    workspaceAddressLine={workspace.addressLine} 
                 />
             </section>
 
+            {/* MODAL TÌM KIẾM */}
             <SearchRoomModal
                 isOpen={isSearchModalOpen}
                 onClose={() => setIsSearchModalOpen(false)}
