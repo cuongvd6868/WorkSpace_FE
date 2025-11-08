@@ -1,28 +1,42 @@
 import React, { useState } from 'react';
 import styles from './SearchRoomModal.module.scss';
 import classNames from 'classnames/bind';
-import { X, Search, Calendar, Clock, Users, Loader, XCircle } from 'lucide-react';
-import { RoomSearchParams } from '~/services/WorkSpaceRoomService'; // Vẫn giữ import này
+import { X, Search, CalendarCheck, Clock, Users, Loader2, RefreshCcw } from 'lucide-react'; 
+import DatePicker from 'react-datepicker'; 
+import 'react-datepicker/dist/react-datepicker.css'; 
+import { format } from 'date-fns'; 
+
+// Vẫn giữ import này (cần nếu có)
+import { RoomSearchParams } from '~/services/WorkSpaceRoomService'; 
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
-// --- Interface mới để xác định rõ kiểu dữ liệu gửi đi ---
+// --- Interface KHÔNG ĐỔI ---
 interface SearchParamsOutput {
-    startTime: string; // Chắc chắn là string (từ input datetime-local)
-    endTime: string;   // Chắc chắn là string (từ input datetime-local)
+    startTime: string; 
+    endTime: string;    
     capacity: number;
 }
 
-// Thay thế Omit<RoomSearchParams, 'workspaceId'> bằng SearchParamsOutput
 interface SearchRoomModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // Sửa: Thay Omit bằng SearchParamsOutput để TypeScript biết đây là string
     onSearch: (params: SearchParamsOutput) => void;
     onClear: () => void;
     isLoading: boolean;
 }
 // --------------------------------------------------------
+
+/**
+ * Hàm helper để lấy thời điểm cuối ngày (23:59:59)
+ * Dùng để giới hạn maxTime cho DatePicker khi chọn cùng ngày.
+ */
+const getEndOfDay = (date: Date): Date => {
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    return end;
+};
 
 
 const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
@@ -32,105 +46,118 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     onClear,
     isLoading
 }) => {
-    const [startTime, setStartTime] = useState('');
-    const [endTime, setEndTime] = useState('');
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [endDate, setEndDate] = useState<Date | null>(null);
     const [capacity, setCapacity] = useState(1);
 
-    // Lấy thời gian hiện tại
-    const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-                        .toISOString().slice(0, 16);
+    const formatDateTime = (date: Date | null): string => {
+        if (!date) return '';
+        return format(date, "yyyy-MM-dd'T'HH:mm");
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!startTime || !endTime) {
+        if (!startDate || !endDate) {
             alert("Vui lòng chọn ngày giờ bắt đầu và kết thúc.");
             return;
         }
-        if (new Date(startTime) >= new Date(endTime)) {
-            alert("Thời gian kết thúc phải sau thời gian bắt đầu.");
+        if (startDate >= endDate) { 
+            toast.info('Thời gian kết thúc phải sau thời gian bắt đầu.');
             return;
         }
 
-        // Gửi đi đúng định dạng của SearchParamsOutput
         onSearch({
-            startTime: startTime,
-            endTime: endTime,
+            startTime: formatDateTime(startDate),
+            endTime: formatDateTime(endDate),
             capacity: Number(capacity) || 1
         });
     };
 
     const handleClear = () => {
-        setStartTime('');
-        setEndTime('');
+        setStartDate(null);
+        setEndDate(null);
         setCapacity(1);
-        onClear();
-        onClose(); // Đóng modal sau khi xóa
+        onClear(); 
+        onClose(); 
     };
 
-    const handleClose = () => {
-        onClose();
-    };
-
-    // Nếu modal không mở thì không render gì
-    if (!isOpen) return null;
+    if (!isOpen) return null; 
 
     return (
-        <div className={cx('searchModalOverlay')} onClick={handleClose}>
-            <div className={cx('searchModalContent')} onClick={(e) => e.stopPropagation()}>
+        <div className={cx('modalOverlay')} onClick={onClose}>
+            <div className={cx('modalContent')} onClick={(e) => e.stopPropagation()}>
                 
                 {/* Header */}
-                <div className={cx('searchModalHeader')}>
-                    <h2 className={cx('searchModalTitle')}>
-                        <Search size={24} />
-                        Tìm Phòng Trống
+                <div className={cx('modalHeader')}>
+                    <h2 className={cx('modalTitle')}>
+                        <Search size={24} className={cx('titleIcon')} />
+                        Tìm Kiếm Phòng Trống 
                     </h2>
-                    <button className={cx('searchModalClose')} onClick={handleClose}>
+                    <button className={cx('modalCloseButton')} onClick={onClose}>
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Body */}
-                <div className={cx('searchModalBody')}>
+                <div className={cx('modalBody')}>
                     <form className={cx('searchForm')} onSubmit={handleSubmit}>
                         <div className={cx('formGrid')}>
                             
-                            {/* Giờ bắt đầu */}
-                            <div className={cx('formGroup')}>
-                                <label htmlFor="start-time">
-                                    <Calendar size={16} /> 
-                                    Thời gian bắt đầu
+                            {/* START TIME */}
+                            <div className={cx('formGroup', 'startTimeGroup')}>
+                                <label htmlFor="start-time" className={cx('inputLabel')}>
+                                    <CalendarCheck size={16} /> Thời gian bắt đầu
                                 </label>
-                                <input
-                                    id="start-time"
-                                    type="datetime-local"
-                                    value={startTime}
-                                    onChange={(e) => setStartTime(e.target.value)}
-                                    min={nowLocal}
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={(date: Date | null) => setStartDate(date)} 
+                                    showTimeSelect
+                                    dateFormat="dd/MM/yyyy HH:mm"
+                                    minDate={new Date()}
+                                    className={cx('inputField')} 
+                                    placeholderText="Chọn ngày giờ bắt đầu"
                                     required
+                                    popperClassName={cx('customDatePopper')}
                                 />
                             </div>
 
-                            {/* Giờ kết thúc */}
-                            <div className={cx('formGroup')}>
-                                <label htmlFor="end-time">
-                                    <Clock size={16} /> 
-                                    Thời gian kết thúc
+                            {/* END TIME */}
+                            <div className={cx('formGroup', 'endTimeGroup')}>
+                                <label htmlFor="end-time" className={cx('inputLabel')}>
+                                    <Clock size={16} /> Thời gian kết thúc
                                 </label>
-                                <input
-                                    id="end-time"
-                                    type="datetime-local"
-                                    value={endTime}
-                                    onChange={(e) => setEndTime(e.target.value)}
-                                    min={startTime || nowLocal}
+                                <DatePicker
+                                    selected={endDate}
+                                    onChange={(date: Date | null) => setEndDate(date)} 
+                                    showTimeSelect
+                                    dateFormat="dd/MM/yyyy HH:mm"
+                                    // Không cho chọn ngày trước ngày bắt đầu
+                                    minDate={startDate || new Date()} 
+                                    
+                                    // LOGIC SỬA LỖI minTime/maxTime: Yêu cầu cả hai prop khi giới hạn giờ
+                                    minTime={
+                                        (startDate && endDate && startDate.toDateString() === endDate.toDateString())
+                                        ? startDate 
+                                        : undefined 
+                                    }
+                                    maxTime={
+                                        (startDate && endDate && startDate.toDateString() === endDate.toDateString())
+                                        ? getEndOfDay(endDate) 
+                                        : undefined 
+                                    }
+                                    // END LOGIC SỬA LỖI
+
+                                    className={cx('inputField')}
+                                    placeholderText="Chọn ngày giờ kết thúc"
                                     required
+                                    popperClassName={cx('customDatePopper')}
                                 />
                             </div>
-
+                            
                             {/* Số người */}
-                            <div className={cx('formGroup')}>
-                                <label htmlFor="capacity">
-                                    <Users size={16} /> 
-                                    Số lượng người
+                            <div className={cx('formGroup', 'capacityGroup')}>
+                                <label htmlFor="capacity" className={cx('inputLabel')}>
+                                    <Users size={16} /> Số lượng người
                                 </label>
                                 <input
                                     id="capacity"
@@ -139,6 +166,7 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                     value={capacity}
                                     onChange={(e) => setCapacity(Number(e.target.value))}
                                     required
+                                    className={cx('inputField', 'capacityInput')}
                                 />
                             </div>
 
@@ -150,9 +178,9 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
-                                        <Loader size={16} className={cx('buttonLoader')} />
+                                        <Loader2 size={18} className={cx('buttonLoader')} />
                                     ) : (
-                                        <Search size={16} />
+                                        <Search size={18} />
                                     )}
                                     Tìm Phòng
                                 </button>
@@ -162,8 +190,8 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                     onClick={handleClear}
                                     disabled={isLoading}
                                 >
-                                    <XCircle size={16} /> 
-                                    Hủy
+                                    <RefreshCcw size={18} /> 
+                                    Đặt Lại
                                 </button>
                             </div>
                         </div>

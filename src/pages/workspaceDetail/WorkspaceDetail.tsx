@@ -42,6 +42,8 @@ const MOCK_POLICIES = [
     'Hỗ trợ kỹ thuật IT tại chỗ cho mọi vấn đề liên quan đến kết nối và thiết bị.',
 ];
 
+const MOCK_DESCRIPTION = 'Nằm tại vị trí trung tâm thành phố Đà Nẵng, không gian làm việc này mang đến trải nghiệm làm việc hiện đại và linh hoạt, phù hợp cho cá nhân, nhóm nhỏ hoặc doanh nghiệp muốn tìm kiếm môi trường sáng tạo và chuyên nghiệp. Với thiết kế tinh tế, ánh sáng tự nhiên tràn ngập, cùng đầy đủ tiện ích như Wi-Fi tốc độ cao, máy lạnh, khu vực pantry, phòng họp và khu nghỉ ngơi, nơi đây giúp bạn tập trung tối đa cho công việc mà vẫn giữ được sự thoải mái.Chỉ vài phút di chuyển đến các khu vực hành chính, quán cà phê, nhà hàng và bãi biển, workspace này không chỉ là nơi làm việc mà còn là điểm đến lý tưởng để kết nối, sáng tạo và phát triển. Dù bạn đang tìm kiếm một chỗ ngồi yên tĩnh để làm việc cá nhân hay một không gian hợp tác năng động cho nhóm, đây chắc chắn là lựa chọn hoàn hảo để bạn bắt đầu ngày mới đầy cảm hứng tại Đà Nẵng.';
+
 // Hàm hỗ trợ tính tổng giờ từ 2 chuỗi ISO 8601 
 const calculateTotalHours = (start: string, end: string): number => {
     const startDate = new Date(start);
@@ -379,6 +381,9 @@ const WorkspaceDetail: React.FC = () => {
                         <p className={cx('description')}>
                             {workspace.description}
                         </p>
+                        <p className={cx('description')}>
+                            {MOCK_DESCRIPTION}
+                        </p>                        
                     </section>
 
                     {/* TIỆN ÍCH */}

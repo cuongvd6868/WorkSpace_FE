@@ -1,106 +1,110 @@
-/* Biến (Variables) */
-$primary-color: #007bff; // Màu xanh dương hiện đại (Blue Primary)
-$accent-color: #17a2b8; // Màu xanh ngọc (Cyan Accent)
-$success-color: #28a745; // Xanh lá cây cho Tìm kiếm
-$danger-color: #dc3545; // Đỏ cho Hủy/Đặt lại
-$text-color: #343a40; // Màu chữ tối
-$light-text-color: #6c757d; // Màu chữ phụ
-$secondary-color: #6c757d; // <<< ĐÃ THÊM: Biến này được dùng cho nút Hủy (clearButton)
-$background-color: #f8f9fa; // Nền sáng
-$modal-bg: #ffffff; // Nền modal trắng tinh
-$border-color: #e9ecef;
-$shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.15); // Bóng đổ sâu, mượt mà
-$transition-speed: 0.3s;
-$border-radius: 12px;
+/* Thiết lập font chữ cơ bản nếu chưa có, dùng biến CSS */
+:root {
+    --primary-color: #007bff; /* Xanh dương chủ đạo */
+    --secondary-color: #6c757d; /* Xám phụ */
+    --accent-color: #28a745; /* Xanh lá (tìm kiếm) */
+    --danger-color: #dc3545; /* Đỏ (hủy/đóng) */
+    --background-color: #f8f9fa; /* Nền sáng */
+    --card-background: #ffffff; /* Nền modal */
+    --text-color: #343a40; /* Màu chữ chính */
+    --border-color: #ced4da;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+}
 
-/* --- Overlay và Modal --- */
 
-.searchModalOverlay {
+.modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); // Nền tối mờ nhẹ nhàng
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1050; 
+    animation: fadeIn 0.3s ease-out;
 }
 
-.searchModalContent {
-    background-color: $modal-bg;
-    border-radius: $border-radius;
+.modalContent {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--shadow-color); 
     width: 90%;
-    max-width: 550px;
-    box-shadow: $shadow-elevation;
-    padding: 2.5rem;
-    display: flex;
-    flex-direction: column;
-    // Hiệu ứng nhẹ khi mở modal
-    transform: translateY(-10px);
-    opacity: 1;
-    transition: transform $transition-speed ease-out, opacity $transition-speed ease-out;
+    max-width: 600px; /* Tăng kích thước modal một chút */
+    padding: 30px;
+    position: relative;
+    transform: scale(0.95);
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
 }
 
 /* --- Header --- */
-
-.searchModalHeader {
+.modalHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid $border-color;
-    margin-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef; /* Đường kẻ nhẹ hơn */
+    padding-bottom: 15px;
+    margin-bottom: 25px;
 }
 
-.searchModalTitle {
+.modalTitle {
     display: flex;
     align-items: center;
-    font-size: 1.6rem;
+    font-size: 1.8rem; /* To hơn */
     font-weight: 700;
-    color: $text-color;
-    margin: 0;
-
-    & > svg {
-        margin-right: 10px;
-        color: $primary-color; // Màu chủ đạo cho icon tiêu đề
-    }
+    color: var(--text-color); /* Chuyển màu chữ tiêu đề về màu chính */
 }
 
-.searchModalClose {
+.titleIcon {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+.modalCloseButton {
     background: none;
     border: none;
     cursor: pointer;
-    color: $light-text-color;
-    padding: 8px;
+    color: var(--secondary-color);
+    padding: 5px;
     border-radius: 50%;
-    transition: background-color 0.2s, color 0.2s;
+    transition: all 0.2s ease-in-out;
 
     &:hover {
-        background-color: $background-color;
-        color: $danger-color; // Màu đỏ khi hover
+        color: var(--danger-color);
+        background-color: #f8f9fa;
+        transform: rotate(90deg) scale(1.1);
     }
 }
 
 /* --- Form Body --- */
-
-.searchModalBody {
-    flex-grow: 1;
-}
-
 .searchForm {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
 }
 
 .formGrid {
     display: grid;
-    grid-template-columns: 1fr; 
-    gap: 1.5rem 1rem; // Khoảng cách dọc và ngang
+    gap: 20px;
+    grid-template-columns: 1fr 1fr; /* Mặc định 2 cột */
 
-    @media (min-width: 600px) {
-        grid-template-columns: repeat(2, 1fr); // 2 cột trên desktop
+    // Điều chỉnh layout cho các trường
+    .startTimeGroup, .endTimeGroup {
+        grid-column: span 1;
+    }
+    .capacityGroup {
+        grid-column: span 2; /* Số người chiếm 2 cột */
+        max-width: 50%; /* Giảm chiều rộng input số người */
+    }
+    .formActions {
+        grid-column: 1 / -1; /* Nút bấm chiếm hết */
+    }
+
+    @media (max-width: 576px) {
+        grid-template-columns: 1fr; /* Màn hình nhỏ 1 cột */
+        .startTimeGroup, .endTimeGroup, .capacityGroup, .formActions {
+            grid-column: span 1;
+            max-width: 100%;
+        }
     }
 }
 
@@ -109,74 +113,62 @@ $border-radius: 12px;
     flex-direction: column;
 }
 
-// Bắt đầu các thành phần của formGroup
-
-.formGroup > label {
+.inputLabel {
     display: flex;
     align-items: center;
+    margin-bottom: 8px;
     font-weight: 600;
-    margin-bottom: 0.6rem;
-    color: $primary-color; 
-    font-size: 0.9rem;
-    
-    // Sử dụng class formLabel đã thêm trong JSX
-    &.formLabel > svg {
-        margin-right: 8px;
-        color: $accent-color; // Màu icon trong label
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+
+    svg {
+        margin-right: 6px;
+        color: var(--primary-color);
     }
 }
 
-.formGroup > input {
-    padding: 1rem 1.25rem;
-    border: 1px solid $border-color;
+.inputField {
+    padding: 12px 15px; /* Tăng padding input */
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
-    color: $text-color;
-    background-color: $background-color;
-    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
-    width: 100%;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
 
     &:focus {
-        border-color: $success-color;
-        box-shadow: 0 0 0 4px rgba($success-color, 0.15);
-        background-color: #fff;
+        border-color: var(--primary-color);
+        background-color: var(--card-background);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
         outline: none;
-    }
-    
-    // Tùy chỉnh riêng cho input type="number" (sử dụng class capacityInput)
-    &.capacityInput {
-      max-width: 150px;
     }
 }
 
-
-/* --- Form Actions (Nút bấm) --- */
-
 .formActions {
-    // Sử dụng formActions đã có trong JSX
-    grid-column: 1 / -1; // Chiếm hết chiều ngang của formGrid
     display: flex;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    justify-content: flex-end;
-    flex-wrap: wrap; 
+    gap: 15px;
+    margin-top: 15px;
+    
+    @media (max-width: 480px) {
+        flex-direction: column;
+    }
 }
 
 .actionButton {
+    flex: 1;
+    padding: 14px 20px; /* Tăng padding nút bấm */
+    font-size: 1.05rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px; /* Làm tròn hơn */
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.9rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    min-width: 130px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-    & > svg {
+    svg {
         margin-right: 8px;
     }
 
@@ -188,37 +180,144 @@ $border-radius: 12px;
 }
 
 .searchButton {
-    background-color: $success-color;
-    color: $modal-bg;
+    background-color: var(--accent-color);
+    color: var(--card-background); 
 
     &:hover:not(:disabled) {
-        background-color: darken($success-color, 5%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba($success-color, 0.3);
+        background-color: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
     }
 }
 
 .clearButton {
-    background-color: $secondary-color; // <<< SỬ DỤNG BIẾN ĐÃ THÊM
-    color: $modal-bg;
+    background-color: var(--secondary-color);
+    color: var(--card-background);
+    opacity: 0.8;
 
     &:hover:not(:disabled) {
-        background-color: darken($secondary-color, 5%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba($secondary-color, 0.3);
+        background-color: #5a6268;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+        opacity: 1;
     }
 }
 
-/* Loading Spinner Animation */
+/* Hiệu ứng loading */
 .buttonLoader {
     animation: spin 1s linear infinite;
 }
 
+/* ================================================= */
+/* === STYLES CHO DATEPICKER CUSTOM (KÍCH THƯỚC LỚN HƠN) === */
+/* ================================================= */
+
+/* Sử dụng class custom popperClassName từ TSX để ghi đè */
+.customDatePopper {
+    z-index: 1100;
+}
+
+.react-datepicker {
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.1); 
+    font-family: inherit !important;
+    font-size: 1.05rem !important; /* TĂNG KÍCH THƯỚC FONT */
+    overflow: hidden; 
+}
+
+/* Tăng kích thước khu vực Calendar và Time */
+.react-datepicker__month-container {
+    padding: 10px;
+}
+
+/* 1. HEADER CỦA LỊCH (Tháng/Năm) */
+.react-datepicker__header {
+    background-color: var(--primary-color) !important;
+    padding-top: 15px !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker-year-header {
+    color: var(--card-background) !important;
+    font-weight: 600;
+}
+
+.react-datepicker__day-name {
+    color: #e9ecef !important; 
+    font-weight: 500;
+}
+
+/* 2. NÚT ĐIỀU HƯỚNG */
+.react-datepicker__navigation--previous,
+.react-datepicker__navigation--next {
+    top: 15px !important;
+    svg {
+        fill: var(--card-background) !important;
+    }
+}
+
+/* 3. CHỌN NGÀY */
+.react-datepicker__day {
+    width: 2.5rem !important; /* TĂNG KÍCH THƯỚC NGÀY */
+    line-height: 2.5rem !important; /* TĂNG KÍCH THƯỚC NGÀY */
+    margin: 0.2rem !important; /* Tăng khoảng cách giữa các ngày */
+    border-radius: 50% !important; 
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.react-datepicker__day:hover {
+    background-color: #dee2e6 !important;
+    color: var(--text-color) !important;
+}
+
+/* Ngày được chọn */
+.react-datepicker__day--selected,
+.react-datepicker__day--selected:hover {
+    background-color: var(--primary-color) !important;
+    color: var(--card-background) !important;
+    font-weight: 600;
+    box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
+}
+
+/* 4. CHỌN GIỜ */
+.react-datepicker__time-container {
+    border-left: 1px solid var(--border-color);
+    width: 120px !important; /* TĂNG CHIỀU RỘNG TIME PICKER */
+    padding: 10px 0;
+}
+
+.react-datepicker__time-list {
+    max-height: 250px !important; /* TĂNG CHIỀU CAO */
+}
+
+.react-datepicker__time-list-item {
+    padding: 8px 10px !important; /* Tăng padding mục giờ */
+    transition: background-color 0.2s;
+}
+
+.react-datepicker__time-list-item--selected {
+    background-color: var(--primary-color) !important;
+    color: var(--card-background) !important;
+    font-weight: 600;
+}
+.react-datepicker__time-list-item:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

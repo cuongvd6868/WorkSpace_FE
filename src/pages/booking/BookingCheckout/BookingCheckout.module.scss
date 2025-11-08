@@ -1,450 +1,633 @@
-// BookingCheckout.module.scss
 
-.checkout-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 0;
-  background-color: #f8fafc;
-  min-height: 100vh;
+
+$primary-brand-color: #0056B3; // Một màu tím/xanh hiện đại
+$accent-color: #4CAF50;      // Màu xanh lá cây cho success/nhấn mạnh
+$text-color-dark: #2D3748;   // Gần đen
+$text-color-medium: #4A5568; // Xám đậm
+$text-color-light: #718096;  // Xám nhạt
+$bg-light-grey: #F7FAFC;     // Nền rất nhạt
+$border-light: #E2E8F0;      // Border nhạt
+$white-bg: #FFFFFF;          // Nền trắng cho các card
+$error-color: #E53E3E;       // Màu đỏ cho lỗi
+$border-radius-large: 10px;
+
+$font-stack: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$border-radius-base: 8px;
+$transition-speed: 0.2s ease-in-out;
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.checkout-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 32px;
-  
-  .back-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    color: #475569;
-    cursor: pointer;
-    transition: all 0.2s;
-    
-    &:hover:not(:disabled) {
-      background: #f1f5f9;
-      border-color: #cbd5e1;
-    }
-    
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-  
-  .page-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: 16px;
-    font-size: 28px;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0;
-  }
-}
+/* ========================================= */
+/* PAGE WRAPPER & HEADER */
+/* ========================================= */
 
-.checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 32px;
-  
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-}
-
-// Cột trái - Thông tin đặt phòng
-.left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.booking-summary,
-.promotion-section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 20px 0;
-  
-  svg {
-    color: #3b82f6;
-  }
-}
-
-.workspace-info {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #f1f5f9;
-  
-  .workspace-name {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 8px 0;
-  }
-  
-  .room-name {
-    font-size: 16px;
-    color: #475569;
-    margin: 0 0 12px 0;
-    
-    .room-type {
-      color: #64748b;
-      font-weight: 500;
-    }
-  }
-  
-  .address {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    font-size: 14px;
-    color: #64748b;
-    
-    svg {
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-  }
-}
-
-.booking-details {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  
-  svg {
-    color: #64748b;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  
-  .detail-content {
+.checkout-page-wrapper {
     display: flex;
     flex-direction: column;
-  }
-  
-  .detail-label {
-    font-size: 14px;
-    color: #64748b;
-    margin-bottom: 4px;
-  }
-  
-  .detail-value {
-    font-size: 15px;
-    color: #1e293b;
-    font-weight: 500;
-  }
+    align-items: center;
+    min-height: 100vh;
+    background-color: $bg-light-grey;
+    font-family: $font-stack;
+    color: $text-color-dark;
+    padding: 30px 20px;
 }
 
-// Phần khuyến mãi
-.promo-input-container {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-}
+.checkout-header-bar {
+    width: 100%;
+    max-width: 68%; /* Chiều dài 68% */
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $border-light;
 
-.promo-input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 15px;
-  transition: all 0.2s;
-  
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  }
-  
-  &.applied {
-    background-color: #f0f9ff;
-    border-color: #0ea5e9;
-    color: #0369a1;
-  }
-  
-  &:disabled {
-    background-color: #f8fafc;
-    color: #94a3b8;
-  }
-}
+    .back-button {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: $text-color-medium;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color $transition-speed;
 
-.promo-button {
-  padding: 12px 20px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-  
-  &:hover:not(:disabled) {
-    background: #2563eb;
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  &.applied {
-    background: #10b981;
-    
-    &:hover:not(:disabled) {
-      background: #059669;
+        &:hover {
+            color: $primary-brand-color;
+        }
+
+        svg {
+            margin-right: 8px;
+        }
     }
-  }
+
+    .page-main-title {
+        flex-grow: 1;
+        text-align: center;
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: $text-color-dark;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-right: 45px;
+
+        svg {
+            margin-right: 12px;
+            color: $primary-brand-color;
+            transform: translateY(-2px);
+        }
+    }
 }
 
-.promo-success,
-.promo-error {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  padding: 8px 12px;
-  border-radius: 8px;
+/* ========================================= */
+/* MAIN CONTENT LAYOUT */
+/* ========================================= */
+
+.checkout-main-content {
+    width: 100%;
+    max-width: 68%; /* Chiều dài 68% */
+    display: flex;
+    gap: 30px; /* Khoảng cách giữa các cột */
+    background-color: $white-bg;
+    border-radius: $border-radius-base;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    padding: 40px;
 }
 
-.promo-success {
-  background: #f0fdf4;
-  color: #166534;
-  
-  svg {
-    color: #22c55e;
-  }
-}
-
-.promo-error {
-  background: #fef2f2;
-  color: #991b1b;
-  
-  svg {
-    color: #ef4444;
-  }
-}
-
-// Cột phải - Form thanh toán
-.right-column {
-  .payment-form {
+.left-panel {
+    flex: 3; // Lớn hơn cho form
     display: flex;
     flex-direction: column;
-    gap: 24px;
-  }
+    gap: 30px;
 }
 
-.form-section {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+.right-panel {
+    flex: 2; // Nhỏ hơn cho tóm tắt
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+/* ========================================= */
+/* CARD STYLES */
+/* ========================================= */
+
+.section-card, .summary-card, .promo-card, .total-payment-card {
+    background-color: $white-bg;
+    border-radius: $border-radius-base;
+    padding: 25px 30px;
+    border: 1px solid $border-light;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+
+    .card-title, .summary-card-title, .promo-card-title, .total-payment-title {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $text-color-dark;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid $border-light;
+
+        svg {
+            margin-right: 10px;
+            color: $primary-brand-color;
+        }
+    }
 }
 
-.full-width {
-  grid-column: 1 / -1;
+/* ========================================= */
+/* FORM ELEMENTS */
+/* ========================================= */
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Tăng khoảng cách giữa các nhóm */
+}
+
+.form-row {
+    display: flex;
+    gap: 25px;
+
+    .form-group {
+        flex: 1;
+    }
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  
-  label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 8px;
-  }
-  
-  input, textarea {
-    padding: 12px 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
-    font-size: 15px;
-    transition: all 0.2s;
-    
-    &:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-    
-    &:disabled {
-      background-color: #f9fafb;
-      color: #6b7280;
-      cursor: not-allowed;
-    }
-  }
-  
-  textarea {
-    resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
-  }
-}
-
-.payment-options {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.payment-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  &:hover {
-    border-color: #3b82f6;
-    background: #f8fafc;
-  }
-  
-  input[type="radio"] {
-    margin-top: 2px;
-  }
-  
-  .option-content {
     display: flex;
     flex-direction: column;
-  }
-  
-  .option-title {
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
-  }
-  
-  .option-description {
-    font-size: 14px;
-    color: #6b7280;
-  }
+    width: 100%;
+
+    label {
+        font-weight: 700; /* Nổi bật hơn */
+        margin-bottom: 8px;
+        color: $text-color-dark; // Đổi sang màu tối để dễ đọc
+        font-size: 1.4rem;
+        transition: color 0.1s;
+    }
+
+    .input-icon-wrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid $border-light;
+        border-radius: $border-radius-large; /* Áp dụng góc lớn hơn */
+        overflow: hidden;
+        transition: all $transition-speed;
+        background-color: $white-bg;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Shadow tinh tế */
+
+        /* Hiệu ứng cao cấp khi focus */
+        &:focus-within {
+            border-color: $primary-brand-color;
+            box-shadow: 0 4px 12px rgba($primary-brand-color, 0.15); /* Shadow nổi bật hơn */
+            
+            svg {
+                color: $primary-brand-color; /* Icon đổi màu khi focus */
+            }
+        }
+
+        svg {
+            color: $text-color-light; /* Icon mặc định màu xám nhạt tinh tế */
+            margin: 0 14px; /* Tăng khoảng cách cho cảm giác thoáng */
+            flex-shrink: 0;
+            transition: color $transition-speed;
+        }
+
+        input, textarea {
+            flex-grow: 1;
+            padding: 14px; /* Tăng padding */
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: $text-color-dark;
+            background-color: transparent; /* Giúp focus shadow hiện đẹp hơn */
+
+            &::placeholder {
+                color: $text-color-light; // Placeholder màu xám nhạt
+            }
+            &:disabled {
+                background-color: $bg-light-grey;
+                cursor: not-allowed;
+            }
+        }
+
+        &.textarea-wrapper {
+            align-items: flex-start;
+            textarea {
+                padding-top: 14px;
+                padding-bottom: 14px;
+                width: 100%;
+                resize: vertical;
+                min-height: 120px; /* Tăng chiều cao textarea */
+            }
+            .textarea-icon {
+                margin-top: 14px;
+            }
+        }
+    }}
+/* Payment Options Grid */
+
+.payment-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
 }
 
-.order-summary {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
-  position: sticky;
-  top: 24px;
+.payment-option-card {
+    display: flex;
+    position: relative;
+    padding: 20px;
+    border: 2px solid $border-light;
+    border-radius: $border-radius-base;
+    cursor: pointer;
+    transition: all $transition-speed;
+    background-color: $white-bg;
+    flex-direction: column; // Để nội dung xếp dọc
+    align-items: flex-start;
+
+    &:hover {
+        border-color: lighten($primary-brand-color, 20%);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="radio"] {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        accent-color: $primary-brand-color;
+        width: 20px;
+        height: 20px;
+    }
+    
+    input[type="radio"]:checked + .option-content {
+        border-color: $primary-brand-color;
+        .option-title {
+            color: $primary-brand-color;
+            font-weight: 700;
+        }
+    }
+
+    .option-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+
+        svg {
+            color: $primary-brand-color;
+            margin-bottom: 5px;
+        }
+
+        .option-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: $text-color-dark;
+        }
+
+        .option-description {
+            font-size: 1rem;
+            color: $text-color-light;
+            line-height: 1.4;
+        }
+    }
 }
+
+/* ========================================= */
+/* SUMMARY ELEMENTS (RIGHT PANEL) */
+/* ========================================= */
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .summary-workspace-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $primary-brand-color;
+        margin-bottom: 5px;
+    }
+
+    .summary-room-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: $text-color-dark;
+        margin-bottom: 10px;
+
+        .summary-room-type {
+            font-size: 1rem;
+            font-weight: 400;
+            color: $text-color-light;
+        }
+    }
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        color: $text-color-medium;
+
+        svg {
+            color: $primary-brand-color;
+            margin-right: 8px;
+            min-width: 16px;
+        }
+    }
+}
+
+/* Promo Section */
+
+.promo-input-group {
+    display: flex;
+    margin-top: 15px;
+    border-radius: $border-radius-base;
+    overflow: hidden;
+    border: 1px solid $border-light;
+    transition: border-color $transition-speed;
+
+    &:focus-within {
+        border-color: $primary-brand-color;
+    }
+
+    .promo-input {
+        flex-grow: 1;
+        padding: 12px 15px;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        color: $text-color-dark;
+
+        &::placeholder {
+            color: $text-color-light;
+        }
+        &:disabled {
+            background-color: $bg-light-grey;
+            cursor: not-allowed;
+        }
+        &.applied {
+            background-color: lighten($accent-color, 45%);
+            color: darken($accent-color, 10%);
+            font-weight: 600;
+        }
+    }
+
+    .apply-promo-btn {
+        padding: 12px 20px;
+        background-color: $primary-brand-color;
+        color: $white-bg;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color $transition-speed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.49rem;
+
+        &:hover:not(:disabled) {
+            background-color: darken($primary-brand-color, 10%);
+        }
+        &:disabled {
+            background-color: $text-color-light;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        &.applied {
+            background-color: $accent-color;
+            svg {
+                margin-right: 5px;
+            }
+        }
+    }
+}
+
+.promo-message {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: $border-radius-base;
+    font-size: 1.2rem;
+    
+    svg {
+        margin-right: 8px;
+        min-width: 16px;
+    }
+
+    &.success {
+        background-color: lighten($accent-color, 45%);
+        color: darken($accent-color, 10%);
+    }
+
+    &.error {
+        background-color: lighten($error-color, 40%);
+        color: darken($error-color, 10%);
+    }
+}
+
+/* Total Payment */
 
 .price-breakdown {
-  margin-bottom: 20px;
-}
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
 
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
-  
-  &:last-child {
-    border-bottom: none;
-  }
-  
-  &.discount {
-    color: #10b981;
-    font-weight: 500;
-  }
-  
-  &.total {
-    font-size: 18px;
-    font-weight: 700;
-    color: #1f2937;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
-  }
+    .price-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.3rem;
+
+        .label {
+            color: $text-color-medium;
+        }
+        .value {
+            font-weight: 600;
+            color: $text-color-dark;
+        }
+
+        &.discount-line {
+            .label, .value {
+                color: $accent-color;
+                font-weight: 700;
+            }
+        }
+
+        &.total-line {
+            border-top: 1px dashed $border-light;
+            padding-top: 15px;
+            margin-top: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+
+            .label, .value {
+                color: $primary-brand-color;
+            }
+        }
+    }
 }
 
 .tax-note {
-  font-size: 14px;
-  color: #6b7280;
-  text-align: center;
-  margin-bottom: 24px;
+    font-size: 1rem;
+    color: $text-color-light;
+    text-align: right;
+    margin-bottom: 25px;
 }
 
-.submit-button {
-  width: 100%;
-  padding: 16px 24px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  
-  &:hover:not(:disabled) {
-    background: #2563eb;
-  }
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  &.processing {
-    background: #6b7280;
-  }
-  
-  .loader {
-    animation: spin 1s linear infinite;
-  }
+.confirm-payment-btn {
+    width: 100%;
+    padding: 18px 25px;
+    border: none;
+    border-radius: $border-radius-base;
+    background-color: $primary-brand-color;
+    color: $white-bg;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color $transition-speed, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba($primary-brand-color, 0.3);
+
+    &:hover:not(:disabled) {
+        background-color: darken($primary-brand-color, 8%);
+        transform: translateY(-2px);
+    }
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba($primary-brand-color, 0.2);
+    }
+    &:disabled {
+        background-color: $text-color-light;
+        opacity: 0.8;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+    
+    svg {
+        margin-right: 12px;
+    }
+
+    &.processing {
+        background-color: $text-color-medium;
+        box-shadow: none;
+        .loader-spin {
+            animation: spin 1s linear infinite;
+        }
+    }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+
+/* ========================================= */
+/* FOOTER NOTE */
+/* ========================================= */
+
+.footer-note {
+    margin-top: 40px;
+    font-size: 1rem;
+    color: $text-color-light;
+    text-align: center;
+    max-width: 60%;
+    line-height: 1.6;
+}
+
+/* ========================================= */
+/* RESPONSIVENESS */
+/* ========================================= */
+
+@media (max-width: 1200px) {
+    .checkout-page-wrapper, .checkout-main-content, .checkout-header-bar {
+        max-width: 90%;
+    }
+    .page-main-title {
+        font-size: 2rem;
+    }
+    .card-title, .summary-card-title, .promo-card-title, .total-payment-title {
+        font-size: 1.2rem;
+    }
+    .payment-option-card {
+        padding: 15px;
+        .option-title {
+            font-size: 1rem;
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    .checkout-main-content {
+        flex-direction: column;
+        padding: 30px;
+        gap: 25px;
+    }
+    .left-panel, .right-panel {
+        width: 100%;
+    }
+    .right-panel {
+        order: -1; /* Đưa tóm tắt lên trên */
+    }
+    .checkout-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .page-main-title {
+            justify-content: flex-start;
+        }
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-note {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 576px) {
+    .checkout-page-wrapper {
+        padding: 20px 10px;
+    }
+    .checkout-main-content {
+        padding: 20px;
+    }
+    .page-main-title {
+        font-size: 1.8rem;
+        svg {
+            transform: translateY(0);
+        }
+    }
+    .section-card, .summary-card, .promo-card, .total-payment-card {
+        padding: 20px;
+    }
+    .card-title, .summary-card-title, .promo-card-title, .total-payment-title {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+    .payment-options-grid {
+        grid-template-columns: 1fr;
+    }
+    .promo-input-group .apply-promo-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    .confirm-payment-btn {
+        font-size: 1.1rem;
+        padding: 15px 20px;
+        svg {
+            margin-right: 8px;
+        }
+    }
+    .price-item.total-line {
+        font-size: 1.3rem;
+    }
 }

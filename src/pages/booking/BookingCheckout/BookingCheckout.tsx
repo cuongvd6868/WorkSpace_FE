@@ -6,7 +6,7 @@ import { useBooking } from '~/context/BookingContext';
 import { 
     CreditCard, Calendar, Clock, Users, DollarSign, MapPin, 
     User, Lock, Home, Loader, ChevronLeft, Tag,
-    CheckCircle, AlertCircle
+    CheckCircle, AlertCircle, Phone, Mail, FileText, Briefcase
 } from 'lucide-react';
 
 const cx = classNames.bind(styles);
@@ -63,6 +63,7 @@ const BookingCheckout: React.FC = () => {
         } else {
             setDiscountAmount(0);
             setIsCodeApplied(false);
+            setPromoError("Vui lòng nhập mã khuyến mãi.");
         }
     };
 
@@ -70,7 +71,9 @@ const BookingCheckout: React.FC = () => {
     const formatDateTime = (isoString: string) => {
         if (!isoString) return 'Chưa xác định';
         const date = new Date(isoString);
-        return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleDateString('vi-VN', { 
+            weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' 
+        }) + ' lúc ' + date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     };
 
     const handlePlaceBooking = (e: React.FormEvent) => {
@@ -109,85 +112,195 @@ const BookingCheckout: React.FC = () => {
     };
 
     return (
-        <div className={cx('checkout-container')}>
-            <div className={cx('checkout-header')}>
+        <div className={cx('checkout-page-wrapper')}>
+            <div className={cx('checkout-header-bar')}>
                 <button 
                     className={cx('back-button')} 
                     onClick={() => navigate(-1)}
                     disabled={isProcessing}
                 >
                     <ChevronLeft size={20} />
+                    <span>Quay lại</span>
                 </button>
-                <h1 className={cx('page-title')}>
+                <h1 className={cx('page-main-title')}>
                     <CreditCard size={28} />
-                    Thanh Toán
+                    Hoàn tất đặt chỗ
                 </h1>
             </div>
-            
-            <div className={cx('checkout-layout')}>
-                {/* CỘT TRÁI: Thông tin đặt phòng */}
-                <div className={cx('left-column')}>
-                    <div className={cx('booking-summary')}>
-                        <h2 className={cx('section-title')}>
-                            <Home size={20} />
-                            Thông tin đặt phòng
+
+            <div className={cx('checkout-main-content')}>
+                <div className={cx('left-panel')}>
+
+                    {/* THÔNG TIN LIÊN HỆ */}
+                    <div className={cx('section-card', 'contact-section')}>
+                        <h2 className={cx('card-title')}>
+                            <User size={20} />
+                            Thông tin của bạn
                         </h2>
-                        
-                        <div className={cx('workspace-info')}>
-                            <h3 className={cx('workspace-name')}>{workspaceName}</h3>
-                            <p className={cx('room-name')}>{room.title} <span className={cx('room-type')}>({room.roomType})</span></p>
-                            <div className={cx('address')}>
+                        <form onSubmit={handlePlaceBooking} id="booking-form" className={cx('contact-form')}>
+                            <div className={cx('form-row')}>
+                                <div className={cx('form-group')}>
+                                    <label htmlFor="name">Họ *</label>
+                                    <div className={cx('input-icon-wrapper')}>
+                                        <User size={18} />
+                                        <input
+                                            id="name"
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            required
+                                            disabled={isProcessing}
+                                            placeholder="Ví dụ: Nguyễn"
+                                        />
+                                    </div>
+                                </div>
+                                <div className={cx('form-group')}>
+                                    <label htmlFor="name">tên *</label>
+                                    <div className={cx('input-icon-wrapper')}>
+                                        <User size={18} />
+                                        <input
+                                            id="name"
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            required
+                                            disabled={isProcessing}
+                                            placeholder="Ví dụ: Văn A"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('form-row')}>
+                                <div className={cx('form-group')}>
+                                    <label htmlFor="phone">Số điện thoại *</label>
+                                    <div className={cx('input-icon-wrapper')}>
+                                        <Phone size={18} />
+                                        <input
+                                            id="phone"
+                                            type="tel"
+                                            value={contactPhone}
+                                            onChange={(e) => setContactPhone(e.target.value)}
+                                            required
+                                            disabled={isProcessing}
+                                            placeholder="09xx xxx xxx"
+                                        />
+                                    </div>
+                                </div>
+                                <div className={cx('form-group')}>
+                                    <label htmlFor="email">Email *</label>
+                                    <div className={cx('input-icon-wrapper')}>
+                                        <Mail size={18} />
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                            disabled={isProcessing}
+                                            placeholder="email@example.com"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className={cx('form-group')}>
+                                <label htmlFor="notes">Yêu cầu đặc biệt (tùy chọn)</label>
+                                <div className={cx('input-icon-wrapper', 'textarea-wrapper')}>
+                                    <FileText size={18} className={cx('textarea-icon')} />
+                                    <textarea
+                                        id="notes"
+                                        value={notes}
+                                        onChange={(e) => setNotes(e.target.value)}
+                                        rows={3}
+                                        disabled={isProcessing}
+                                        placeholder="Cần thêm màn hình phụ, nước uống,..."
+                                    />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    {/* PHƯƠNG THỨC THANH TOÁN */}
+                    <div className={cx('section-card', 'payment-method-section')}>
+                        <h2 className={cx('card-title')}>
+                            <Lock size={20} />
+                            Chọn phương thức thanh toán
+                        </h2>
+                        <div className={cx('payment-options-grid')}>
+                            <label className={cx('payment-option-card')}>
+                                <input type="radio" name="paymentMethod" value="transfer" defaultChecked disabled={isProcessing} />
+                                <div className={cx('option-content')}>
+                                    <CreditCard size={24} />
+                                    <span className={cx('option-title')}>Chuyển khoản trực tuyến</span>
+                                    <span className={cx('option-description')}>VietQR, Momo, ZaloPay (qua cổng VNPAY)</span>
+                                </div>
+                            </label>
+                            
+                            <label className={cx('payment-option-card')}>
+                                <input type="radio" name="paymentMethod" value="card" disabled={isProcessing} />
+                                <div className={cx('option-content')}>
+                                    <CreditCard size={24} />
+                                    <span className={cx('option-title')}>Thẻ tín dụng/ghi nợ</span>
+                                    <span className={cx('option-description')}>Visa, Mastercard, JCB (bảo mật bởi Stripe)</span>
+                                </div>
+                            </label>
+                            
+                            <label className={cx('payment-option-card')}>
+                                <input type="radio" name="paymentMethod" value="onsite" disabled={isProcessing} />
+                                <div className={cx('option-content')}>
+                                    <Briefcase size={24} />
+                                    <span className={cx('option-title')}>Thanh toán tại chỗ</span>
+                                    <span className={cx('option-description')}>Áp dụng cho đơn hàng nhỏ hơn 1.000.000 VNĐ</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={cx('right-panel')}>
+                    {/* TÓM TẮT ĐƠN HÀNG */}
+                    <div className={cx('summary-card')}>
+                        <h2 className={cx('summary-card-title')}>
+                            <Home size={20} />
+                            Thông tin đặt chỗ
+                        </h2>
+                        <div className={cx('summary-details')}>
+                            <p className={cx('summary-workspace-name')}>{workspaceName}</p>
+                            <p className={cx('summary-room-name')}>{room.title} <span className={cx('summary-room-type')}>({room.roomType})</span></p>
+                            <div className={cx('summary-item')}>
                                 <MapPin size={16} />
                                 <span>{workspaceAddressLine}</span>
                             </div>
-                        </div>
-
-                        <div className={cx('booking-details')}>
-                            <div className={cx('detail-item')}>
-                                <Calendar size={18} />
-                                <div className={cx('detail-content')}>
-                                    <span className={cx('detail-label')}>Ngày bắt đầu</span>
-                                    <span className={cx('detail-value')}>{formatDateTime(startTimeUtc)}</span>
-                                </div>
+                            <div className={cx('summary-item')}>
+                                <Calendar size={16} />
+                                <span>Bắt đầu: {formatDateTime(startTimeUtc)}</span>
                             </div>
-                            
-                            <div className={cx('detail-item')}>
-                                <Clock size={18} />
-                                <div className={cx('detail-content')}>
-                                    <span className={cx('detail-label')}>Ngày kết thúc</span>
-                                    <span className={cx('detail-value')}>{formatDateTime(endTimeUtc)}</span>
-                                </div>
+                            <div className={cx('summary-item')}>
+                                <Clock size={16} />
+                                <span>Kết thúc: {formatDateTime(endTimeUtc)}</span>
                             </div>
-                            
-                            <div className={cx('detail-item')}>
-                                <Users size={18} />
-                                <div className={cx('detail-content')}>
-                                    <span className={cx('detail-label')}>Số người</span>
-                                    <span className={cx('detail-value')}>{numberOfParticipants} người</span>
-                                </div>
+                            <div className={cx('summary-item')}>
+                                <Users size={16} />
+                                <span>Số người: {numberOfParticipants}</span>
                             </div>
-                            
-                            <div className={cx('detail-item')}>
-                                <Clock size={18} />
-                                <div className={cx('detail-content')}>
-                                    <span className={cx('detail-label')}>Tổng giờ thuê</span>
-                                    <span className={cx('detail-value')}>{totalHours.toFixed(2)} giờ</span>
-                                </div>
+                            <div className={cx('summary-item')}>
+                                <Clock size={16} />
+                                <span>Tổng thời gian: {totalHours.toFixed(2)} giờ</span>
                             </div>
                         </div>
                     </div>
-                    
-                    {/* Phần khuyến mãi */}
-                    <div className={cx('promotion-section')}>
-                        <h2 className={cx('section-title')}>
-                            <Tag size={20} />
+
+                    {/* MÃ KHUYẾN MÃI */}
+                    <div className={cx('promo-card')}>
+                        <h3 className={cx('promo-card-title')}>
+                            <Tag size={18} />
                             Mã khuyến mãi
-                        </h2>
-                        
-                        <div className={cx('promo-input-container')}>
+                        </h3>
+                        <div className={cx('promo-input-group')}>
                             <input
                                 type="text"
-                                placeholder="Nhập mã khuyến mãi"
+                                placeholder="Nhập mã giảm giá..."
                                 value={promotionCode}
                                 onChange={(e) => setPromotionCode(e.target.value)}
                                 disabled={isProcessing || isCodeApplied}
@@ -196,172 +309,75 @@ const BookingCheckout: React.FC = () => {
                             <button 
                                 type="button" 
                                 onClick={handleApplyPromotion}
-                                className={cx('promo-button', { applied: isCodeApplied })}
+                                className={cx('apply-promo-btn', { applied: isCodeApplied })}
                                 disabled={isProcessing || isCodeApplied}
                             >
                                 {isCodeApplied ? <CheckCircle size={18} /> : "Áp dụng"}
                             </button>
                         </div>
-                        
                         {isCodeApplied && (
-                            <div className={cx('promo-success')}>
+                            <div className={cx('promo-message', 'success')}>
                                 <CheckCircle size={16} />
-                                <span>Mã khuyến mãi đã được áp dụng thành công!</span>
+                                <span>Mã khuyến mãi đã được áp dụng.</span>
                             </div>
                         )}
-                        
                         {promoError && (
-                            <div className={cx('promo-error')}>
+                            <div className={cx('promo-message', 'error')}>
                                 <AlertCircle size={16} />
                                 <span>{promoError}</span>
                             </div>
                         )}
                     </div>
+
+                    {/* TỔNG THANH TOÁN */}
+                    <div className={cx('total-payment-card')}>
+                        <h2 className={cx('total-payment-title')}>
+                            <DollarSign size={20} />
+                            Chi tiết thanh toán
+                        </h2>
+                        <div className={cx('price-breakdown')}>
+                            <div className={cx('price-item')}>
+                                <span className={cx('label')}>Giá thuê cơ bản</span>
+                                <span className={cx('value')}>{totalAmount.toLocaleString()} VNĐ</span>
+                            </div>
+                            {discountAmount > 0 && (
+                                <div className={cx('price-item', 'discount-line')}>
+                                    <span className={cx('label')}>Giảm giá khuyến mãi</span>
+                                    <span className={cx('value')}>- {discountAmount.toLocaleString()} VNĐ</span>
+                                </div>
+                            )}
+                            <div className={cx('price-item', 'total-line')}>
+                                <span className={cx('label')}>Tổng cộng</span>
+                                <span className={cx('value', 'final-price')}>{finalAmount.toLocaleString()} VNĐ</span>
+                            </div>
+                        </div>
+                        <p className={cx('tax-note')}>Đã bao gồm thuế và phí dịch vụ.</p>
+
+                        <button 
+                            type="submit" 
+                            className={cx('confirm-payment-btn', { processing: isProcessing })}
+                            disabled={isProcessing}
+                            form="booking-form" // Liên kết với form ở cột trái
+                        >
+                            {isProcessing ? (
+                                <>
+                                    <Loader size={20} className={cx('loader-spin')} />
+                                    Đang xử lý...
+                                </>
+                            ) : (
+                                <>
+                                    <CreditCard size={20} />
+                                    Xác nhận và Thanh toán
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </div>
-                
-                {/* CỘT PHẢI: Form thanh toán */}
-                <div className={cx('right-column')}>
-                    <form onSubmit={handlePlaceBooking} className={cx('payment-form')}>
-                        <div className={cx('form-section')}>
-                            <h2 className={cx('section-title')}>
-                                <User size={20} />
-                                Thông tin liên hệ
-                            </h2>
-                            
-                            <div className={cx('form-grid')}>
-                                <div className={cx('form-group', 'full-width')}>
-                                    <label htmlFor="name">Họ và tên *</label>
-                                    <input
-                                        id="name"
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        required
-                                        disabled={isProcessing}
-                                        placeholder="Nhập họ và tên của bạn"
-                                    />
-                                </div>
-                                
-                                <div className={cx('form-group')}>
-                                    <label htmlFor="email">Email *</label>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                        disabled={isProcessing}
-                                        placeholder="your@email.com"
-                                    />
-                                </div>
-                                
-                                <div className={cx('form-group')}>
-                                    <label htmlFor="phone">Số điện thoại *</label>
-                                    <input
-                                        id="phone"
-                                        type="tel"
-                                        value={contactPhone}
-                                        onChange={(e) => setContactPhone(e.target.value)}
-                                        required
-                                        disabled={isProcessing}
-                                        placeholder="0123 456 789"
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className={cx('form-group', 'full-width')}>
-                                <label htmlFor="notes">Yêu cầu đặc biệt (tùy chọn)</label>
-                                <textarea
-                                    id="notes"
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
-                                    rows={3}
-                                    disabled={isProcessing}
-                                    placeholder="Ghi chú thêm về yêu cầu của bạn..."
-                                />
-                            </div>
-                        </div>
-                        
-                        <div className={cx('form-section')}>
-                            <h2 className={cx('section-title')}>
-                                <Lock size={20} />
-                                Phương thức thanh toán
-                            </h2>
-                            
-                            <div className={cx('payment-options')}>
-                                <label className={cx('payment-option')}>
-                                    <input type="radio" name="paymentMethod" value="transfer" defaultChecked disabled={isProcessing} />
-                                    <div className={cx('option-content')}>
-                                        <span className={cx('option-title')}>Chuyển khoản ngân hàng</span>
-                                        <span className={cx('option-description')}>VietQR, Momo, ZaloPay</span>
-                                    </div>
-                                </label>
-                                
-                                <label className={cx('payment-option')}>
-                                    <input type="radio" name="paymentMethod" value="card" disabled={isProcessing} />
-                                    <div className={cx('option-content')}>
-                                        <span className={cx('option-title')}>Thẻ tín dụng/ghi nợ</span>
-                                        <span className={cx('option-description')}>Visa, Mastercard, JCB</span>
-                                    </div>
-                                </label>
-                                
-                                <label className={cx('payment-option')}>
-                                    <input type="radio" name="paymentMethod" value="onsite" disabled={isProcessing} />
-                                    <div className={cx('option-content')}>
-                                        <span className={cx('option-title')}>Thanh toán tại chỗ</span>
-                                        <span className={cx('option-description')}>Đặt cọc khi nhận phòng</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div className={cx('order-summary')}>
-                            <h2 className={cx('section-title')}>
-                                <DollarSign size={20} />
-                                Tổng thanh toán
-                            </h2>
-                            
-                            <div className={cx('price-breakdown')}>
-                                <div className={cx('price-row')}>
-                                    <span>Giá thuê cơ bản</span>
-                                    <span>{totalAmount.toLocaleString()} VNĐ</span>
-                                </div>
-                                
-                                {discountAmount > 0 && (
-                                    <div className={cx('price-row', 'discount')}>
-                                        <span>Giảm giá khuyến mãi</span>
-                                        <span>- {discountAmount.toLocaleString()} VNĐ</span>
-                                    </div>
-                                )}
-                                
-                                <div className={cx('price-row', 'total')}>
-                                    <span>Tổng thanh toán</span>
-                                    <span>{finalAmount.toLocaleString()} VNĐ</span>
-                                </div>
-                            </div>
-                            
-                            <p className={cx('tax-note')}>Đã bao gồm VAT và phí dịch vụ</p>
-                            
-                            <button 
-                                type="submit" 
-                                className={cx('submit-button', { processing: isProcessing })}
-                                disabled={isProcessing}
-                            >
-                                {isProcessing ? (
-                                    <>
-                                        <Loader size={20} className={cx('loader')} />
-                                        Đang xử lý...
-                                    </>
-                                ) : (
-                                    <>
-                                        <CreditCard size={20} />
-                                        Thanh toán {finalAmount.toLocaleString()} VNĐ
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+            </div>
+            
+            
+            <div className={cx('footer-note')}>
+                Bằng việc xác nhận, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.
             </div>
         </div>
     );
