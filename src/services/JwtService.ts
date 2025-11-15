@@ -71,6 +71,14 @@ export function getUsernameByToken(){
     }
 }
 
+export function getEmailByToken(){
+    const token = localStorage.getItem('token');
+    if(token){
+        const decodedToken = jwtDecode(token) as JwtPayload;
+        return decodedToken.email;
+    }
+}
+
 export function logout(navigate: any) {
     const token:any = localStorage.getItem('token');
     localStorage.removeItem(token);

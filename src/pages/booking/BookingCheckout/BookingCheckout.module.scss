@@ -230,6 +230,84 @@ $transition-speed: 0.2s ease-in-out;
             }
         }
     }}
+
+    .form-group_2 {
+        flex: 1;
+    }
+
+    .form-group_2 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    label {
+        font-weight: 700; /* Nổi bật hơn */
+        margin-bottom: 8px;
+        color: $text-color-dark; // Đổi sang màu tối để dễ đọc
+        font-size: 1.4rem;
+        transition: color 0.1s;
+    }
+
+    .input-icon-wrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid $border-light;
+        border-radius: $border-radius-large; /* Áp dụng góc lớn hơn */
+        overflow: hidden;
+        transition: all $transition-speed;
+        background-color: $white-bg;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Shadow tinh tế */
+
+        /* Hiệu ứng cao cấp khi focus */
+        &:focus-within {
+            border-color: $primary-brand-color;
+            box-shadow: 0 4px 12px rgba($primary-brand-color, 0.15); /* Shadow nổi bật hơn */
+            
+            svg {
+                color: $primary-brand-color; /* Icon đổi màu khi focus */
+            }
+        }
+
+        svg {
+            color: $text-color-light; /* Icon mặc định màu xám nhạt tinh tế */
+            margin: 0 14px; /* Tăng khoảng cách cho cảm giác thoáng */
+            flex-shrink: 0;
+            transition: color $transition-speed;
+        }
+
+        input, textarea {
+            flex-grow: 1;
+            padding: 14px; /* Tăng padding */
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: $text-color-dark;
+            background-color: transparent; /* Giúp focus shadow hiện đẹp hơn */
+
+            &::placeholder {
+                color: $text-color-light; // Placeholder màu xám nhạt
+            }
+            &:disabled {
+                background-color: $bg-light-grey;
+                cursor: not-allowed;
+            }
+        }
+
+        &.textarea-wrapper {
+            align-items: flex-start;
+            textarea {
+                padding-top: 14px;
+                padding-bottom: 14px;
+                width: 100%;
+                resize: vertical;
+                min-height: 120px; /* Tăng chiều cao textarea */
+            }
+            .textarea-icon {
+                margin-top: 14px;
+            }
+        }
+    }}
 /* Payment Options Grid */
 
 .payment-options-grid {

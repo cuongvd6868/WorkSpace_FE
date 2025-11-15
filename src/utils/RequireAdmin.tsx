@@ -8,6 +8,7 @@ export interface JwtPayload {
 	avatar: string;
 	firstName: string;
 	active: boolean;
+	email: string;
 }
 
 const RequireAdmin = <P extends object>(WrappedComponent: React.ComponentType<P>) => {

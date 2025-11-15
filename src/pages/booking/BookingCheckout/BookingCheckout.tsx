@@ -10,13 +10,16 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-// Import các hàm API
-import { createBookingGuest, createPaymentUrl } from '~/services/BookingService';
-import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse } from '~/types/Booking'; 
+import { createBookingCustomer, createBookingGuest, createPaymentUrl } from '~/services/BookingService';
+import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse, CustomerDetails, CreateBookingRequestForCustomer } from '~/types/Booking'; 
+import { getEmailByToken, isToken, isTokenExpired } from '~/services/JwtService';
 
 const cx = classNames.bind(styles);
 
 const BookingCheckout: React.FC = () => {
+    const token = localStorage.getItem('token');
+    const isLoggedIn = token && isToken() && !isTokenExpired(token);
+
     const { bookingData, clearBookingData } = useBooking();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -123,25 +126,38 @@ const BookingCheckout: React.FC = () => {
                 phoneNumber: phoneNumber.trim(),
             };
 
-            // Chuẩn bị Request Payload
-            const requestData: CreateBookingRequestForGuest = {
-                guestDetails,
-                bookingDetails,
+            const customerDetails: CustomerDetails = {
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                phoneNumber: phoneNumber.trim(),
             };
 
-            // 2. Gọi API tạo Booking cho Guest
-            const bookingResponse: CreateBookingResponse = await createBookingGuest(requestData);
-            const bookingId = bookingResponse.bookingId;
-            
-            toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
+            if(!isLoggedIn) {
+                const requestData: CreateBookingRequestForGuest = {
+                    guestDetails,
+                    bookingDetails,
+                };
+                const bookingResponse: CreateBookingResponse = await createBookingGuest(requestData);
+                const bookingId = bookingResponse.bookingId;
+                
+                toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
+                const paymentUrl = await createPaymentUrl(bookingId);
+    
+                window.location.href = paymentUrl; 
+            } else {
+                const requestData: CreateBookingRequestForCustomer = {
+                    customerDetails,
+                    bookingDetails,
+                };
+                const bookingResponse: CreateBookingResponse = await createBookingCustomer(requestData);
+                const bookingId = bookingResponse.bookingId;
+                
+                toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
+    
+                const paymentUrl = await createPaymentUrl(bookingId);
 
-            // 3. Gọi API lấy URL thanh toán
-            const paymentUrl = await createPaymentUrl(bookingId);
-
-            // 4. Chuyển hướng người dùng đến trang thanh toán
-            // Xóa dữ liệu booking khỏi Context sau khi tạo thành công và trước khi chuyển hướng
-            clearBookingData(); 
-            window.location.href = paymentUrl; 
+                window.location.href = paymentUrl; 
+            }
 
         } catch (error: any) {
             console.error('Lỗi quy trình đặt chỗ:', error);
@@ -156,7 +172,6 @@ const BookingCheckout: React.FC = () => {
 
     return (
         <div className={cx('checkout-page-wrapper')}>
-            {/* Header và các phần hiển thị khác giữ nguyên */}
             <div className={cx('checkout-header-bar')}>
                 <button 
                     className={cx('back-button')} 
@@ -231,21 +246,39 @@ const BookingCheckout: React.FC = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className={cx('form-group')}>
-                                    <label htmlFor="email">Email *</label>
-                                    <div className={cx('input-icon-wrapper')}>
-                                        <Mail size={18} />
-                                        <input
-                                            id="email"
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            disabled={isProcessing}
-                                            placeholder="email@example.com"
-                                        />
+                                {isLoggedIn && (
+                                    <div className={cx('form-group_2')}>
+                                        <label htmlFor="email">Email (Mặc định)</label>
+                                        <div className={cx('input-icon-wrapper')}>
+                                            <Mail size={18} />
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                value={getEmailByToken()}
+                                                required
+                                                disabled={isProcessing}
+                                                placeholder="email@example.com"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+                                {!isLoggedIn && (
+                                    <div className={cx('form-group')}>
+                                        <label htmlFor="email">Email *</label>
+                                        <div className={cx('input-icon-wrapper')}>
+                                            <Mail size={18} />
+                                            <input
+                                                id="email"
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
+                                                disabled={isProcessing}
+                                                placeholder="email@example.com"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                             
                             <div className={cx('form-group')}>
