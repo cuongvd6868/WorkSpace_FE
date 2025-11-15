@@ -29,7 +29,7 @@ $transition-speed: 0.2s ease-in-out;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background-color: $bg-light-grey;
+    // background-color: $bg-light-grey;
     font-family: $font-stack;
     color: $text-color-dark;
     padding: 30px 20px;
@@ -88,7 +88,7 @@ $transition-speed: 0.2s ease-in-out;
 
 .checkout-main-content {
     width: 100%;
-    max-width: 68%; /* Chiều dài 68% */
+    max-width: 69%; /* Chiều dài 68% */
     display: flex;
     gap: 30px; /* Khoảng cách giữa các cột */
     background-color: $white-bg;

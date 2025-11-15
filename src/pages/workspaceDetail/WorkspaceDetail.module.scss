@@ -31,14 +31,14 @@ $danger-color: #dc3545;
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         color: $text-muted;
         margin-bottom: 15px;
     }
     .contact-info {
         span {
             margin-right: 20px;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             color: $text-dark;
             display: inline-flex;
             align-items: center;
@@ -137,7 +137,7 @@ $danger-color: #dc3545;
 }
 
 .section-heading {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: $primary-color;
     border-bottom: 2px solid $border-color;
     padding-bottom: 10px;
@@ -184,11 +184,11 @@ $danger-color: #dc3545;
         .amenity-details {
             strong {
                 display: block;
-                font-size: 1rem;
+                font-size: 1.3rem;
                 color: $text-dark;
             }
             p {
-                font-size: 0.85rem;
+                font-size: 1rem;
                 color: $text-muted;
                 margin-top: 5px;
             }
@@ -207,7 +207,7 @@ $danger-color: #dc3545;
         gap: 10px;
         padding: 10px 0;
         border-bottom: 1px dashed $border-color;
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: $text-dark;
         
         svg {
@@ -262,12 +262,12 @@ $danger-color: #dc3545;
     .host-details {
         strong {
             display: block;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             color: $text-dark;
             margin-bottom: 2px;
         }
         p {
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             color: $text-muted;
         }
     }
@@ -277,7 +277,7 @@ $danger-color: #dc3545;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             margin-bottom: 8px;
             strong {
                 font-weight: 600;
@@ -430,7 +430,7 @@ $danger-color: #dc3545;
     
     p {
         margin-top: 15px;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     &.warning {
@@ -465,7 +465,7 @@ $danger-color: #dc3545;
         padding: 15px 10px;
         border-bottom: 1px solid $border-color;
         vertical-align: middle;
-        font-size: 0.95rem;
+        font-size: 1.1rem;
     }
     
     .room-row:hover {
@@ -475,21 +475,21 @@ $danger-color: #dc3545;
     .room-title-cell {
         .room-title {
             display: block;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             color: $primary-color;
             margin-bottom: 5px;
         }
         .room-type-tag {
             display: inline-block;
             padding: 3px 8px;
-            font-size: 0.75rem;
+            font-size: 1rem;
             font-weight: 600;
             border-radius: 4px;
             color: $card-bg;
             background-color: $text-muted;
         }
         .room-description-small {
-            font-size: 0.85rem;
+            font-size: 1rem;
             color: $text-muted;
             margin-top: 5px;
         }
@@ -540,7 +540,7 @@ $danger-color: #dc3545;
     }
     
     .booking-tip {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: $text-muted;
         text-align: center;
         margin-top: 5px;

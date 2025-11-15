@@ -8,6 +8,11 @@ import {
     User, Lock, Home, Loader, ChevronLeft, Tag,
     CheckCircle, AlertCircle, Phone, Mail, FileText, Briefcase
 } from 'lucide-react';
+import { toast } from 'react-toastify';
+
+// Import các hàm API
+import { createBookingGuest, createPaymentUrl } from '~/services/BookingService';
+import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse } from '~/types/Booking'; 
 
 const cx = classNames.bind(styles);
 
@@ -17,10 +22,11 @@ const BookingCheckout: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     
     // State cho Form Thông Tin Khách Hàng
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [contactPhone, setContactPhone] = useState('');
-    const [notes, setNotes] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [specialRequests, setSetspecialRequests] = useState('');
 
     // State cho Khuyến Mãi
     const [promotionCode, setPromotionCode] = useState('');
@@ -41,11 +47,14 @@ const BookingCheckout: React.FC = () => {
     }
 
     const { room, totalAmount, totalHours, startTimeUtc, endTimeUtc, numberOfParticipants, workspaceName, workspaceAddressLine } = bookingData;
-    
-    // Tính lại tổng tiền sau khi áp dụng khuyến mãi
-    const finalAmount = totalAmount - discountAmount;
 
-    // Logic xử lý Mã Khuyến Mãi
+
+    const taxAmount = totalAmount * 0.1;
+    const finalAmount = (totalAmount + taxAmount) - discountAmount;
+    // nền tảng đớp
+    const serviceFee = finalAmount * 0.1; 
+
+    //============================ Logic xử lý Mã Khuyến Mãi ============================
     const handleApplyPromotion = () => {
         if (isProcessing) return;
         
@@ -56,10 +65,12 @@ const BookingCheckout: React.FC = () => {
             const discount = totalAmount * 0.1; // Giảm 10%
             setDiscountAmount(Math.round(discount));
             setIsCodeApplied(true);
+            toast.success("Áp dụng mã khuyến mãi thành công!");
         } else if (code) {
             setDiscountAmount(0);
             setIsCodeApplied(false);
             setPromoError("Mã khuyến mãi không hợp lệ hoặc đã hết hạn.");
+            toast.error("Mã khuyến mãi không hợp lệ.");
         } else {
             setDiscountAmount(0);
             setIsCodeApplied(false);
@@ -76,43 +87,76 @@ const BookingCheckout: React.FC = () => {
         }) + ' lúc ' + date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const handlePlaceBooking = (e: React.FormEvent) => {
+    // ============================ Logic xử lý Đặt chỗ ============================
+    const handlePlaceBooking = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        if (!name || !email || !contactPhone) {
-            alert("Vui lòng điền đầy đủ thông tin liên hệ.");
+        if (isProcessing) return;
+
+        // 1. Kiểm tra thông tin bắt buộc
+        if (!firstName || !lastName || !email || !phoneNumber) {
+            toast.error("Vui lòng điền đầy đủ thông tin liên hệ bắt buộc.");
             return;
         }
 
         setIsProcessing(true);
 
-        // --- MOCK LOGIC XỬ LÝ THANH TOÁN ---
-        setTimeout(() => {
+        try {
+            // Chuẩn bị dữ liệu BookingDetails
+            const bookingDetails: BookingDetails = {
+                workSpaceRoomID: room.id,
+                startTimeUtc: startTimeUtc,
+                endTimeUtc: endTimeUtc,
+                numberOfParticipants: numberOfParticipants,
+                specialRequests: specialRequests,
+                totalPrice: totalAmount, // Tổng giá cơ bản
+                taxAmount: taxAmount,
+                serviceFee: serviceFee,
+                finalAmount: finalAmount, // Tổng cuối cùng sau giảm giá
+            };
+
+            // Chuẩn bị dữ liệu GuestDetails
+            const guestDetails: GuestDetails = {
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                email: email.trim(),
+                phoneNumber: phoneNumber.trim(),
+            };
+
+            // Chuẩn bị Request Payload
+            const requestData: CreateBookingRequestForGuest = {
+                guestDetails,
+                bookingDetails,
+            };
+
+            // 2. Gọi API tạo Booking cho Guest
+            const bookingResponse: CreateBookingResponse = await createBookingGuest(requestData);
+            const bookingId = bookingResponse.bookingId;
+            
+            toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
+
+            // 3. Gọi API lấy URL thanh toán
+            const paymentUrl = await createPaymentUrl(bookingId);
+
+            // 4. Chuyển hướng người dùng đến trang thanh toán
+            // Xóa dữ liệu booking khỏi Context sau khi tạo thành công và trước khi chuyển hướng
+            clearBookingData(); 
+            window.location.href = paymentUrl; 
+
+        } catch (error: any) {
+            console.error('Lỗi quy trình đặt chỗ:', error);
+            // Hiển thị thông báo lỗi chi tiết hơn nếu có
+            const errorMessage = error?.response?.data?.message || error.message || "Đã xảy ra lỗi trong quá trình đặt chỗ. Vui lòng thử lại.";
+            toast.error(errorMessage);
+
+        } finally {
             setIsProcessing(false);
-            
-            // Dữ liệu đặt phòng đã gửi (có cả khuyến mãi)
-            console.log("Dữ liệu đặt phòng đã gửi:", {
-                room: room.id,
-                startTime: startTimeUtc,
-                endTime: endTimeUtc,
-                participants: numberOfParticipants,
-                customerInfo: { name, email, contactPhone, notes },
-                amount: finalAmount,
-                discount: discountAmount,
-                promotionCode: promotionCode
-            });
-
-            // Sau khi thành công:
-            clearBookingData();
-            alert(`Đặt phòng ${room.title} thành công! Tổng tiền cuối cùng: ${finalAmount.toLocaleString()} VNĐ.`);
-            
-            navigate('/booking/success');
-
-        }, 2500); 
+        }
     };
 
     return (
         <div className={cx('checkout-page-wrapper')}>
+            {/* Header và các phần hiển thị khác giữ nguyên */}
             <div className={cx('checkout-header-bar')}>
                 <button 
                     className={cx('back-button')} 
@@ -131,23 +175,24 @@ const BookingCheckout: React.FC = () => {
             <div className={cx('checkout-main-content')}>
                 <div className={cx('left-panel')}>
 
-                    {/* THÔNG TIN LIÊN HỆ */}
+                    {/*============================ THÔNG TIN LIÊN HỆ ============================*/}
                     <div className={cx('section-card', 'contact-section')}>
                         <h2 className={cx('card-title')}>
                             <User size={20} />
                             Thông tin của bạn
                         </h2>
+                        {/* Bọc form với onSubmit để kích hoạt handlePlaceBooking */}
                         <form onSubmit={handlePlaceBooking} id="booking-form" className={cx('contact-form')}>
                             <div className={cx('form-row')}>
                                 <div className={cx('form-group')}>
-                                    <label htmlFor="name">Họ *</label>
+                                    <label htmlFor="firstName">Họ *</label>
                                     <div className={cx('input-icon-wrapper')}>
                                         <User size={18} />
                                         <input
-                                            id="name"
+                                            id="firstName"
                                             type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
                                             required
                                             disabled={isProcessing}
                                             placeholder="Ví dụ: Nguyễn"
@@ -155,14 +200,14 @@ const BookingCheckout: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className={cx('form-group')}>
-                                    <label htmlFor="name">tên *</label>
+                                    <label htmlFor="lastName">Tên *</label>
                                     <div className={cx('input-icon-wrapper')}>
                                         <User size={18} />
                                         <input
-                                            id="name"
+                                            id="lastName"
                                             type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
                                             required
                                             disabled={isProcessing}
                                             placeholder="Ví dụ: Văn A"
@@ -178,8 +223,8 @@ const BookingCheckout: React.FC = () => {
                                         <input
                                             id="phone"
                                             type="tel"
-                                            value={contactPhone}
-                                            onChange={(e) => setContactPhone(e.target.value)}
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
                                             required
                                             disabled={isProcessing}
                                             placeholder="09xx xxx xxx"
@@ -209,8 +254,8 @@ const BookingCheckout: React.FC = () => {
                                     <FileText size={18} className={cx('textarea-icon')} />
                                     <textarea
                                         id="notes"
-                                        value={notes}
-                                        onChange={(e) => setNotes(e.target.value)}
+                                        value={specialRequests}
+                                        onChange={(e) => setSetspecialRequests(e.target.value)}
                                         rows={3}
                                         disabled={isProcessing}
                                         placeholder="Cần thêm màn hình phụ, nước uống,..."
@@ -221,7 +266,7 @@ const BookingCheckout: React.FC = () => {
                     </div>
 
 
-                    {/* PHƯƠNG THỨC THANH TOÁN */}
+                    {/* =========================================PHƯƠNG THỨC THANH TOÁN=================================== */}
                     <div className={cx('section-card', 'payment-method-section')}>
                         <h2 className={cx('card-title')}>
                             <Lock size={20} />
@@ -237,6 +282,7 @@ const BookingCheckout: React.FC = () => {
                                 </div>
                             </label>
                             
+                            {/* Các phương thức thanh toán khác */}
                             <label className={cx('payment-option-card')}>
                                 <input type="radio" name="paymentMethod" value="card" disabled={isProcessing} />
                                 <div className={cx('option-content')}>
@@ -259,7 +305,7 @@ const BookingCheckout: React.FC = () => {
                 </div>
 
                 <div className={cx('right-panel')}>
-                    {/* TÓM TẮT ĐƠN HÀNG */}
+                    {/* TÓM TẮT ĐƠN HÀNG - Giữ nguyên */}
                     <div className={cx('summary-card')}>
                         <h2 className={cx('summary-card-title')}>
                             <Home size={20} />
@@ -291,7 +337,7 @@ const BookingCheckout: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* MÃ KHUYẾN MÃI */}
+                    {/* MÃ KHUYẾN MÃI - Giữ nguyên */}
                     <div className={cx('promo-card')}>
                         <h3 className={cx('promo-card-title')}>
                             <Tag size={18} />
@@ -329,7 +375,7 @@ const BookingCheckout: React.FC = () => {
                         )}
                     </div>
 
-                    {/* TỔNG THANH TOÁN */}
+                    {/* TỔNG THANH TOÁN - Giữ nguyên */}
                     <div className={cx('total-payment-card')}>
                         <h2 className={cx('total-payment-title')}>
                             <DollarSign size={20} />
@@ -353,6 +399,7 @@ const BookingCheckout: React.FC = () => {
                         </div>
                         <p className={cx('tax-note')}>Đã bao gồm thuế và phí dịch vụ.</p>
 
+                        {/* Nút thanh toán gắn với form bằng thuộc tính form="booking-form" */}
                         <button 
                             type="submit" 
                             className={cx('confirm-payment-btn', { processing: isProcessing })}
