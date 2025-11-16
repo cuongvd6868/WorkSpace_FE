@@ -1,23 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './PaymentSuccess.module.scss';
 import { CheckCircle, Zap, Clock, User, DollarSign, ChevronRight } from 'lucide-react';
+import { Link, useSearchParams } from "react-router-dom";
+import { PaymentSuccessResponse } from "~/types/Booking";
+import { GetBookingByBookingCode } from "~/services/BookingService";
 
 const cx = classNames.bind(styles);
 
-const PaymentSuccess: React.FC = () => {
-    // Giả lập dữ liệu cần hiển thị (thường lấy từ query params hoặc state/API)
-    const bookingDetails = {
-        bookingId: "WSP-532456",
-        workspaceName: "The Executive Hub - Coworking & Meeting",
-        roomTitle: "Phòng họp cao cấp 'The Zenith'",
-        date: "Thứ Năm, 28/08/2026",
-        time: "14:00 - 16:30",
-        finalAmount: 1250000,
-        paymentMethod: "VNPay/Chuyển khoản",
-    };
 
-    // Có thể thêm logic side effect ở đây, ví dụ: gửi sự kiện tracking.
+
+const PaymentSuccess: React.FC = () => {
+    const [bookingDetails, setBookingDetail] = useState<PaymentSuccessResponse>();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const [searchParams] = useSearchParams();
+    const bookingCode = searchParams.get("bookingCode");
+
+    useEffect(() => {
+        const fetchBookingResponse = async() => {
+            try {
+                const apiResponse = await GetBookingByBookingCode(bookingCode);
+                setBookingDetail(apiResponse);
+            } catch (error) {
+                setError('' + error);
+                console.log(error);
+            } finally {
+                setLoading(false)
+            }
+        };
+        fetchBookingResponse();
+
+    }, [bookingCode])
+
+
+
+
+
     useEffect(() => {
         document.title = "Thanh toán thành công | Your Platform Name";
     }, []);
@@ -42,34 +62,38 @@ const PaymentSuccess: React.FC = () => {
                     <div className={cx('card-item')}>
                         <Zap size={20} className={cx('item-icon')} />
                         <span className={cx('item-label')}>Mã đặt chỗ</span>
-                        <span className={cx('item-value', 'highlight')}>{bookingDetails.bookingId}</span>
+                        <span className={cx('item-value', 'highlight')}>{bookingDetails?.bookingCode}</span>
                     </div>
                     <div className={cx('card-item')}>
                         <User size={20} className={cx('item-icon')} />
                         <span className={cx('item-label')}>Địa điểm</span>
-                        <span className={cx('item-value')}>{bookingDetails.roomTitle} tại {bookingDetails.workspaceName}</span>
+                        <span className={cx('item-value')}>{bookingDetails?.title} </span>
                     </div>
                     <div className={cx('card-item')}>
                         <Clock size={20} className={cx('item-icon')} />
                         <span className={cx('item-label')}>Thời gian</span>
-                        <span className={cx('item-value')}>{bookingDetails.date}, từ {bookingDetails.time}</span>
+                        <span className={cx('item-value')}>từ {bookingDetails?.startTimeUtc} đến {bookingDetails?.endTimeUtc}</span>
                     </div>
                     <div className={cx('card-item', 'total-line')}>
                         <DollarSign size={24} className={cx('item-icon')} />
                         <span className={cx('item-label', 'total-label')}>Tổng số tiền thanh toán</span>
-                        <span className={cx('item-value', 'total-amount')}>{formatCurrency(bookingDetails.finalAmount)}</span>
+                        <span className={cx('item-value', 'total-amount')}>{bookingDetails?.finalAmount} VND</span>
                     </div>
                 </div>
 
                 {/* 3. Phần Hành động Tiếp theo */}
                 <div className={cx('next-steps')}>
-                    <button className={cx('action-button', 'primary')}>
-                        Xem Chi tiết Đặt chỗ
-                        <ChevronRight size={20} />
-                    </button>
-                    <button className={cx('action-button', 'secondary')}>
-                        Trở về Trang chủ
-                    </button>
+                    {/* <Link to={'/'}>
+                        <button className={cx('action-button', 'primary')}>
+                            Xem Chi tiết Đặt chỗ
+                            <ChevronRight size={20} />
+                        </button>
+                    </Link> */}
+                    <Link to={'/'}>
+                        <button className={cx('action-button', 'primary')}>
+                            Trở về Trang chủ
+                        </button>
+                    </Link>
                 </div>
                 
                 {/* 4. Ghi chú bảo mật */}

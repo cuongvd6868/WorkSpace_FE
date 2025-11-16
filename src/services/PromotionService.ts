@@ -13,3 +13,13 @@ export const GetAllPromotions = async () => {
         throw error; 
     }
 }
+
+export const GetPromotionByCode = async (code: string) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/booking/code?promotionCode=${code}`)
+        return response.data
+    } catch (error) {
+        handleError(error); 
+        throw error; 
+    }
+}

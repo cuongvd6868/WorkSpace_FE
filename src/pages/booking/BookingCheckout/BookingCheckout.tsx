@@ -13,6 +13,8 @@ import { toast } from 'react-toastify';
 import { createBookingCustomer, createBookingGuest, createPaymentUrl } from '~/services/BookingService';
 import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse, CustomerDetails, CreateBookingRequestForCustomer } from '~/types/Booking'; 
 import { getEmailByToken, isToken, isTokenExpired } from '~/services/JwtService';
+import { Promotions } from '~/types/Promotions';
+import { GetPromotionByCode } from '~/services/PromotionService';
 
 const cx = classNames.bind(styles);
 
@@ -36,6 +38,9 @@ const BookingCheckout: React.FC = () => {
     const [discountAmount, setDiscountAmount] = useState(0);
     const [isCodeApplied, setIsCodeApplied] = useState(false);
     const [promoError, setPromoError] = useState('');
+    const [promotion, setPromotion] = useState<Promotions>();
+    const [promotionLoading, setPromotionLoading] = useState<boolean>(true);
+
 
     // --- KIỂM TRA DỮ LIỆU ĐẶT PHÒNG ---
     useEffect(() => {
@@ -43,42 +48,100 @@ const BookingCheckout: React.FC = () => {
             alert("Không tìm thấy thông tin đặt phòng. Vui lòng chọn phòng trước khi thanh toán.");
             navigate('/'); 
         }
-    }, [bookingData, navigate]);
+        if(isLoggedIn) {
+          const loggedInEmail = getEmailByToken();
+            if (loggedInEmail) {
+                setEmail(loggedInEmail);
+            }  
+        }
+    }, [bookingData, navigate, isLoggedIn]);
 
     if (!bookingData) {
         return null;
     }
 
     const { room, totalAmount, totalHours, startTimeUtc, endTimeUtc, numberOfParticipants, workspaceName, workspaceAddressLine } = bookingData;
-
-
     const taxAmount = totalAmount * 0.1;
     const finalAmount = (totalAmount + taxAmount) - discountAmount;
     // nền tảng đớp
     const serviceFee = finalAmount * 0.1; 
 
     //============================ Logic xử lý Mã Khuyến Mãi ============================
-    const handleApplyPromotion = () => {
-        if (isProcessing) return;
-        
-        const code = promotionCode.toUpperCase().trim();
-        setPromoError('');
 
-        if (code === 'GIAMGIA10' && totalAmount > 0) {
-            const discount = totalAmount * 0.1; // Giảm 10%
-            setDiscountAmount(Math.round(discount));
-            setIsCodeApplied(true);
-            toast.success("Áp dụng mã khuyến mãi thành công!");
-        } else if (code) {
-            setDiscountAmount(0);
-            setIsCodeApplied(false);
-            setPromoError("Mã khuyến mãi không hợp lệ hoặc đã hết hạn.");
-            toast.error("Mã khuyến mãi không hợp lệ.");
-        } else {
-            setDiscountAmount(0);
-            setIsCodeApplied(false);
-            setPromoError("Vui lòng nhập mã khuyến mãi.");
+    const calculateDiscount = (
+        discountType: string, 
+        discountValue: number, 
+        baseAmount: number 
+    ): number => { 
+        
+        const validatedBaseAmount = Math.max(0, baseAmount);
+        const validatedDiscountValue = Math.max(0, discountValue);
+
+        let calculatedDiscount = 0;
+
+        if (discountType === 'AMOUNT') {
+            calculatedDiscount = validatedDiscountValue;
+
+            return Math.min(calculatedDiscount, validatedBaseAmount); 
+
+        } else if (discountType === 'PERCENT') {
+            
+            calculatedDiscount = validatedBaseAmount * (validatedDiscountValue / 100);
+            
+
+            return Math.round(calculatedDiscount); 
         }
+        
+        return 0;
+    }   
+    const handleApplyPromotion = async () => {
+        if (isProcessing) return;
+        if(!isLoggedIn) {
+            toast.dark('Bạn phải đăng nhập để sử dụng khuyến mãi')
+        }else {
+            const codeToUse = promotionCode.toUpperCase().trim();
+            if (codeToUse === '') {
+                setPromoError("Vui lòng nhập mã khuyến mãi.");
+                setDiscountAmount(0);
+                setIsCodeApplied(false);
+                return;
+            }
+            setPromotionLoading(true);
+            setPromoError('');
+
+            try {
+                const apiResponse = await GetPromotionByCode(codeToUse);
+                if (apiResponse && apiResponse.id) {
+                    setPromotion(apiResponse);
+                    setIsCodeApplied(true);
+                    setPromoError('');
+                    toast.success(`Mã khuyến mãi "${codeToUse}" đã được áp dụng!`);
+
+                    const discount = calculateDiscount(
+                        apiResponse.discountType,     
+                        apiResponse.discountValue,     
+                        totalAmount                    
+                    ); 
+                    setDiscountAmount(discount);
+                } else {
+                    setPromotion(undefined);
+                    setPromoError("Mã khuyến mãi không hợp lệ hoặc không áp dụng được.");
+                    setIsCodeApplied(false);
+                    setDiscountAmount(0);
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra khuyến mãi:', error);
+                const errorMessage =  "Mã khuyến mãi không hợp lệ hoặc đã hết hạn.";
+                setPromoError(errorMessage);
+                setPromotion(undefined);
+                setIsCodeApplied(false);
+                setDiscountAmount(0);
+                toast.error(errorMessage);                
+            } finally {
+                setPromotionLoading(false);
+            }
+        }
+        
     };
 
     // Định dạng thời gian
@@ -254,7 +317,7 @@ const BookingCheckout: React.FC = () => {
                                             <input
                                                 id="email"
                                                 type="email"
-                                                value={getEmailByToken()}
+                                                value={email}
                                                 required
                                                 disabled={isProcessing}
                                                 placeholder="email@example.com"
@@ -418,6 +481,10 @@ const BookingCheckout: React.FC = () => {
                             <div className={cx('price-item')}>
                                 <span className={cx('label')}>Giá thuê cơ bản</span>
                                 <span className={cx('value')}>{totalAmount.toLocaleString()} VNĐ</span>
+                            </div>
+                            <div className={cx('price-item')}>
+                                <span className={cx('label')}>VAT</span>
+                                <span className={cx('value')}>{taxAmount.toLocaleString()} VNĐ</span>
                             </div>
                             {discountAmount > 0 && (
                                 <div className={cx('price-item', 'discount-line')}>

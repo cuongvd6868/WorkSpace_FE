@@ -7,7 +7,7 @@ import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingPartici
 import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faDesktop, faLocationDot, faPeopleGroup, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
@@ -132,11 +132,12 @@ const Navbar: React.FC = () => {
       <header className={cx('wrapper')}>
         <div className={cx('top-nav-bar')}>
           <div className={cx('top-nav-content')}>
-            <div className={cx('left-section')}>
-              <Link to={'/'}>
-                <div className={cx('logo')}>CSB</div>
-              </Link>
-            </div>
+            <Link to={'/'}>
+              <div className={cx('left-section')}>
+                  <FontAwesomeIcon icon={faBriefcase} className={cx('logo-icon')} />
+                  <div className={cx('logo')}>CSB</div>
+              </div>
+            </Link>
             {isLoggedIn ? (
                <div className={cx('right-section')}>
                 <img src={flagImg} alt="" className={cx('flag')}/>

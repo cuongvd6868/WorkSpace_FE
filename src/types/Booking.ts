@@ -41,3 +41,12 @@ export interface CreateBookingResponse {
 export interface CreatePaymentUrlResponse {
   url: string; 
 }
+
+export type PaymentSuccessResponse = {
+  bookingCode: string;
+  startTimeUtc: string;
+  endTimeUtc: string;
+  finalAmount: number;
+  title: string;
+}
+
