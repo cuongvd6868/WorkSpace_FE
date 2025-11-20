@@ -7,7 +7,7 @@ import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingPartici
 import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBriefcase, faDesktop, faLocationDot, faPeopleGroup, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faCaretDown, faDesktop, faEnvelope, faHeart, faLocationDot, faMessage, faPaperPlane, faPeopleGroup, faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
@@ -19,6 +19,8 @@ import { toast } from "react-toastify";
 const cx = classNames.bind(styles);
 
 const Navbar: React.FC = () => {
+
+  
 
   // === DÙNG CONTEXT HOOK VÀ NAVIGATE ===
   const { 
@@ -126,6 +128,23 @@ const Navbar: React.FC = () => {
 
       navigate(`/search-results?${queryString}`);
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); 
+    toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
+  };
+
+  // === HÀM XỬ LÝ CLICK LINK CẦN ĐĂNG NHẬP ===
+  const handleProtectedLinkClick = (e: React.MouseEvent, path: string) => {
+    if (!isLoggedIn) {
+      e.preventDefault(); // Ngăn chặn Link điều hướng
+      toast.info('Vui lòng đăng nhập để truy cập tính năng này.');
+    } else {
+      // Nếu đã đăng nhập, cho phép Link điều hướng
+      navigate(path);
+    }
+  };
   
   return (
     <>
@@ -138,23 +157,26 @@ const Navbar: React.FC = () => {
                   <div className={cx('logo')}>CSB</div>
               </div>
             </Link>
-            {isLoggedIn ? (
-               <div className={cx('right-section')}>
-                <img src={flagImg} alt="" className={cx('flag')}/>
-                <a href="#" className={cx('top-nav-item')}>Hoạt động</a>
-                <Link to={'/'} className={cx('top-nav-item')}>Đăng không gian của quý vị</Link>
-                <Link to={'/login'} className={cx('nav_btn')}>{getUsernameByToken()}</Link>
-              </div>
-            ): 
               <div className={cx('right-section')}>
                 <p className={cx('flag_payment')}>VND</p>
                 <img src={flagImg} alt="" className={cx('flag')}/>
-                <Link to={'/'} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></Link>
-                <Link to={'/'} className={cx('top-nav-item')}>Đăng không gian của quý vị</Link>
-                <Link to={'/login'} className={cx('nav_btn')}>Đăng Ký</Link>
-                <Link to={'/login'} className={cx('nav_btn')}>Đăng nhập</Link>
-              </div>
-            }
+                <div onClick={(e) => handleProtectedLinkClick(e, '/help')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
+                <div onClick={(e) => handleProtectedLinkClick(e, '/messages')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
+                <div onClick={(e) => handleProtectedLinkClick(e, '/favorites')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
+                <div onClick={(e) => handleProtectedLinkClick(e, '/activities')} className={cx('top-nav-item')}>Hoạt động</div>  
+                <div onClick={(e) => handleProtectedLinkClick(e, '/host-space')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
+                {isLoggedIn ? (
+                  <div className={cx('toggle_auth')}>
+                    <div className={cx('nav_btn_login')}>{getUsernameByToken()}</div>
+                    <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
+                  </div>
+                ): 
+                  <div className={cx('toggle_auth')}>
+                    <Link to={'/login'} className={cx('nav_btn')}>Đăng Ký</Link>
+                    <Link to={'/login'} className={cx('nav_btn')}>Đăng nhập</Link>
+                  </div>
+                }
+            </div>
           </div>
         </div>
 

@@ -79,10 +79,6 @@ export function getEmailByToken(){
     }
 }
 
-export function logout(navigate: any) {
-    const token:any = localStorage.getItem('token');
-    localStorage.removeItem(token);
-    // window.location.reload();
-    console.log(token)
-    // localStorage.removeItem('cart');
- }
+export function logout() {
+    localStorage.removeItem('token');
+}
