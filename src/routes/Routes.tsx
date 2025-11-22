@@ -7,6 +7,7 @@ import MapPageView from "~/pages/map/MapPageView";
 import SearchResults from "~/pages/search/SearchResultsPage";
 import WorkspaceDetail from "~/pages/workspaceDetail/WorkspaceDetail";
 import PaymentSuccess from "~/pages/booking/PaymentResult/Success/PaymentSuccess";
+import HelpCenter from "~/pages/help/HelpCenter";
 
 export const router = createBrowserRouter([{
     path: "/",
@@ -19,5 +20,6 @@ export const router = createBrowserRouter([{
         {path: "/workspace/:id", element: <WorkspaceDetail/>},
         {path: "/booking/checkout", element: <BookingCheckout/>},
         {path: "/payment-result/success", element: <PaymentSuccess/>},
+        {path: "/help", element: <HelpCenter/>},
     ]
 }]);

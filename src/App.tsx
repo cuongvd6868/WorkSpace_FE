@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer';
 import { ToastContainer } from 'react-toastify';
 import { SearchProvider } from './context/SearchContext';
 import { BookingProvider } from './context/BookingContext';
+import FloatingChatWidget from './components/FloatingChatWidget/FloatingChatWidget';
 
 function App() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function App() {
         <BookingProvider>
           {showNavbar && <Navbar/>}
           <Outlet/>
+          <FloatingChatWidget />
           <Footer/>
         </BookingProvider>
       </SearchProvider>

@@ -93,6 +93,10 @@ const Navbar: React.FC = () => {
   const token = localStorage.getItem('token');
   const isLoggedIn = token && isToken() && !isTokenExpired(token);
 
+  const handleBookingNow = () => {
+    toast.info('Bạn vui lòng chọn địa điểm và thời gian!')
+  }
+
   const handleParticipantsSelect = (participantsCount: number) => {
     setParticipants(participantsCount); // Cập nhật participants vào Context
   };
@@ -135,11 +139,11 @@ const Navbar: React.FC = () => {
     toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
   };
 
-  // === HÀM XỬ LÝ CLICK LINK CẦN ĐĂNG NHẬP ===
-  const handleProtectedLinkClick = (e: React.MouseEvent, path: string) => {
+  const handleProtectedLinkClick = (e: React.MouseEvent, path: string, message: string) => {
     if (!isLoggedIn) {
-      e.preventDefault(); // Ngăn chặn Link điều hướng
-      toast.info('Vui lòng đăng nhập để truy cập tính năng này.');
+      e.preventDefault(); 
+      // toast.info('Vui lòng đăng nhập để truy cập tính năng này.');
+      toast.info(message);
     } else {
       // Nếu đã đăng nhập, cho phép Link điều hướng
       navigate(path);
@@ -160,11 +164,11 @@ const Navbar: React.FC = () => {
               <div className={cx('right-section')}>
                 <p className={cx('flag_payment')}>VND</p>
                 <img src={flagImg} alt="" className={cx('flag')}/>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/help')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/messages')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/favorites')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
-                <div onClick={(e) => handleProtectedLinkClick(e, '/activities')} className={cx('top-nav-item')}>Hoạt động</div>  
-                <div onClick={(e) => handleProtectedLinkClick(e, '/host-space')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
+                <div onClick={(e) => handleProtectedLinkClick(e, '/help', 'Vui lòng đăng nhập để hỏi đáp')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
+                <div onClick={(e) => handleProtectedLinkClick(e, '/messages', 'Vui lòng đăng nhập để truy cập tin nhắn')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
+                <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
+                <div onClick={(e) => handleProtectedLinkClick(e, '/activities', 'Vui lòng đăng nhập để truy cập hoạt động')} className={cx('top-nav-item')}>Hoạt động</div>  
+                <div onClick={(e) => handleProtectedLinkClick(e, '/host-space', 'Vui lòng đăng nhập để đăng không gian')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
                 {isLoggedIn ? (
                   <div className={cx('toggle_auth')}>
                     <div className={cx('nav_btn_login')}>{getUsernameByToken()}</div>
@@ -191,7 +195,7 @@ const Navbar: React.FC = () => {
                 Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
                 phù hợp với mọi quy mô đội nhóm của bạn...
               </p>
-              <button className={cx('cover_button')}>Đặt chỗ ngay</button>
+              <button className={cx('cover_button')} onClick={handleBookingNow}>Đặt chỗ ngay</button>
             </div>
           </div>
         ) : (

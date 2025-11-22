@@ -1,0 +1,206 @@
+// src/components/FloatingChatWidget/FloatingChatWidget.module.scss
+
+$primary-gradient-start: #6a11cb; // Deep purple
+$primary-gradient-end: #2575fc;   // Vibrant blue
+$accent-red: #dc3545;           
+$chat-bubble-size: 60px;         
+$chat-box-width: 380px;
+$chat-box-height: 550px;
+$bottom-spacing: 30px;           
+$right-spacing: 30px;            
+
+.floating-wrapper {
+    position: fixed;
+    bottom: $bottom-spacing;
+    right: $right-spacing;
+    z-index: 1000; 
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+/* Nút Bật/Tắt (Icon Bubble) */
+.chat-toggle-button {
+    width: $chat-bubble-size;
+    height: $chat-bubble-size;
+    border-radius: 50%;
+    
+    // ⭐ Đặt Gradient nền Tĩnh
+    background: linear-gradient(135deg, $primary-gradient-start, $primary-gradient-end);
+    
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1001; 
+
+    // ⭐ ÁP DỤNG CẢ 3 HIỆU ỨNG ĐỒNG THỜI
+    animation: 
+        breathe 4s ease-in-out infinite,
+        float 6s ease-in-out infinite,
+        vibrancy 10s linear infinite; // Hiệu ứng màu sắc và bóng nền
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        animation: none; // Tắt hiệu ứng tự động khi hover
+    }
+
+    &.is-open {
+        background: $accent-red; 
+        box-shadow: 0 4px 10px rgba($accent-red, 0.4);
+        transform: rotate(90deg);
+        animation: none; 
+    }
+}
+
+// Keyframes 1: Breathe (Phóng to/Thu nhỏ nhẹ - Tạo khối lượng)
+@keyframes breathe {
+    0% {
+        transform: scale(1); // Thêm transform vào đây để tránh xung đột với float
+    }
+    50% {
+        transform: scale(1.02); 
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+// Keyframes 2: Float (Dịch chuyển nhẹ nhàng - Tạo cảm giác trôi)
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+    }
+    33% {
+        transform: translate(-2px, -3px); 
+    }
+    66% {
+        transform: translate(2px, 3px); 
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+// ⭐ Keyframes 3 MỚI: Vibrancy (Rung động màu sắc - Tạo độ lấp lánh)
+@keyframes vibrancy {
+    0% {
+        background: linear-gradient(135deg, $primary-gradient-start, $primary-gradient-end);
+    }
+    25% {
+        // Thay đổi góc gradient
+        background: linear-gradient(100deg, darken($primary-gradient-start, 5%), lighten($primary-gradient-end, 5%)); 
+    }
+    50% {
+        // Thay đổi vị trí stop
+        background: linear-gradient(135deg, $primary-gradient-end, $primary-gradient-start); 
+    }
+    75% {
+        // Thay đổi độ sáng
+        background: linear-gradient(180deg, lighten($primary-gradient-start, 5%), darken($primary-gradient-end, 5%)); 
+    }
+    100% {
+        background: linear-gradient(135deg, $primary-gradient-start, $primary-gradient-end);
+    }
+}
+
+
+.chat-icon {
+    font-size: 1.8rem;
+}
+
+.close-icon {
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+
+
+/* Box Chat */
+.chat-box-container {
+    position: absolute;
+    bottom: $chat-bubble-size + 18px; 
+    right: 0;
+    width: $chat-box-width;
+    height: $chat-box-height;
+    background-color: #fff;
+    border-radius: 16px; 
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    // Hiệu ứng chuyển động (Ẩn/Hiện) Pop-out
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9) translateY(20px); 
+    transition: opacity 0.4s ease-out, visibility 0.4s ease-out, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+
+    &.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: linear-gradient(90deg, $primary-gradient-start, $primary-gradient-end);
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    width: 10px; 
+    height: 10px;
+    background-color: #38c172; 
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 0 0 6px #38c172;
+    animation: pulse 1.5s infinite; // Hiệu ứng nhấp nháy liên tục
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s, transform 0.2s;
+
+    &:hover {
+        opacity: 1;
+        transform: rotate(90deg);
+    }
+}

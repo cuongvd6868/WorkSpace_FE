@@ -1,0 +1,219 @@
+// src/components/RecommendationCard/RecommendationCard.module.scss
+
+$primary-gradient-start: #6a11cb; // Deep purple
+$primary-gradient-end: #2575fc;   // Vibrant blue
+$accent-color: #ffc107;         // Warm yellow
+$background-light: #ffffff;
+$text-dark: #212529;
+$text-light: #f8f9fa;
+$text-muted: #6c757d;
+$border-light: #e0e0e0;
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px; // More rounded corners
+    overflow: hidden;
+    background: $background-light;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); // Deeper shadow
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); // Smooth cubic-bezier transition
+    height: 100%;
+    border: 1px solid rgba(220, 220, 220, 0.6); // Subtle border
+
+    &:hover {
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2); // Even deeper shadow on hover
+        transform: translateY(-5px); // Lift effect
+    }
+}
+
+.image-wrapper {
+    position: relative;
+    height: 160px; // Slightly taller image
+    overflow: hidden;
+    background: linear-gradient(45deg, #e0f2f7, #c6e2e9); // Placeholder gradient
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease-out; // Smooth image zoom
+
+    .wrapper:hover & {
+        transform: scale(1.08); // Subtle zoom on hover
+    }
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    .wrapper:hover & {
+        opacity: 1;
+    }
+}
+
+.image-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0f4f8, #e0e6eb); // Smoother gradient placeholder
+    color: $text-muted;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 15px;
+    text-align: center;
+}
+
+.content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.title {
+    font-size: 1.25rem;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    font-weight: 700;
+    color: $text-dark;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    
+    // Underline effect
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, $primary-gradient-end, $primary-gradient-start);
+        border-radius: 2px;
+    }
+}
+
+.details {
+    margin-bottom: 15px;
+    padding-top: 10px;
+    border-top: 1px solid $border-light; // Cleaner separator
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: $text-muted;
+
+    .icon {
+        margin-right: 10px;
+        font-size: 1.1rem;
+        color: $primary-gradient-end; // Use a gradient color for icons
+        transform: translateY(1px); // Fine-tune alignment
+    }
+
+    .text {
+        font-weight: 500;
+        color: $text-dark;
+    }
+}
+
+.price-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 15px 0 20px 0;
+    padding-top: 15px;
+    border-top: 1px dashed $border-light; // Dashed separator
+}
+
+.price-label {
+    font-size: 0.95rem;
+    color: $text-muted;
+    font-weight: 600;
+}
+
+.price {
+    font-weight: 800;
+    color: $accent-color;
+    font-size: 1.5rem; // Larger price
+    letter-spacing: -0.7px;
+}
+
+.amenities {
+    margin-bottom: 20px;
+}
+
+.amenities-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; // Increased gap for tags
+    font-size: 0.8rem;
+}
+
+.amenity-item {
+    background: rgba($primary-gradient-end, 0.1); // Lighter background
+    color: $primary-gradient-end;
+    padding: 6px 12px;
+    border-radius: 20px; // Pill shape
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+        background: $primary-gradient-end;
+        color: $text-light;
+    }
+}
+
+.amenity-more {
+    color: $text-muted;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: #f1f3f5;
+    font-weight: 600;
+}
+
+.action-button {
+    background: linear-gradient(90deg, $primary-gradient-start, $primary-gradient-end);
+    color: $text-light;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: auto;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: 0 5px 20px rgba($primary-gradient-end, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1rem;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba($primary-gradient-end, 0.5);
+    }
+}
+
+.arrow-icon {
+    font-size: 1.2em;
+    transition: transform 0.2s ease-out;
+    .action-button:hover & {
+        transform: translateX(5px);
+    }
+}

@@ -59,7 +59,7 @@ export const UserProvider: React.FC<Props> = ({ children }) => {
             const res = await loginAPI(email, password);
             if (res?.data) {
                 handleAuthSuccess(res.data);
-                toast.success("Login successful!");
+                toast.success("Bạn vừa đăng nhập vào hệ thống!");
                 navigate("/");
             }
         } catch (error) {
