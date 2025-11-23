@@ -1,5 +1,3 @@
-// src/components/ChatComponent/ChatComponent.module.scss
-
 $primary-color-start: #6a11cb; // Deep purple
 $primary-color-end: #2575fc;   // Vibrant blue
 $user-bubble-bg: #e3f2fd;      // Light blue
@@ -13,7 +11,7 @@ $secondary-color:#6c757d;
 
 .wrapper {
     width: 100%;
-    height: 100%;
+    height: 90%;
     padding: 0;
     border-radius: 0; 
     box-shadow: none; 
@@ -160,12 +158,14 @@ $secondary-color:#6c757d;
         background: linear-gradient(45deg, $primary-color-start, $primary-color-end);
         color: white;
         margin-right: 10px;
+        font-size: 1.7rem;
     }
     &.user-avatar {
         background-color: #fff;
         color: $primary-color-end;
         border: 1px solid $border-light;
         margin-left: 10px;
+        font-size: 1.7rem;
     }
 }
 
@@ -193,6 +193,7 @@ $secondary-color:#6c757d;
 
 .message-text {
     margin: 0;
+    font-size: 1.2rem;
 
     :global(.highlight) { 
         background: linear-gradient(90deg, #ffe0b2, #ffcc80); // Subtle highlight
@@ -283,7 +284,7 @@ $secondary-color:#6c757d;
 }
 
 .recommendations-title {
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: $primary-color-start;
     margin-top: 0;
     margin-bottom: 15px; // More space

@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 export interface JwtPayload {
 	jti: any;
-	roles: string;
+	role: string;
 	avatar: string;
 	firstName: string;
 	active: boolean;
@@ -27,7 +27,7 @@ const RequireAdmin = <P extends object>(WrappedComponent: React.ComponentType<P>
 			// Giải mã token
 			const decodedToken = jwtDecode(token) as JwtPayload;
 			// Lấy thông tin từ token đó
-			const role = decodedToken.roles;
+			const role = decodedToken.role;
 			// Kiểm tra quyền
 			if (role !== "ADMIN") {
 				navigate("/login");

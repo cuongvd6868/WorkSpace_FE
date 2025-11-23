@@ -50,3 +50,21 @@ export type PaymentSuccessResponse = {
   title: string;
 }
 
+export type workSpaceRoom = {
+  title: string,
+  description: string
+}
+
+export type BookingListType = {
+  bookingCode: string,
+  workSpaceRoomId: number,
+  startTimeUtc: string,
+  endTimeUtc: string,
+  numberOfParticipants: number,
+  specialRequests: string,
+  finalAmount: number,
+  bookingStatusId: number,
+  isReviewed: boolean,
+  paymentMethodID: number,
+  workSpaceRoom: workSpaceRoom
+}

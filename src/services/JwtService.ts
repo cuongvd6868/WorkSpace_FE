@@ -40,7 +40,7 @@ export function getRoleByToken(){
     const token = localStorage.getItem('token');
     if(token){
         const decodedToken = jwtDecode(token) as JwtPayload;
-        return decodedToken.roles;
+        return decodedToken.role;
     }
 }
 

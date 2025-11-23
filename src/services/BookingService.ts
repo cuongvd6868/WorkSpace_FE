@@ -17,6 +17,16 @@ export const GetBookingByBookingCode = async (bookingCode: any) => {
   }
 }
 
+export const GetBookingsByUser = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}v1/booking/customer`);
+    return response.data;
+  } catch (error) {
+      handleError(error);
+      throw error;      
+  }
+}
+
 export const createBookingGuest = async (bookingData: CreateBookingRequestForGuest) => {
   try {
     const response = await axios.post(`${API_BASE_URL}v1/booking/guest`, bookingData);

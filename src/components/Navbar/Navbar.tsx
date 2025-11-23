@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
-import { isToken, isTokenExpired, getUsernameByToken, logout } from "~/services/JwtService";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBriefcase, faCaretDown, faDesktop, faEnvelope, faHeart, faLocationDot, faMessage, faPaperPlane, faPeopleGroup, faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faHeart, faLocationDot, faMessage, faPaperPlane, faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
 import coverImg from '~/assets/img/bg_img/cover.avif';
-
+import { useAuth } from "~/context/useAuth";
 import { useSearch } from '~/context/SearchContext'; 
 import { toast } from "react-toastify";
 
@@ -29,6 +28,8 @@ const Navbar: React.FC = () => {
     setParticipants
   } = useSearch();
   const navigate = useNavigate();
+
+  const {isLoggedIn, logout, user} = useAuth();
 
   const [searchWardResult, setSearchWardResult] = useState<string[]>([]);
   const [showWardResult, setShowWardResult] = useState(false);
@@ -90,8 +91,6 @@ const Navbar: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [searchState.location])
 
-  const token = localStorage.getItem('token');
-  const isLoggedIn = token && isToken() && !isTokenExpired(token);
 
   const handleBookingNow = () => {
     toast.info('Bạn vui lòng chọn địa điểm và thời gian!')
@@ -140,12 +139,10 @@ const Navbar: React.FC = () => {
   };
 
   const handleProtectedLinkClick = (e: React.MouseEvent, path: string, message: string) => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn()) {
       e.preventDefault(); 
-      // toast.info('Vui lòng đăng nhập để truy cập tính năng này.');
       toast.info(message);
     } else {
-      // Nếu đã đăng nhập, cho phép Link điều hướng
       navigate(path);
     }
   };
@@ -167,11 +164,12 @@ const Navbar: React.FC = () => {
                 <div onClick={(e) => handleProtectedLinkClick(e, '/help', 'Vui lòng đăng nhập để hỏi đáp')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/messages', 'Vui lòng đăng nhập để truy cập tin nhắn')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
-                <div onClick={(e) => handleProtectedLinkClick(e, '/activities', 'Vui lòng đăng nhập để truy cập hoạt động')} className={cx('top-nav-item')}>Hoạt động</div>  
+                <div onClick={(e) => handleProtectedLinkClick(e, '/booking-list', 'Vui lòng đăng nhập để truy cập danh sách đặt chỗ')} className={cx('top-nav-item')}>Danh sách đặt chỗ</div>  
+                <div className={cx('right-section_vector')}>|</div>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/host-space', 'Vui lòng đăng nhập để đăng không gian')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
-                {isLoggedIn ? (
+                {isLoggedIn() ? (
                   <div className={cx('toggle_auth')}>
-                    <div className={cx('nav_btn_login')}>{getUsernameByToken()}</div>
+                    <div className={cx('nav_btn_login')}>{user?.userName}</div>
                     <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
                   </div>
                 ): 

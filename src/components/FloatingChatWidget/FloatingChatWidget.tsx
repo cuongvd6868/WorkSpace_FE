@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './FloatingChatWidget.module.scss';
-import ChatComponent from '../ChatComponent/ChatComponent'; 
+import ChatAIComponent from '../ChatAIComponent/ChatAIComponent';
 
 const cx = classNames.bind(styles);
 
@@ -15,17 +15,14 @@ const FloatingChatWidget: React.FC = () => {
   return (
     <div className={cx('floating-wrapper')}>
       
-      {/* Nút bật/tắt (Bubble Icon) */}
       <button 
         className={cx('chat-toggle-button', { 'is-open': isOpen })}
         onClick={toggleChat}
         aria-label={isOpen ? 'Đóng chat' : 'Mở chat'}
       >
-        {/* Dùng icon X khi mở, icon chat khi đóng */}
         {isOpen ? <span className={cx('close-icon')}>✕</span> : <span className={cx('chat-icon')}>💬</span>} 
       </button>
 
-      {/* Box Chat */}
       <div className={cx('chat-box-container', { 'is-open': isOpen })}>
         <div className={cx('chat-header')}>
             <span className={cx('header-title')}>
@@ -39,7 +36,7 @@ const FloatingChatWidget: React.FC = () => {
                 ✕
             </button>
         </div>
-        <ChatComponent /> 
+        <ChatAIComponent /> 
       </div>
     </div>
   );

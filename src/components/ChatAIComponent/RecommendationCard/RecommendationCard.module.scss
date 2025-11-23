@@ -28,7 +28,7 @@ $border-light: #e0e0e0;
 
 .image-wrapper {
     position: relative;
-    height: 160px; // Slightly taller image
+    height: 100px; // Slightly taller image
     overflow: hidden;
     background: linear-gradient(45deg, #e0f2f7, #c6e2e9); // Placeholder gradient
 }
@@ -72,7 +72,7 @@ $border-light: #e0e0e0;
 }
 
 .content {
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -103,7 +103,7 @@ $border-light: #e0e0e0;
 }
 
 .details {
-    margin-bottom: 15px;
+    // margin-bottom: 15px;
     padding-top: 10px;
     border-top: 1px solid $border-light; // Cleaner separator
 }
@@ -111,7 +111,7 @@ $border-light: #e0e0e0;
 .detail-item {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    // margin-bottom: 8px;
     font-size: 0.9rem;
     color: $text-muted;
 
@@ -132,8 +132,8 @@ $border-light: #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin: 15px 0 20px 0;
-    padding-top: 15px;
+    margin: 5px 0 10px 0;
+    // padding-top: 15px;
     border-top: 1px dashed $border-light; // Dashed separator
 }
 

@@ -1,3 +1,4 @@
+// AI Chatbox
 export interface WorkspaceAmenity {
   name: string;
 }
@@ -34,7 +35,6 @@ export interface ChatbotResponse {
   images?: string[]; 
 }
 
-// BỔ SUNG: Type cho lịch sử chat
 export type MessageSender = 'user' | 'ai';
 
 export interface ChatMessage {
@@ -44,3 +44,5 @@ export interface ChatMessage {
   recommendations?: Recommendation[]; 
   timestamp: Date;
 }
+
+// User Chat

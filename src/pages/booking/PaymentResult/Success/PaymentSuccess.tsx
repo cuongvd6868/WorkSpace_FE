@@ -83,14 +83,14 @@ const PaymentSuccess: React.FC = () => {
 
                 {/* 3. Phần Hành động Tiếp theo */}
                 <div className={cx('next-steps')}>
-                    {/* <Link to={'/'}>
+                    <Link to={'/booking-list'}>
                         <button className={cx('action-button', 'primary')}>
                             Xem Chi tiết Đặt chỗ
                             <ChevronRight size={20} />
                         </button>
-                    </Link> */}
+                    </Link>
                     <Link to={'/'}>
-                        <button className={cx('action-button', 'primary')}>
+                        <button className={cx('action-button', 'secondary')}>
                             Trở về Trang chủ
                         </button>
                     </Link>

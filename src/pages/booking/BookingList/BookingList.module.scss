@@ -1,0 +1,260 @@
+
+$color-main: #005461;     // Xanh đậm, chuyên nghiệp
+$color-accent: #008234;   // Xanh dương, nổi bật
+$color-bg: #f4f7f6;        // Nền nhẹ
+$color-white: #ffffff;
+$color-secondary: #6c757d; // Xám phụ
+$shadow-light: rgba(0, 0, 0, 0.08);
+
+// Trạng thái cơ bản
+$color-confirmed: #2ecc71; // Xanh lá
+$color-pending: #f1c40f;   // Vàng
+$color-cancelled: #e74c3c; // Đỏ
+
+// Trạng thái mở rộng (Theo BookingStatuses)
+$color-checked-in: #8e44ad; // Tím (Đang sử dụng dịch vụ)
+$color-checked-out: #1abc9c; // Xanh ngọc (Hoàn tất ra về)
+$color-completed: #2c3e50;  // Xanh đậm hơn (Hoàn tất cuối cùng)
+$color-no-show: #95a5a6;    // Xám nhẹ (Không đến)
+$color-failed: #e67e22;     // Cam (Lỗi thanh toán)
+
+
+.wrapper {
+    // padding: 30px 20px;
+    width: 68%;
+    margin: 0 auto;
+    padding-top: 30px;
+    padding-bottom: 100px;
+}
+
+/* --- HEADER --- */
+.page-header_container {
+    display: flex;
+    gap: 4px;
+}
+.page-header_icon {
+    font-size: 2.2rem;
+    color: #073E68;
+    padding-top: 10px;
+}
+.page-header {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #073E68;
+    margin-bottom: 30px;
+}
+
+/* --- MESSAGE STATUS --- */
+.message-status {
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+    
+    &.loading {
+        background-color: lighten($color-accent, 35%);
+        color: darken($color-accent, 10%);
+    }
+    &.error {
+        background-color: lighten($color-cancelled, 35%);
+        color: darken($color-cancelled, 10%);
+    }
+}
+
+/* --- GRID CONTAINER (Responsive) --- */
+.booking-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+    gap: 25px; 
+}
+
+/* --- BOOKING CARD (Item) --- */
+.booking-card {
+    display: flex;
+    position: relative; 
+    background-color: $color-white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px $shadow-light; 
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e0e6e9; 
+    
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    // Dải màu trạng thái bên trái
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8px;
+        height: 100%;
+        z-index: 1; 
+    }
+
+    &.confirmed::before { background-color: $color-confirmed; }
+    &.pending::before { background-color: $color-pending; }
+    &.cancelled::before { background-color: $color-cancelled; }
+    &.checked-in::before { background-color: $color-checked-in; }
+    &.checked-out::before { background-color: $color-checked-out; }
+    &.completed::before { background-color: $color-completed; }
+    &.no-show::before { background-color: $color-no-show; }
+    &.failed::before { background-color: $color-failed; }
+}
+
+/* --- KHỐI NGÀY/THỜI GIAN (TRÁI - Calendar Block) --- */
+.card-time-date-block {
+    width: 130px; 
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background-color: #ecf0f1;
+    border-right: 1px solid #dcdfe1;
+
+    .date-display {
+        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,105,148,1) 15.6%, rgba(0,163,217,1) 51.9%, rgba(0,194,226,1) 81% );
+        // background-color: $color-main;
+        color: $color-white;
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        .date-day {
+            display: block;
+            font-size: 2.5em;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+        .date-month {
+            display: block;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    }
+}
+
+.time-detail {
+    margin-top: 15px;
+    text-align: center;
+    .time-range {
+        font-size: 0.9em;
+        font-weight: 600;
+        color: $color-main;
+        margin-bottom: 5px;
+    }
+    .participants-count {
+        font-size: 0.8em;
+        color: $color-secondary;
+    }
+}
+
+
+/* --- KHỐI CHI TIẾT (PHẢI - Content Block) --- */
+.card-details-block {
+    flex-grow: 1;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.room-info {
+    margin-bottom: 15px;
+    
+    .room-title {
+        font-size: 1em;
+        font-weight: 700;
+        color: $color-accent;
+        margin: 0;
+        padding-bottom: 5px;
+    }
+    .booking-id {
+        font-size: 0.9em;
+        color: $color-secondary;
+        margin: 0;
+        span {
+            font-weight: 600;
+            color: $color-main;
+        }
+    }
+}
+
+.summary-info {
+    border-top: 1px dashed #e0e6e9;
+    padding-top: 10px;
+    
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+
+        .item-label {
+            font-weight: 500;
+            color: $color-main;
+            font-size: 0.95em;
+        }
+        .item-value {
+            font-weight: 700;
+        }
+    }
+    
+    .amount {
+        color: $color-accent;
+        font-size: 1.1em;
+    }
+}
+
+/* --- Màu trạng thái (Badge) --- */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px; 
+    font-size: 0.85em;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &.confirmed { background-color: lighten($color-confirmed, 35%); color: darken($color-confirmed, 10%); }
+    &.pending { background-color: lighten($color-pending, 30%); color: darken($color-pending, 10%); }
+    &.cancelled { background-color: lighten($color-cancelled, 35%); color: darken($color-cancelled, 10%); }
+    
+    &.checked-in { background-color: lighten($color-checked-in, 35%); color: darken($color-checked-in, 10%); }
+    &.checked-out { background-color: lighten($color-checked-out, 35%); color: darken($color-checked-out, 10%); }
+    &.completed { background-color: lighten($color-completed, 35%); color: darken($color-completed, 10%); }
+    &.no-show { background-color: lighten($color-no-show, 15%); color: darken($color-no-show, 20%); }
+    &.failed { background-color: lighten($color-failed, 25%); color: darken($color-failed, 10%); }
+}
+
+/* --- MEDIA QUERIES cho thiết bị nhỏ hơn --- */
+@media (max-width: 650px) {
+    .booking-list-grid {
+        grid-template-columns: 1fr; 
+    }
+    .booking-card {
+        flex-direction: column; 
+    }
+    .booking-card::before {
+        height: 8px; 
+        width: 100%;
+    }
+    .card-time-date-block {
+        width: 100%; 
+        flex-direction: row; 
+        justify-content: space-around;
+        border-right: none;
+        border-bottom: 1px solid #dcdfe1;
+        padding-top: 25px; 
+    }
+    .card-details-block {
+        padding: 15px;
+    }
+}

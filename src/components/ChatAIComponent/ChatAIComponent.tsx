@@ -1,13 +1,15 @@
 import React, { useState, FormEvent, useRef, useEffect } from 'react';
 import classNames from 'classnames/bind';
-import styles from './ChatComponent.module.scss';
+import styles from './ChatAIComponent.module.scss';
 import { ChatbotResponse, ChatMessage } from '~/types/Chat';
 import { getChatResponse } from '~/services/chatService'; 
 import RecommendationCard from './RecommendationCard/RecommendationCard'; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBrain, faRobot, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-const ChatComponent: React.FC = () => {
+const ChatAIComponent: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +93,7 @@ const ChatComponent: React.FC = () => {
         {messages.map((msg, index) => (
           <div key={msg.id} className={cx('message-row', msg.sender, { 'fade-in': true })}>
             
-            {msg.sender === 'ai' && <div className={cx('avatar', 'ai-avatar')}>🤖</div>}
+            {msg.sender === 'ai' && <div className={cx('avatar', 'ai-avatar')}><FontAwesomeIcon icon={faRobot} className="ai-icon" /></div>}
             
             <div className={cx('message-bubble', msg.sender)}>
               
@@ -117,7 +119,7 @@ const ChatComponent: React.FC = () => {
               )}
               
             </div>
-            {msg.sender === 'user' && <div className={cx('avatar', 'user-avatar')}>👤</div>}
+            {msg.sender === 'user' && <div className={cx('avatar', 'user-avatar')}><FontAwesomeIcon icon={faUser} className="ai-icon" /></div>}
           </div>
         ))}
 
@@ -154,4 +156,4 @@ const ChatComponent: React.FC = () => {
   );
 };
 
-export default ChatComponent;
+export default ChatAIComponent;

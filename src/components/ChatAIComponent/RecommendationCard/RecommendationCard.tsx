@@ -71,7 +71,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
         </div>
 
         {/* 5. Tiện nghi */}
-        <div className={cx('amenities')}>
+        {/* <div className={cx('amenities')}>
           <ul className={cx('amenities-list')}>
             {displayAmenities.map((amenity, index) => (
               <li key={index} className={cx('amenity-item')}>
@@ -84,7 +84,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
               </li>
             )}
           </ul>
-        </div>
+        </div> */}
 
         {/* 6. Nút hành động */}
         <button className={cx('action-button')}>
