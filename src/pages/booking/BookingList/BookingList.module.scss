@@ -234,7 +234,6 @@ $color-failed: #e67e22;     // Cam (Lỗi thanh toán)
     &.failed { background-color: lighten($color-failed, 25%); color: darken($color-failed, 10%); }
 }
 
-/* --- MEDIA QUERIES cho thiết bị nhỏ hơn --- */
 @media (max-width: 650px) {
     .booking-list-grid {
         grid-template-columns: 1fr; 

@@ -106,7 +106,8 @@ form {
 
 .social-text {
   padding: 0.7rem 0;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .social-media {
@@ -400,4 +401,40 @@ form {
     bottom: 28%;
     left: 50%;
   }
+}
+
+
+
+
+.google-custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    width: 100%;
+    padding: 12px 18px;
+
+    background: linear-gradient(135deg, #ffffff, #f4f7ff);
+    border: 1px solid #e3e8ff;
+    border-radius: 5px;
+
+    font-size: 15px;
+    font-weight: 600;
+    color: #3c4043;
+
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 118, 255, 0.15);
+}
+
+.google-custom-button:hover {
+    background: linear-gradient(135deg, #fdfdfd, #eef2ff);
+    box-shadow: 0 6px 18px rgba(102, 118, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+.google-icon {
+    width: 22px;
+    height: 22px;
 }

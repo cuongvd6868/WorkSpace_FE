@@ -2,7 +2,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 
-export const setupAxiosInterceptors = (logoutHandler: () => void): number => {
+
+
+export const setupAxiosInterceptors = (logoutHandler: () => void, navigate: (path: string) => void): number => {
     const interceptorId = axios.interceptors.response.use(
         (response) => response,
         (error) => {
@@ -23,12 +25,13 @@ export const setupAxiosInterceptors = (logoutHandler: () => void): number => {
                 // Đây là kịch bản token hết hạn gây ra lỗi kết nối theo kinh nghiệm của bạn
                 console.warn("Network Error while authenticated. Assuming expired token and forcing logout.");
                 logoutHandler(); 
+                navigate("/login");
                 toast.dark("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.");
             }
-            // 3. Lỗi Network Error thông thường (server down/mất mạng)
-            else if (isNetworkError) {
-                toast.error("Lỗi kết nối mạng: Không thể kết nối đến máy chủ.");
-            }
+            // // 3. Lỗi Network Error thông thường (server down/mất mạng)
+            // else if (isNetworkError) {
+            //     toast.error("Lỗi kết nối mạng: Không thể kết nối đến máy chủ.");
+            // }
             
             return Promise.reject(error);
         }

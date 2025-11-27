@@ -1,0 +1,74 @@
+/* Bảng màu riêng cho TaskCard (Sử dụng Light Mode) */
+$bg-card: #FFFFFF;
+$text-primary: #2C3E50;
+$text-secondary: #95A5A6;
+$shadow-base: rgba(0, 0, 0, 0.1);
+
+.task-card {
+    background-color: $bg-card;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
+    transition: all 0.3s ease;
+    border: 1px solid #ECEFF1;
+
+    &:hover {
+        transform: translateY(-5px); 
+        box-shadow: 0 8px 16px $shadow-base; 
+    }
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.icon-container {
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.count-display {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Color definitions */
+.orange { 
+    background-color: #FF9800;
+    color: #FF9800; /* Text color for count */
+}
+.purple { 
+    background-color: #9B59B6;
+    color: #9B59B6;
+}
+.green { 
+    background-color: #2ECC71;
+    color: #2ECC71;
+}
+.blue { 
+    background-color: #3498DB;
+    color: #3498DB;
+}
+
+.content {
+    .title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin-bottom: 5px;
+    }
+
+    .description {
+        font-size: 0.85rem;
+        color: $text-secondary;
+    }
+}

@@ -1,0 +1,192 @@
+/* Cố định các biến màu sắc cho Dark Mode */
+$bg-main: #1D1E22; // Màu nền chính
+$bg-card: #282C34; // Màu card/box
+$bg-sidebar: #1C232B; // Sidebar tối hơn
+$bg-sidebar-hover: #2F3640; // Hover sidebar
+$text-primary: #ECF0F1; // Text chính màu trắng sáng
+$text-secondary: #BDC3C7; // Text phụ
+$color-accent: #3498DB; // Màu xanh dương chủ đạo
+$color-border: #3D4148; // Màu border tối
+$shadow-base: rgba(0, 0, 0, 0.5); // Shadow đậm
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: $bg-main;
+    margin-top: -60px;
+}
+
+/* --- SIDEBAR STYLES --- */
+.sidebar {
+    width: 250px;
+    background-image: radial-gradient( circle farthest-corner at 50.3% 47.3%,  rgba(113,42,92,1) 0.1%, rgba(40,25,46,1) 90% );
+    color: $text-secondary;
+    padding: 20px 0;
+    box-shadow: 2px 0 15px $shadow-base; 
+    position: fixed;
+    height: 100%;
+    z-index: 10;
+
+    .logo {
+        font-size: 1.6rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 30px;
+        color: $color-accent; 
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: $text-secondary;
+            
+
+            svg { 
+                margin-right: 15px;
+                font-size: 1.2rem;
+            }
+
+            &:hover {
+                background-color: $bg-sidebar-hover; 
+                color: $text-primary;
+            }
+
+            &.active {
+                background-color: $color-accent;
+                color: white;
+                // Hiệu ứng "pill"
+                margin: 0 10px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(52, 152, 219, 0.4);
+            }
+        }
+    }
+}
+
+/* --- MAIN CONTENT STYLES --- */
+.main-content {
+    flex-grow: 1;
+    margin-left: 250px; 
+    padding: 0;
+}
+
+.header {
+    background-image: radial-gradient( circle farthest-corner at 50.3% 47.3%,  rgba(113,42,92,1) 0.1%, rgba(40,25,46,1) 90% ); 
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+    .page-header {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin: 0;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        span {
+            font-weight: 500;
+            color: $text-primary;
+        }
+    }
+}
+
+.content-area {
+    padding: 30px;
+}
+
+/* --- SECTIONS & CARDS --- */
+.content-section {
+    .section-title {
+        font-size: 1.5rem;
+        color: $text-primary;
+        margin-bottom: 25px;
+        border-bottom: 2px solid $color-border;
+        padding-bottom: 10px;
+    }
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-box, .recent-activity, .account-management {
+    background-color: $bg-card;
+    padding: 25px;
+    border-radius: 12px; 
+    box-shadow: 0 6px 20px $shadow-base;
+    
+    h3 {
+        color: $text-primary;
+    }
+}
+
+.chart-box {
+    margin-bottom: 30px;
+
+    .chart-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin-bottom: 15px;
+    }
+
+    .chart-placeholder {
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text-secondary;
+        border: 1px dashed $color-border;
+        border-radius: 4px;
+    }
+}
+
+
+.account-management {
+    .add-user-btn {
+        background-color: $color-accent;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        margin-top: 15px;
+
+        &:hover {
+            background-color: darken($color-accent, 10%);
+        }
+    }
+}
+
+.placeholder {
+    padding: 20px;
+    background-color: lighten($bg-card, 5%);
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    color: $text-secondary;
+    text-align: center;
+    font-style: italic;
+}

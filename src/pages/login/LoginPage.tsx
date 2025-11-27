@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './LoginPage.module.scss'; 
 import { useAuth } from '~/context/useAuth'; 
@@ -6,15 +6,16 @@ import { toast } from 'react-toastify';
 import NavbarLogin from '~/components/NavbarLogin/NavbarLogin';
 import logImg from '~/assets/img/login/log.svg';
 import resImg from '~/assets/img/login/register.svg';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const cx = classNames.bind(styles);
 
 const LoginPage: React.FC = () => {
-    const { loginUser, registerUser } = useAuth();
+    const { loginUser, registerUser, googleLogin } = useAuth();
     const [isSignUpMode, setIsSignUpMode] = useState(false);
 
     // State for login form
-    const [loginUsername, setLoginUsername] = useState('');
+    const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
 
     // State for register form
@@ -23,21 +24,52 @@ const LoginPage: React.FC = () => {
     const [registerPassword, setRegisterPassword] = useState('');
     const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('');
 
+    // Custom Google Login - Sử dụng authorization code flow
+    const googleAuth = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                // Sử dụng authorization code flow để lấy id_token
+                console.log('Token response:', tokenResponse);
+                
+                // Với authorization code flow, chúng ta cần gửi code đến backend
+                // Backend sẽ trao đổi code lấy id_token
+                if (tokenResponse.code) {
+                    await googleLogin(tokenResponse.code);
+                } else {
+                    toast.error("Không thể lấy authorization code từ Google.");
+                }
+            } catch (error) {
+                console.error('Google Login Failed:', error);
+                toast.error("Đăng nhập Google thất bại.");
+            }
+        },
+        onError: (errorResponse) => {
+            console.error('Google Login Failed:', errorResponse);
+            toast.error("Đăng nhập Google thất bại.");
+        },
+        flow: 'auth-code', // Sử dụng authorization code flow
+        scope: 'openid profile email',
+    });
+
     // Handle login form submission
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!loginUsername || !loginPassword) {
-            toast.error("Please enter both username and password.");
+        if (!loginEmail || !loginPassword) {
+            toast.error("Vui lòng nhập email và mật khẩu.");
             return;
         }
-        await loginUser(loginUsername, loginPassword);
+        await loginUser(loginEmail, loginPassword);
     };
 
     // Handle register form submission
     const handleRegisterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!registerUsername || !registerEmail || !registerPassword) {
-            toast.error("Please fill in all fields.");
+        if (!registerUsername || !registerEmail || !registerPassword || !registerPasswordConfirm) {
+            toast.error("Vui lòng điền đầy đủ tất cả các trường.");
+            return;
+        }
+        if (registerPassword !== registerPasswordConfirm) {
+            toast.error("Mật khẩu xác nhận không khớp.");
             return;
         }
         await registerUser(registerEmail, registerUsername, registerPassword, registerPasswordConfirm);
@@ -53,12 +85,12 @@ const LoginPage: React.FC = () => {
                         <form action="#" className={cx('sign-in-form')} onSubmit={handleLoginSubmit}>
                             <h2 className={cx('title')}>Đăng Nhập</h2>
                             <div className={cx('input-field')}>
-                                <i className="fas fa-user"></i>
+                                <i className="fas fa-envelope"></i>
                                 <input
-                                    type="text"
-                                    placeholder="Tên đăng nhập"
-                                    value={loginUsername}
-                                    onChange={(e) => setLoginUsername(e.target.value)}
+                                    type="email"
+                                    placeholder="Email"
+                                    value={loginEmail}
+                                    onChange={(e) => setLoginEmail(e.target.value)}
                                     required
                                 />
                             </div>
@@ -72,22 +104,23 @@ const LoginPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <input type="submit" value="Login" className={cx('btn', 'solid')} />
-                            <p className={cx('social-text')}>Or Sign in with social platforms</p>
+                            <input type="submit" value="Đăng nhập" className={cx('btn', 'solid')} />
+                            <p className={cx('social-text')}>Hoặc đăng nhập với</p>
                             <div className={cx('social-media')}>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className={cx('fab fa-facebook-f')}></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className={cx('fab fa-twitter')}></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className={cx('fab fa-google')}></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className={cx('fab fa-linkedin-in')}></i>
-                                </a>
+                                <button 
+                                    type="button"
+                                    className={cx('google-custom-button')}
+                                    onClick={() => googleAuth()}
+                                >
+                                    <img 
+                                        src="https://www.svgrepo.com/show/475656/google-color.svg" 
+                                        alt="Google" 
+                                        className={cx('google-icon')}
+                                    />
+                                    Đăng nhập với Google
+                                </button>
                             </div>
+
                         </form>
 
                         {/* Sign Up Form */}
@@ -123,7 +156,7 @@ const LoginPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                                                        <div className={cx('input-field')}>
+                            <div className={cx('input-field')}>
                                 <i className="fas fa-lock"></i>
                                 <input
                                     type="password"
@@ -133,22 +166,23 @@ const LoginPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <input type="submit" className={cx('btn')} value="Sign up" />
-                            <p className={cx('social-text')}>Or Sign up with social platforms</p>
+                            <input type="submit" className={cx('btn')} value="Đăng ký" />
+                            {/* <p className={cx('social-text')}>Hoặc đăng ký với</p> */}
                             <div className={cx('social-media')}>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className="fab fa-facebook-f"></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className="fab fa-twitter"></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className="fab fa-google"></i>
-                                </a>
-                                <a href="#" className={cx('social-icon')}>
-                                    <i className="fab fa-linkedin-in"></i>
-                                </a>
+                                <button 
+                                    type="button"
+                                    className={cx('google-custom-button')}
+                                    onClick={() => googleAuth()}
+                                >
+                                    <img 
+                                        src="https://www.svgrepo.com/show/475656/google-color.svg" 
+                                        alt="Google" 
+                                        className={cx('google-icon')}
+                                    />
+                                    Đăng nhập với Google
+                                </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

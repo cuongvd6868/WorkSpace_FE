@@ -89,11 +89,11 @@ const PaymentSuccess: React.FC = () => {
                             <ChevronRight size={20} />
                         </button>
                     </Link>
-                    <Link to={'/'}>
+                    {/* <Link to={'/'}>
                         <button className={cx('action-button', 'secondary')}>
                             Trở về Trang chủ
                         </button>
-                    </Link>
+                    </Link> */}
                 </div>
                 
                 {/* 4. Ghi chú bảo mật */}

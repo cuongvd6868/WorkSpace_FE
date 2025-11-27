@@ -126,7 +126,7 @@ const ChatAIComponent: React.FC = () => {
         {/* Loading Bubble */}
         {isLoading && (
             <div className={cx('message-row', 'ai', 'fade-in')}>
-                <div className={cx('avatar', 'ai-avatar')}>🤖</div>
+                <div className={cx('avatar', 'ai-avatar')}><FontAwesomeIcon icon={faRobot} className="ai-icon" /></div>
                 <div className={cx('message-bubble', 'ai', 'loading-bubble')}>
                     <span>Đang tìm kiếm</span>
                     <span className={cx('dot-flashing')}></span>
