@@ -1,0 +1,209 @@
+$bg-main: #F4F7F9;           // Nền trang chính
+$bg-card: #FFFFFF;           // Nền các thẻ/hộp nội dung
+$bg-sidebar: #3498DB;        // Sidebar: Cố định màu xanh dương đậm (Accent)
+$bg-sidebar-hover: #2980B9;  // Hover sidebar: Xanh dương đậm hơn
+$text-primary: #2C3E50;      // Text chính (Rất đậm)
+$text-secondary: #BDC3C7;    // Text phụ (Xám)
+$color-accent: #3498DB;      // Màu xanh dương chủ đạo
+$color-border: #E0E0E0;      // Đường viền/Ngăn cách
+$shadow-base: rgba(0, 0, 0, 0.15); // Shadow rõ hơn cho vẻ ngoài cao cấp
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: $bg-main;
+    margin-top: -60px;
+}
+
+/* --- SIDEBAR STYLES (ĐỘC ĐÁO & ACCENT) --- */
+.sidebar {
+    width: 250px;
+    background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,33,71,1) 0%, rgba(47,183,186,1) 90% );
+    // background-color: $bg-sidebar; /* Sidebar màu xanh accent */
+    color: white; /* Text Sidebar màu trắng */
+    padding: 20px 0;
+    box-shadow: 4px 0 20px rgba(52, 152, 219, 0.4); /* Shadow accent nổi bật */
+    position: fixed;
+    height: 100%;
+    z-index: 10;
+    
+    .logo {
+        font-size: 1.7rem;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 40px;
+        color: white; /* Logo màu trắng */
+        letter-spacing: 2px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            margin: 5px 15px; /* Tạo khoảng cách và bo góc cho từng mục */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85); /* Text màu trắng mờ */
+
+            svg { 
+                margin-right: 15px;
+                font-size: 1.2rem;
+            }
+
+            &:hover {
+                background-color: $bg-sidebar-hover; /* Màu xanh đậm hơn khi hover */
+                color: white;
+            }
+
+            &.active {
+                background-color: white; /* Nền trắng tinh khi active */
+                color: $text-primary; /* Text màu đậm */
+                font-weight: 600;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow rõ ràng */
+                padding: 15px 20px; /* Nhỏ hơn một chút để tạo hiệu ứng "nổi" */
+            }
+        }
+    }
+}
+
+/* --- MAIN CONTENT STYLES (Sử dụng Light Mode) --- */
+.main-content {
+    flex-grow: 1;
+    margin-left: 250px; 
+    padding: 0;
+}
+
+.header {
+    background-color: $bg-card; 
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    box-shadow: 0 1px 8px $shadow-base; /* Header nổi bật */
+
+    .page-header {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: $text-primary;
+        margin: 0;
+        opacity: 0.95;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        span {
+            font-weight: 500;
+            color: $text-primary;
+        }
+    }
+}
+
+.content-area {
+    padding: 30px;
+}
+
+/* --- SECTIONS & CARDS (Thiết kế Card tinh tế hơn) --- */
+.content-section {
+    .section-title {
+        font-size: 1.6rem;
+        color: $text-primary;
+        margin-bottom: 25px;
+        border-left: 5px solid $color-accent; /* Đường accent nổi bật */
+        padding-left: 15px;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px; /* Tăng khoảng cách */
+    margin-bottom: 40px;
+}
+
+.chart-box, .recent-activity, 
+.listings-management, .bookings-management {
+    background-color: $bg-card;
+    padding: 30px; /* Padding lớn hơn */
+    border-radius: 16px; /* Bo góc lớn, hiện đại */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Shadow sâu và rõ hơn */
+    transition: transform 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-3px); /* Hiệu ứng nổi */
+    }
+    
+    h3 {
+        color: $text-primary;
+    }
+}
+
+.chart-box {
+    margin-bottom: 30px;
+
+    .chart-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: $text-primary;
+        margin-bottom: 20px;
+    }
+
+    .chart-placeholder {
+        height: 350px; /* Cao hơn một chút */
+        border: 2px dashed $color-border; /* Border rõ ràng hơn */
+    }
+}
+
+/* --- OWNER SPECIFIC BUTTONS (Nút ấn tượng) --- */
+.listings-management, .bookings-management {
+    .add-btn, .filter-btn {
+        background-color: $color-accent;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-right: 15px;
+        box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); /* Shadow cho nút */
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: darken($color-accent, 8%);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+    }
+}
+
+
+.placeholder, .placeholder-long {
+    padding: 25px;
+    background-color: $bg-sidebar-hover; 
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    color: $text-secondary;
+    text-align: center;
+    font-style: italic;
+    font-size: 1.05rem;
+}
+  .logo-icon {
+    font-size: 2.2rem;
+    padding-bottom: 2px;
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    cursor: pointer;
+    color: #2980B9;
+  }

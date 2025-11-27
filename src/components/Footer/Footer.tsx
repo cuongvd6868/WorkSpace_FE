@@ -6,10 +6,13 @@ import footer_check from '~/assets/img/footer/footer_check_img.svg';
 import instagram from '~/assets/img/footer/instagram.svg'
 import linkedin from '~/assets/img/footer/linkedin.svg'
 import facebook from '~/assets/img/footer/facebook.svg'
+import { useLocation } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
 const Footer: React.FC = () => {
+
+
   return (
     <div className={cx('wrapper')}>
       <div className={cx('footer_container')}>

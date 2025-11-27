@@ -8,6 +8,9 @@ import SearchResults from "~/pages/search/SearchResultsPage";
 import WorkspaceDetail from "~/pages/workspaceDetail/WorkspaceDetail";
 import PaymentSuccess from "~/pages/booking/PaymentResult/Success/PaymentSuccess";
 import BookingList from "~/pages/booking/BookingList/BookingList";
+import AdminDasdboard from "~/pages/admin/AdminDasdboard";
+import OwnerDashboard from "~/pages/owner/OwnerDashboard";
+import StaffDashboard from "~/pages/staff/StaffDashboard";
 
 export const router = createBrowserRouter([{
     path: "/",
@@ -21,5 +24,8 @@ export const router = createBrowserRouter([{
         {path: "/booking/checkout", element: <BookingCheckout/>},
         {path: "/payment-result/success", element: <PaymentSuccess/>},
         {path: "/booking-list", element: <BookingList/>},
+        {path: "/admin", element: <AdminDasdboard/>},
+        {path: "/owner", element: <OwnerDashboard/>},
+        {path: "/staff", element: <StaffDashboard/>},
     ]
 }]);

@@ -1,0 +1,66 @@
+$bg-card: #282C34;
+$text-color: #ECF0F1; // Sử dụng màu trắng sáng cho Dark Mode
+
+.kpi-card {
+    background-image: radial-gradient( circle 703px at 15.9% 53.4%,  rgba(80,15,85,1) 0%, rgba(11,83,149,1) 100.2% );
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    // Shadow nhẹ hơn một chút trên nền tối
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); 
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px); 
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); 
+    }
+}
+
+.icon-container {
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+
+    &.green { background-color: #2ECC71; }
+    &.blue { background-color: #3498DB; }
+    &.purple { background-color: #9B59B6; }
+    &.red { background-color: #E74C3C; }
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.title {
+    font-size: 0.9rem;
+    color: #BDC3C7; // Màu text phụ trong Dark Mode
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $text-color;
+    margin-bottom: 5px;
+}
+
+.change {
+    font-size: 0.85rem;
+
+    &.positive {
+        color: #2ECC71; 
+        font-weight: 500;
+    }
+
+    &.negative {
+        color: #E74C3C; 
+        font-weight: 500;
+    }
+}

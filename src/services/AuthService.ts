@@ -31,6 +31,33 @@ export const loginAPI = async (email: string, password: string) => {
     }
 };
 
+export const googleLoginAPI = async (authorizationCode: string) => {
+    try {
+        const tokenResponse = await axios.post(
+            'https://oauth2.googleapis.com/token',
+            {
+                code: authorizationCode,
+                client_id: "499711778033-gt8i1tg39cdmhil3r0721jhn2fjnjpfs.apps.googleusercontent.com",
+                client_secret: "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", 
+                redirect_uri: window.location.origin,
+                grant_type: 'authorization_code'
+            }
+        );
+
+        const idToken = tokenResponse.data.id_token;
+        
+        const data = await axios.post<UserProfileToken>(
+            API_BASE_URL + "accounts/google-login", 
+            { 
+                idToken: idToken,
+            }
+        );
+        return data;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
 const TOKEN_KEY = 'authToken';
 
 export const storeToken = (token: string): boolean => {

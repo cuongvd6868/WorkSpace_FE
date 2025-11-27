@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './Navbar.module.scss';
 import WorkspaceDatePicker from "../DatePicker/WorkspaceDatePicker";
@@ -41,6 +41,10 @@ const Navbar: React.FC = () => {
 
   const locationRouter = useLocation();
   const isHomePage = locationRouter.pathname === '/';
+  const isDashboardPage = 
+        locationRouter.pathname.startsWith('/admin') ||
+        locationRouter.pathname.startsWith('/staff') ||
+        locationRouter.pathname.startsWith('/owner');
 
   
   const handleHideResult = () => {
@@ -182,118 +186,122 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {isHomePage ? (
-          <div className={cx('cover_container')}>
-            <img src={coverImg} alt="Cover" className={cx('cover_img')} />
-            <div className={cx('cover_overlay')}></div>
-            <div className={cx('cover_content')}>
-              <div className={cx('promo_badge')}>Giảm đến 15% khi đặt chỗ</div>
-              <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
-              <p className={cx('cover_subtitle')}>
-                Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
-                phù hợp với mọi quy mô đội nhóm của bạn...
-              </p>
-              <button className={cx('cover_button')} onClick={handleBookingNow}>Đặt chỗ ngay</button>
-            </div>
-          </div>
-        ) : (
-          <div className={cx('cover_container2')}>
-            <div className={cx('cover_content')}>
-              <h1 className={cx('cover_title')}>Không gian làm việc cho hiệu suất tối đa</h1>
-              <p className={cx('cover_subtitle')}>
-                Trải nghiệm đa dạng không gian làm việc – từ bàn cá nhân linh hoạt đến phòng họp chuyên nghiệp, đáp ứng mọi nhu cầu và quy mô đội nhóm của bạn.
-              </p>
-            </div>
-          </div>
-        )}
-
-
-        {/* Search section */}
-        <div className={cx('search-section')}>
-          <div className={cx('search-content')}>
-            <HeadlessTippy
-              interactive
-              visible={showWardResult && (searchWardResult.length > 0 || loading || !!error)}
-              placement="bottom-start"
-              offset={[0, 5]}
-              render={attrs => (
-                <div className={cx('search-result')} tabIndex={-1} {...attrs}>
-                  <Popper>
-                    {loading ? (
-                      <div className={cx('loading')}>Đang tải...</div>
-                    ) : error ? (
-                      <div className={cx('error')}>{error}</div>
-                    ) : searchWardResult.length > 0 ? (
-                      searchWardResult.map((location, index) => (
-                        <div 
-                          key={index} 
-                          className={cx('location-item')}
-                          onClick={() => handleLocationSelect(location)}
-                        >
-                          <FontAwesomeIcon icon={faLocationDot} className={cx('location-icon')} />
-                          <span className={cx('location-text')}>{location}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className={cx('no-results')}>Không tìm thấy kết quả</div>
-                    )}
-                  </Popper>
-                </div>
-              )}
-              onClickOutside={handleHideResult}
-            >
-              <div className={cx('search-box')}>
-                {/* location pick */}
-                <div className={cx('search-input', 'location')}>
-                  <p className={cx('search-box_label')}>Địa điểm</p>
-                  <input 
-                    type="text" 
-                    placeholder="Nhập tên phường..." 
-                    className={cx('search-box-input')} 
-                    value={searchState.location}
-                    onChange={handleInputChange}
-                    onFocus={() => {
-                      if (searchState.location.trim() && searchWardResult.length > 0) {
-                        setShowWardResult(true);
-                      }
-                    }}
-                  />
-                </div>
-              
-                {/* time pick */}
-                <div className={cx('search-input', 'time')} onClick={() => setIsDatePickerOpen(true)}>
-                  <p className={cx('search-box_label')}>Thời gian làm việc</p>
-                  <input 
-                    type="text" 
-                    readOnly 
-                    value={searchState.selectedTime.displayText} 
-                    placeholder="Chọn ngày và giờ làm việc" 
-                    className={cx('search-box-input')}
-                  />
-                </div>
-                
-                {/* participants pick*/}
-                <div className={cx('search-input', 'participants')} onClick={() => setIsParticipantsPickerOpen(true)}>
-                  <p className={cx('search-box_label')}>Số người tham gia</p>
-                  <input 
-                    type="text" 
-                    readOnly 
-                    value={getParticipantsDisplayText()} 
-                    className={cx('search-box-input')}
-                    placeholder="Chọn số người tham gia"
-                  />
-                </div>
-
-                <button 
-                    className={cx('search-button')}
-                    onClick={handleSearchClick} // GỌI HÀM XỬ LÝ TÌM KIẾM
-                >
-                  Tìm kiếm
-                </button>
+        {!isDashboardPage && (
+          <>
+          {isHomePage ? (
+            <div className={cx('cover_container')}>
+              <img src={coverImg} alt="Cover" className={cx('cover_img')} />
+              <div className={cx('cover_overlay')}></div>
+              <div className={cx('cover_content')}>
+                <div className={cx('promo_badge')}>Giảm đến 15% khi đặt chỗ</div>
+                <h1 className={cx('cover_title')}>Đặt chỗ làm việc ngay</h1>
+                <p className={cx('cover_subtitle')}>
+                  Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
+                  phù hợp với mọi quy mô đội nhóm của bạn...
+                </p>
+                <button className={cx('cover_button')} onClick={handleBookingNow}>Đặt chỗ ngay</button>
               </div>
-            </HeadlessTippy>
+            </div>
+          ) : (
+            <div className={cx('cover_container2')}>
+              <div className={cx('cover_content')}>
+                <h1 className={cx('cover_title')}>Không gian làm việc cho hiệu suất tối đa</h1>
+                <p className={cx('cover_subtitle')}>
+                  Trải nghiệm đa dạng không gian làm việc – từ bàn cá nhân linh hoạt đến phòng họp chuyên nghiệp, đáp ứng mọi nhu cầu và quy mô đội nhóm của bạn.
+                </p>
+              </div>
+            </div>
+          )}
+
+
+          {/* Search section */}
+          <div className={cx('search-section')}>
+            <div className={cx('search-content')}>
+              <HeadlessTippy
+                interactive
+                visible={showWardResult && (searchWardResult.length > 0 || loading || !!error)}
+                placement="bottom-start"
+                offset={[0, 5]}
+                render={attrs => (
+                  <div className={cx('search-result')} tabIndex={-1} {...attrs}>
+                    <Popper>
+                      {loading ? (
+                        <div className={cx('loading')}>Đang tải...</div>
+                      ) : error ? (
+                        <div className={cx('error')}>{error}</div>
+                      ) : searchWardResult.length > 0 ? (
+                        searchWardResult.map((location, index) => (
+                          <div 
+                            key={index} 
+                            className={cx('location-item')}
+                            onClick={() => handleLocationSelect(location)}
+                          >
+                            <FontAwesomeIcon icon={faLocationDot} className={cx('location-icon')} />
+                            <span className={cx('location-text')}>{location}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className={cx('no-results')}>Không tìm thấy kết quả</div>
+                      )}
+                    </Popper>
+                  </div>
+                )}
+                onClickOutside={handleHideResult}
+              >
+                <div className={cx('search-box')}>
+                  {/* location pick */}
+                  <div className={cx('search-input', 'location')}>
+                    <p className={cx('search-box_label')}>Địa điểm</p>
+                    <input 
+                      type="text" 
+                      placeholder="Nhập tên phường..." 
+                      className={cx('search-box-input')} 
+                      value={searchState.location}
+                      onChange={handleInputChange}
+                      onFocus={() => {
+                        if (searchState.location.trim() && searchWardResult.length > 0) {
+                          setShowWardResult(true);
+                        }
+                      }}
+                    />
+                  </div>
+                
+                  {/* time pick */}
+                  <div className={cx('search-input', 'time')} onClick={() => setIsDatePickerOpen(true)}>
+                    <p className={cx('search-box_label')}>Thời gian làm việc</p>
+                    <input 
+                      type="text" 
+                      readOnly 
+                      value={searchState.selectedTime.displayText} 
+                      placeholder="Chọn ngày và giờ làm việc" 
+                      className={cx('search-box-input')}
+                    />
+                  </div>
+                  
+                  {/* participants pick*/}
+                  <div className={cx('search-input', 'participants')} onClick={() => setIsParticipantsPickerOpen(true)}>
+                    <p className={cx('search-box_label')}>Số người tham gia</p>
+                    <input 
+                      type="text" 
+                      readOnly 
+                      value={getParticipantsDisplayText()} 
+                      className={cx('search-box-input')}
+                      placeholder="Chọn số người tham gia"
+                    />
+                  </div>
+
+                  <button 
+                      className={cx('search-button')}
+                      onClick={handleSearchClick} // GỌI HÀM XỬ LÝ TÌM KIẾM
+                  >
+                    Tìm kiếm
+                  </button>
+                </div>
+              </HeadlessTippy>
+            </div>
           </div>
-        </div>
+        </>
+        )}
       </header>
 
       <WorkspaceDatePicker 

@@ -2,6 +2,8 @@ import React from "react";
 import classNames from "classnames/bind";
 import styles from './RecommendationCard.module.scss';
 import { Recommendation } from '~/types/Chat'; 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarker, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -55,11 +57,11 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
         {/* 3. Chi tiết */}
         <div className={cx('details')}>
           <div className={cx('detail-item')}>
-            <span className={cx('icon')}>📍</span> 
+            <span className={cx('icon')}><FontAwesomeIcon icon={faMapMarker}/></span> 
             <span className={cx('text')}>{street}</span>
           </div>
           <div className={cx('detail-item')}>
-            <span className={cx('icon')}>👥</span> 
+            <span className={cx('icon')}><FontAwesomeIcon icon={faUsers}/></span> 
             <span className={cx('text')}>{minCapacity} - {maxCapacity} người</span>
           </div>
         </div>
@@ -69,22 +71,6 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
             <span className={cx('price-label')}>Giá TB/ngày</span>
             <span className={cx('price')}>{formatPrice(averagePricePerDay)}</span>
         </div>
-
-        {/* 5. Tiện nghi */}
-        {/* <div className={cx('amenities')}>
-          <ul className={cx('amenities-list')}>
-            {displayAmenities.map((amenity, index) => (
-              <li key={index} className={cx('amenity-item')}>
-                {amenity.name}
-              </li>
-            ))}
-            {remainingAmenities > 0 && (
-              <li className={cx('amenity-more')}>
-                +{remainingAmenities}
-              </li>
-            )}
-          </ul>
-        </div> */}
 
         {/* 6. Nút hành động */}
         <button className={cx('action-button')}>

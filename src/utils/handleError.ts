@@ -1,17 +1,20 @@
-export const handleError = async (error: any) => {
+export const handleError = (error: any): void => { 
     if (error.response) {
-        // Lỗi từ axios hoặc fetch tự ném lỗi thủ công
         const status = error.response.status;
-        const message = error.response.data?.message || "Lỗi máy chủ";
-
-        console.error(`❌ HTTP ${status}:`, message);
-        alert(`Lỗi (${status}): ${message}`);
+        const message = error.response.data?.message || `Lỗi máy chủ (HTTP ${status})`;
+        
+        console.error(`❌ API Error HTTP ${status}:`, message, error.response.data);
+        
+        throw error; 
+    } else if (error.request) {
+        console.error("❌ Network Error: No response received.", error);
+        throw new Error("Lỗi kết nối mạng. Vui lòng kiểm tra internet.");
     } else if (error instanceof Error) {
-        // Lỗi thông thường
-        console.error("❌ Error:", error.message);
-        alert("Lỗi: " + error.message);
+        console.error("❌ Client Error:", error.message, error);
+        throw error;
     } else {
         console.error("❌ Unknown error:", error);
-        alert("Đã xảy ra lỗi không xác định.");
+        throw new Error("Đã xảy ra lỗi không xác định.");
     }
 };
+
