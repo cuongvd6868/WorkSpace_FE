@@ -70,9 +70,9 @@ const OwnerDashboard: React.FC = () => {
                         </div>
 
                         <div className={cx('chart-box')}>
-                            <h3 className={cx('chart-title')}>TỶ LỆ LẤP ĐẦY THEO TUẦN</h3>
+                            <h3 className={cx('chart-title')}>Biểu đồ Xu hướng Doanh thu theo Tuần</h3>
                             <div className={cx('placeholder', 'chart-placeholder')}>
-                                [Biểu đồ cột: Tỷ lệ lấp đầy của từng Workspace trong tuần này]
+                                [Biểu đồ cột: Biểu đồ Xu hướng Doanh thu theo Tuần]
                             </div>
                         </div>
 

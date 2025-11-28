@@ -170,7 +170,7 @@ const Navbar: React.FC = () => {
                 <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
                 <div onClick={(e) => handleProtectedLinkClick(e, '/booking-list', 'Vui lòng đăng nhập để truy cập danh sách đặt chỗ')} className={cx('top-nav-item')}>Danh sách đặt chỗ</div>  
                 <div className={cx('right-section_vector')}>|</div>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/host-space', 'Vui lòng đăng nhập để đăng không gian')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
+                <div onClick={(e) => handleProtectedLinkClick(e, '/host-register', 'Vui lòng đăng nhập để đăng không gian')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
                 {isLoggedIn() ? (
                   <div className={cx('toggle_auth')}>
                     <div className={cx('nav_btn_login')}>{user?.userName}</div>
