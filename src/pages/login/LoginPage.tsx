@@ -193,7 +193,7 @@ const LoginPage: React.FC = () => {
                         <div className={cx('content')}>
                             <h3>Bạn là người mới ?</h3>
                             <p>
-                                Hãy đăng ký để Khám phá hàng nghìn chỗ làm việc, đặt phòng ngay hôm nay với trải nghiệm nhanh chóng và thuận tiện.
+                                Hãy đăng ký để nhận được nhiều ưu đãi từ CSB!
                             </p>
                             <button
                                 className={cx('btn', 'transparent')}
