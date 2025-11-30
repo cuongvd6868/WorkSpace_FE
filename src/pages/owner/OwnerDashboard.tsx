@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar, faWallet, faBuilding, faCalendarCheck, faUserCog, IconDefinition, faDollarSign, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,11 @@ import KPICard from '~/components/KPICard/KPICard';
 import { useAuth } from "~/context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { OwnerStats } from "~/types/Owner";
+import { getOwnerStats } from "~/services/OwnerService";
+import WeeklyRevenueChart from "~/components/OwnerComponents/Charts/WeeklyRevenueChart";
+import FinanceSection from "~/components/OwnerComponents/FinanceSection/FinanceSection";
+import OwnerBookingsSection from "~/components/OwnerComponents/OwnerBookingsSection/OwnerBookingsSection";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -17,12 +22,7 @@ enum OwnerPage {
     Settings = 'settings',
 }
 
-const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
-    { title: "Doanh Thu Của Tôi (T.Này)", value: "55.000.000 VND", change: "+15.2%", icon: faDollarSign, color: "green" },
-    { title: "Lượt Booking Mới", value: "35 Đơn", change: "+5%", icon: faCalendarCheck, color: "blue" },
-    { title: "Tỷ Lệ Lấp Đầy", value: "82%", change: "+2.1%", icon: faChartBar, color: "purple" },
-    { title: "Workspace Hết Hạn Duyệt", value: "2 Mục", change: "Khẩn cấp!", icon: faBuilding, color: "red" },
-];
+
 
 const ListingsManagementSection: React.FC = () => (
     <div className={cx('listings-management')}>
@@ -45,6 +45,32 @@ const BookingsManagementSection: React.FC = () => (
 );
 
 const OwnerDashboard: React.FC = () => {
+    const [stats, setStats] = useState<OwnerStats | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+        try {
+            setIsLoading(true);
+            const data = await getOwnerStats(); // Dữ liệu trả về đã là kiểu OwnerStats
+            setStats(data);
+        } catch (err) {
+            setError(err + '');
+        } finally {
+            setIsLoading(false);
+        }
+        };
+
+    fetchStats();
+    }, []);
+
+    const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
+    { title: "Doanh Thu Của Tôi (T.Này)", value: `${stats?.monthlyRevenue} VND`, change: "+15.2%", icon: faDollarSign, color: "green" },
+    { title: "Lượt Booking Mới", value: `${stats?.totalBookings} Đơn`, change: "+5%", icon: faCalendarCheck, color: "blue" },
+    { title: "Tỷ Lệ Lấp Đầy", value: `${stats?.occupancyRate}%`, change: "+2.1%", icon: faChartBar, color: "purple" },
+    { title: "Workspace Hết Hạn Duyệt", value: `${stats?.pendingWorkspaces} mục`, change: "Khẩn cấp!", icon: faBuilding, color: "red" },
+    ];
     const [activePage, setActivePage] = useState<OwnerPage>(OwnerPage.Overview);
     const {user, logout, isLoggedIn} = useAuth();
 
@@ -71,25 +97,28 @@ const OwnerDashboard: React.FC = () => {
 
                         <div className={cx('chart-box')}>
                             <h3 className={cx('chart-title')}>Biểu đồ Xu hướng Doanh thu theo Tuần</h3>
-                            <div className={cx('placeholder', 'chart-placeholder')}>
-                                [Biểu đồ cột: Biểu đồ Xu hướng Doanh thu theo Tuần]
-                            </div>
+                            {stats?.weeklyRevenueTrend ? (
+                                <WeeklyRevenueChart data={stats.weeklyRevenueTrend} />
+                            ) : (
+                                <div className={cx('placeholder', 'chart-placeholder')}>
+                                    {isLoading ? 'Đang tải biểu đồ...' : 'Không có dữ liệu xu hướng doanh thu.'}
+                                </div>
+                            )}
                         </div>
 
                         <div className={cx('recent-activity')}>
                              <h3>📝 BOOKING SẮP TỚI</h3>
                              <p className={cx('placeholder')}>[Danh sách 5 booking sắp diễn ra cần xác nhận]</p>
+                             ced
                         </div>
                     </div>
                 );
             case OwnerPage.Finance:
                 return (
-                    <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>💰 TÀI CHÍNH & THANH TOÁN</h2>
-                        <p className={cx('placeholder-long')}>
-                            [Báo cáo doanh thu hàng tháng, Lịch sử thanh toán từ hệ thống, Quản lý tài khoản ngân hàng nhận tiền]
-                        </p>
-                    </div>
+<div className={cx('content-section')}>
+            <h2 className={cx('section-title')}>💰 TÀI CHÍNH & THANH TOÁN</h2>
+            <FinanceSection stats={stats} isLoading={isLoading} />
+        </div>
                 );
             case OwnerPage.Listings:
                 return (
@@ -100,10 +129,11 @@ const OwnerDashboard: React.FC = () => {
                 );
             case OwnerPage.Bookings:
                 return (
-                    <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>📅 QUẢN LÝ LƯỢT BOOKING</h2>
-                        <BookingsManagementSection />
-                    </div>
+                <div className={cx('content-section')}>
+                    <h2 className={cx('section-title')}>📅 QUẢN LÝ LƯỢT BOOKING</h2>
+                    {/* Thay thế placeholder bằng component mới */}
+                    <OwnerBookingsSection />
+                </div>
                 );
             case OwnerPage.Settings:
                 return (
