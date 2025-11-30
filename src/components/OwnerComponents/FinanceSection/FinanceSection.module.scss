@@ -205,3 +205,55 @@ $shadow-base: rgba(0, 0, 0, 0.15);
     cursor: pointer;
     color: #2980B9;
   }
+
+  .finance-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; // Khoảng cách giữa các phần lớn
+}
+.settings-box {
+    background-color: var(--color-white); // Nền trắng
+    border: 1px solid var(--color-border); // Viền nhẹ
+    border-radius: var(--border-radius-large);
+    padding: 25px 0px;
+    box-shadow: var(--shadow-sm); // Shadow nhẹ
+
+    h3 {
+        color: var(--color-text-dark);
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--color-grey-light);
+        padding-bottom: 15px;
+    }
+}
+.placeholder-short {
+    margin-bottom: 20px;
+
+    p {
+        margin: 8px 0;
+        color: var(--color-text-secondary);
+        font-size: 0.95rem;
+
+        // Định dạng BOLD cho nội dung
+        strong {
+            color: var(--color-text-dark);
+        }
+    }
+}
+
+
+// 3. Nút Chỉnh Sửa
+.edit-btn {
+    background-color: transparent;
+    color: var(--color-blue-primary); // Màu xanh dương cho hành động chỉnh sửa
+    border: 1px solid var(--color-blue-primary);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: var(--color-blue-primary);
+        color: white;
+    }}
