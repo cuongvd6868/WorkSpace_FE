@@ -10,6 +10,7 @@ export type WorkspacesOwnerView = {
     imageUrls: []
 }
 
+
 export type BookingsOwnerView = {
     id: number,
     bookingCode: string,

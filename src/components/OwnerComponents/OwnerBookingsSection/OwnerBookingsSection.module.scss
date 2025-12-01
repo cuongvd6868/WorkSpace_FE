@@ -1,8 +1,5 @@
-/* ======================================= */
-/* ====== 📅 BOOKINGS SECTION STYLES ===== */
-/* ======================================= */
 
-// Định nghĩa biến màu (giả sử có thể dùng trong module này hoặc đã được import)
+
 $color-primary: #3f51b5; // Màu xanh chính (hoặc màu dashboard của bạn)
 $color-green: #4caf50;
 $color-red: #f44336;
@@ -48,7 +45,7 @@ $shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         &.active {
-            background-color: $color-primary;
+            background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,33,71,1) 0%, rgb(28, 119, 120) 90% );
             color: white;
             border-color: $color-primary;
             box-shadow: 0 4px 6px rgba($color-primary, 0.3);
