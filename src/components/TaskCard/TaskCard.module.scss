@@ -33,6 +33,10 @@ $shadow-base: rgba(0, 0, 0, 0.1);
     justify-content: center;
     font-size: 1.1rem;
     color: white;
+
+    .icon {
+    color: #FFFFFF;
+}
 }
 
 .count-display {
@@ -76,7 +80,4 @@ $shadow-base: rgba(0, 0, 0, 0.1);
 }
 .count-display_detail {
     color: #fff;
-}
-.abc {
-    color: #FFFFFF;
 }
