@@ -11,7 +11,6 @@ import TaskCard from '~/components/TaskCard/TaskCard';
 
 const cx = classNames.bind(styles);
 
-// Các mục điều hướng mới cho Staff
 enum StaffPage {
     Support = 'support',
     ContentReview = 'contentReview',

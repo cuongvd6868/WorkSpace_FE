@@ -1,24 +1,21 @@
-// src/components/OwnerDashboard/OwnerBookingsSection.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames/bind';
-import styles from './OwnerBookingsSection.module.scss'; // Thay thế bằng đường dẫn SCSS của bạn
+import styles from './OwnerBookingsSection.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faTimesCircle, faArrowRight, faDoorOpen, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faTimesCircle, faArrowRight, faDoorOpen, faSpinner, faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-// Import types và service methods của bạn
 import { BookingsOwnerView } from '~/types/Owner'; 
 import { 
     getAllBookingsOwnerView, 
-    getPendingBookingsOwnerView,
     confirmBookingOwner,
     cancelBookingOwner,
     checkInBookingOwner,
-    checkOutBookingOwner
+    checkOutBookingOwner,
+    completeBookingOwner 
 } from '~/services/OwnerService'; 
 
 const cx = classNames.bind(styles);
 
-// Định nghĩa các trạng thái lọc
 enum BookingFilter {
     ALL = 'Tất Cả',
     PENDING = 'Đang Chờ Duyệt',
@@ -27,59 +24,27 @@ enum BookingFilter {
     CANCELLED = 'Đã Hủy',
 }
 
+// Định nghĩa các trạng thái chuẩn hóa để dễ kiểm soát hơn
+const Status = {
+    PENDING: 'PENDING',
+    CONFIRMED: 'CONFIRMED',
+    CHECKED_IN: 'CHECKED_IN',
+    CHECKEDIN: 'CHECKEDIN', // Giữ lại cả hai nếu backend không nhất quán
+    CHECKED_OUT: 'CHECKED_OUT',
+    CHECKEDOUT: 'CHECKEDOUT', // Giữ lại cả hai nếu backend không nhất quán
+    COMPLETED: 'COMPLETED',
+    CANCEL: 'CANCEL', // Chỉ kiểm tra 'CANCEL' và 'REJECTED'
+    REJECTED: 'REJECTED',
+};
+
 const OwnerBookingsSection: React.FC = () => {
     const [bookings, setBookings] = useState<BookingsOwnerView[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState<BookingFilter>(BookingFilter.ALL);
 
-    // Hàm fetch dữ liệu chính
-    const fetchBookings = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            let data: BookingsOwnerView[];
-            if (activeFilter === BookingFilter.PENDING) {
-                // Giả sử service getPendingBookingsOwnerView trả về mảng
-                data = await getPendingBookingsOwnerView(); 
-            } else {
-                // Giả sử service getAllBookingsOwnerView trả về mảng
-                data = await getAllBookingsOwnerView(); 
-            }
-            
-            // Xử lý lọc client-side cho các trạng thái khác
-            const filteredData = data.filter(booking => {
-                const status = booking.bookingStatusName.toUpperCase();
-                switch (activeFilter) {
-                    case BookingFilter.PENDING:
-                        return status === 'PENDING';
-                    case BookingFilter.UPCOMING:
-                        // UPCOMING là Confirmed và đang chờ Check-in HOẶC đã Check-in
-                        return status === 'CONFIRMED' || status === 'CHECKED_IN' || status === 'CHECKEDIN';
-                    case BookingFilter.COMPLETED:
-                        return status === 'COMPLETED';
-                    case BookingFilter.CANCELLED:
-                        return status.includes('CANCEL') || status.includes('REJECTED');
-                    default:
-                        return true;
-                }
-            });
-
-            setBookings(filteredData);
-
-        } catch (error) {
-            toast.error("Lỗi khi tải danh sách Booking.");
-        } finally {
-            setIsLoading(false);
-        }
-    }, [activeFilter]);
-
-    useEffect(() => {
-        fetchBookings();
-    }, [fetchBookings]);
-
-
-    // Hàm xử lý hành động (Confirm/Cancel/Check-in/out)
-    const handleAction = async (bookingId: number, action: 'confirm' | 'cancel' | 'checkin' | 'checkout') => {
-        // 1. Dùng window.confirm để xác nhận hành động
+    // Bọc handleAction trong useCallback
+    const handleAction = useCallback(async (bookingId: number, action: 'confirm' | 'cancel' | 'checkin' | 'checkout' | 'complete') => {
+        
         if (!window.confirm(`Bạn có chắc chắn muốn ${action.toUpperCase()} Booking #${bookingId} không?`)) {
             return;
         }
@@ -94,7 +59,6 @@ const OwnerBookingsSection: React.FC = () => {
                     successMessage = "Booking đã được **XÁC NHẬN** thành công!";
                     break;
                 case 'cancel':
-                    // Dùng prompt để lấy lý do hủy
                     const reason = prompt("Vui lòng nhập lý do hủy:");
                     if (!reason || reason.trim() === "") {
                         toast.info("Hành động hủy đã bị gián đoạn hoặc lý do trống.");
@@ -109,7 +73,11 @@ const OwnerBookingsSection: React.FC = () => {
                     break;
                 case 'checkout':
                     actionFunction = checkOutBookingOwner;
-                    successMessage = "Khách hàng đã **CHECK-OUT** và hoàn thành giao dịch!";
+                    successMessage = "Khách hàng đã **CHECK-OUT** (Đang chờ Hoàn tất)!";
+                    break;
+                case 'complete':
+                    actionFunction = completeBookingOwner;
+                    successMessage = "Booking đã được **HOÀN TẤT** thủ công!";
                     break;
                 default:
                     return;
@@ -118,50 +86,169 @@ const OwnerBookingsSection: React.FC = () => {
             // Gọi API
             await actionFunction(bookingId as number);
             toast.success(successMessage);
-            fetchBookings(); // Tải lại dữ liệu sau khi hành động thành công
 
         } catch (error) {
+            console.error(`Error performing action ${action} for booking ${bookingId}:`, error);
             toast.error(`Thực hiện hành động ${action} thất bại.`);
         }
-    };
+        
+
+        await fetchBookings(); 
+    }, []); 
+
     
-    // Hàm render các nút hành động (ĐÃ SỬA: Thêm CHECKEDIN)
+    // Bọc fetchBookings trong useCallback và đưa dependencies vào
+    const fetchBookings = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            let data: BookingsOwnerView[] = await getAllBookingsOwnerView(); 
+            
+            const filteredData = data.filter(booking => {
+                const status = booking.bookingStatusName.toUpperCase();
+
+                switch (activeFilter) {
+                    case BookingFilter.PENDING:
+                        return status === Status.PENDING;
+                    case BookingFilter.UPCOMING:
+                        // Lỗi tiềm ẩn đã được sửa: loại bỏ CHECKED_OUT khỏi UPCOMING
+                        return (
+                            status === Status.CONFIRMED || 
+                            status === Status.CHECKED_IN ||
+                            status === Status.CHECKEDIN // Giữ lại CHECKEDIN nếu cần
+                        );
+                    case BookingFilter.COMPLETED:
+                        return status === Status.COMPLETED;
+                    case BookingFilter.CANCELLED:
+                        // Sử dụng includes để bao gồm CANCELED/REJECTED
+                        return status.includes(Status.CANCEL) || status.includes(Status.REJECTED);
+                    default:
+                        return true;
+                }
+            });
+
+            setBookings(filteredData);
+
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách Booking:", error);
+            toast.error("Lỗi khi tải danh sách Booking.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, [activeFilter]); // Dependency chính là activeFilter
+
+    // Hook để gọi fetchBookings mỗi khi activeFilter thay đổi hoặc lần đầu tiên component mount
+    useEffect(() => {
+        fetchBookings();
+    }, [fetchBookings]); // Đảm bảo fetchBookings là dependency
+
+
+    // Bổ sung: Định nghĩa lại handleAction sau khi fetchBookings đã được định nghĩa
+    // **Chú ý quan trọng:** Để `handleAction` hoạt động, ta cần định nghĩa lại nó 
+    // sau khi `fetchBookings` đã được định nghĩa, HOẶC làm cho `fetchBookings` 
+    // không có dependency. Tốt nhất là thêm `fetchBookings` vào dependency của `handleAction`.
+    // Tôi sẽ sửa lại `handleAction` để lấy `fetchBookings` làm dependency:
+
+    // Khai báo lại handleAction với dependency:
+    const handleActionWithDep = useCallback(async (bookingId: number, action: 'confirm' | 'cancel' | 'checkin' | 'checkout' | 'complete') => {
+        
+        if (!window.confirm(`Bạn có chắc chắn muốn ${action.toUpperCase()} Booking #${bookingId} không?`)) {
+            return;
+        }
+
+        try {
+            let actionFunction: (id: number, reason?: string) => Promise<any>;
+            let successMessage = "";
+            
+            switch (action) {
+                // ... (giữ nguyên logic switch case)
+                case 'confirm':
+                    actionFunction = confirmBookingOwner;
+                    successMessage = "Booking đã được **XÁC NHẬN** thành công!";
+                    break;
+                case 'cancel':
+                    const reason = prompt("Vui lòng nhập lý do hủy:");
+                    if (!reason || reason.trim() === "") {
+                        toast.info("Hành động hủy đã bị gián đoạn hoặc lý do trống.");
+                        return;
+                    }
+                    actionFunction = (id) => cancelBookingOwner(id, reason);
+                    successMessage = "Booking đã được **HỦY** thành công!";
+                    break;
+                case 'checkin':
+                    actionFunction = checkInBookingOwner;
+                    successMessage = "Khách hàng đã **CHECK-IN**!";
+                    break;
+                case 'checkout':
+                    actionFunction = checkOutBookingOwner;
+                    successMessage = "Khách hàng đã **CHECK-OUT** (Đang chờ Hoàn tất)!";
+                    break;
+                case 'complete':
+                    actionFunction = completeBookingOwner;
+                    successMessage = "Booking đã được **HOÀN TẤT** thủ công!";
+                    break;
+                default:
+                    return;
+            }
+
+            await actionFunction(bookingId as number);
+            toast.success(successMessage);
+            await fetchBookings(); // Tải lại dữ liệu sau khi hành động thành công
+
+        } catch (error) {
+            console.error(`Error performing action ${action} for booking ${bookingId}:`, error);
+            toast.error(`Thực hiện hành động ${action} thất bại.`);
+        }
+    }, [fetchBookings]); // <-- Dependency quan trọng
+
+    
+    // Hàm render các nút hành động
     const renderActions = (booking: BookingsOwnerView) => {
         const status = booking.bookingStatusName.toUpperCase();
 
         switch (status) {
-            case 'PENDING':
+            case Status.PENDING:
                 return (
                     <>
-                        <button className={cx('action-btn', 'confirm')} onClick={() => handleAction(booking.id, 'confirm')}>
+                        <button className={cx('action-btn', 'confirm')} onClick={() => handleActionWithDep(booking.id, 'confirm')}>
                             <FontAwesomeIcon icon={faCheckCircle} /> Duyệt
                         </button>
-                        <button className={cx('action-btn', 'cancel')} onClick={() => handleAction(booking.id, 'cancel')}>
+                        <button className={cx('action-btn', 'cancel')} onClick={() => handleActionWithDep(booking.id, 'cancel')}>
                             <FontAwesomeIcon icon={faTimesCircle} /> Hủy
                         </button>
                     </>
                 );
-            case 'CONFIRMED':
+            case Status.CONFIRMED:
                 return (
                     <>
-                        <button className={cx('action-btn', 'checkin')} onClick={() => handleAction(booking.id, 'checkin')}>
+                        <button className={cx('action-btn', 'checkin')} onClick={() => handleActionWithDep(booking.id, 'checkin')}>
                             <FontAwesomeIcon icon={faDoorOpen} /> Check-in
                         </button>
-                        <button className={cx('action-btn', 'cancel')} onClick={() => handleAction(booking.id, 'cancel')}>
+                        <button className={cx('action-btn', 'cancel')} onClick={() => handleActionWithDep(booking.id, 'cancel')}>
                             Hủy
                         </button>
                     </>
                 );
-            case 'CHECKED_IN':
-            case 'CHECKEDIN': // Thêm case này để khớp với dữ liệu API của bạn
+            case Status.CHECKED_IN:
+            case Status.CHECKEDIN: 
                 return (
-                    <button className={cx('action-btn', 'checkout')} onClick={() => handleAction(booking.id, 'checkout')}>
-                        <FontAwesomeIcon icon={faArrowRight} /> Check-out
+                    <>
+                        <button className={cx('action-btn', 'checkout')} onClick={() => handleActionWithDep(booking.id, 'checkout')}>
+                            <FontAwesomeIcon icon={faArrowRight} /> Check-out
+                        </button>
+                        {/* <button className={cx('action-btn', 'complete')} onClick={() => handleActionWithDep(booking.id, 'complete')}>
+                            <FontAwesomeIcon icon={faClipboardCheck} /> Hoàn tất (Thủ công)
+                        </button> */}
+                    </>
+                );
+            case Status.CHECKED_OUT: 
+            case Status.CHECKEDOUT: 
+                return (
+                    <button className={cx('action-btn', 'complete')} onClick={() => handleActionWithDep(booking.id, 'complete')}>
+                        <FontAwesomeIcon icon={faClipboardCheck} /> Hoàn tất giao dịch
                     </button>
                 );
             default:
-                // Hiển thị nhãn cho các trạng thái đã kết thúc (COMPLETED, CANCELLED, REJECTED, v.v.)
-                return <span className={cx('status-label', status.toLowerCase())}>{status}</span>;
+                return <span className={cx('status-label', status.toLowerCase())}>{booking.bookingStatusName}</span>;
         }
     };
 

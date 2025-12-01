@@ -1,6 +1,6 @@
 export const CLOUD_NAME: string = "dqm8mrtdf";
 
-export const WORKSPACE_PHOTOS_PRESET: string = "csb_workspace_photos_unsigned";
+export const WORKSPACE_PHOTOS_PRESET: string = "csb_space_photos_unsigned";
 export const AVATAR_PRESET: string = "csb_avatar_unsigned";
 export const COVER_PRESET: string = "csb_cover_unsigned"; 
 

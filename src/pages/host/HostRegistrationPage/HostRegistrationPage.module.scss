@@ -1,302 +1,859 @@
+// Variables
+$primary-color: rgb(12, 69, 131);
+$primary-gradient: linear-gradient( 90.2deg,  rgba(1,47,95,1) -0.4%, rgba(56,141,217,1) 106.1% );;
+$secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+$success-color: #10b981;
 
-$color-bg-primary: #f5f5f5;
-$color-bg-secondary: #ffffff; 
-$color-text-primary: #1a1a1a; 
-$color-text-secondary: #363232; 
-$color-accent: #2661a1; 
-$color-accent-hover: #0056b3; 
-$color-error: #dc3545; 
-$color-border: #cccccc; 
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #3b82f6;
 
-@mixin transition-default {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+$border-radius: 16px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@mixin shadow-elevated {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // Bóng nhẹ hơn cho nền sáng
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
-// --- KHAI BÁO CLASS CHÍNH ---
-
-.wrapper {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    color: $color-text-primary;
-    margin-top: 30px;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.register-container {
-    width: 68%;
-    background-color: $color-bg-secondary;
-    border-radius: 12px;
-    padding: 35px 50px;
-    @include shadow-elevated;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); // mạnh & mềm
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
-// --- HEADER VÀ THÔNG BÁO ---
-.header {
-    margin-bottom: 40px;
-}
-.title-container {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    .title-icon {
-        font-size: 2.2rem;
-        color: #043d68;
-    }
-
-    .title {
-        font-size: 2.5rem;
-        margin: 0;
-        text-shadow: none; // Bỏ hiệu ứng text-shadow
-        color: #043d68;
-    }
+// Page Container
+.page-container {
+  min-height: 100vh;
+//   background: linear-gradient(135deg, $gray-50 0%, $gray-100 100%);
+  animation: fadeIn 0.6s ease-out;
+  margin-top: 20px;
 }
 
-.subtitle {
-    font-size: 1.2rem;
-    color: $color-text-secondary;
-    margin-top: 10px;
-    font-weight: 500;
-}
-
-.error-message {
-    color: $color-error;
-    background-color: rgba($color-error, 0.05);
-    border: 1px solid $color-error;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    font-weight: 500;
-}
-
-// --- FORM VÀ FIELDSET ---
-
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 35px; 
-}
-
-.fieldset {
-    border: none;
-    padding: 0;
-    margin: 0;
-    width: 70%;
-    
-    &:not(:last-of-type) {
-        padding-bottom: 30px;
-        border-bottom: 1px solid #e0e0e0;
-    }
-}
-
-.legend {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: $color-text-primary;
-    margin-bottom: 25px;
-    position: relative;
-    padding-left: 20px;
-
-    &::before {
-        content: '●';
-        position: absolute;
-        left: 0;
-        color: $color-accent;
-        font-size: 1rem;
-        top: 5px;
-    }
-}
-
-.form-row {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 15px;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-        gap: 0;
-    }
-}
-
-.form-control {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-
-    &.flex-2 {
-        flex: 2;
-    }
-
-    label {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 8px;
-        color: $color-text-secondary;
-    }
-    
-    .required {
-        color: $color-error;
-        margin-left: 4px;
-        font-size: 1.3rem;
-    }
-    
-    .note {
-        font-size: 0.85rem;
-        color: #00796b; // Màu nhấn nhẹ nhàng hơn
-        font-weight: 400;
-        margin-left: 8px;
-    }
-}
-
-// --- CLASS CHO INPUT VÀ TEXTAREA ---
-.input-field {
-    padding: 14px 58px;
-    border: 1px solid $color-border;
-    border-radius: 8px;
-    background-color: #ffffff; // Nền input trắng
-    color: $color-text-primary;
-    font-size: 1rem;
-    @include transition-default;
-    
-    &:focus {
-        border-color: $color-accent;
-        outline: none;
-        background-color: #fcfcfc;
-        box-shadow: 0 0 0 3px rgba($color-accent, 0.2);
-    }
-
-    &::placeholder {
-        color: #888;
-    }
-}
-
-.textarea-field {
-    min-height: 120px;
-    resize: vertical;
-}
-// --- END CLASS MỚI ---
-
-// --- FILE UPLOAD (CUSTOM STYLING) ---
-.asset-note {
-    font-style: italic;
-    font-size: 1rem;
-    color: #28a745; // Màu xanh lá cây cho note tích cực
-    margin-bottom: 30px;
-}
-
-.file-row {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 15px;
-
-    @media (max-width: 600px) {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .file-control {
-        flex: 1;
-    }
-}
-
-.file-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: $color-text-secondary;
-}
-
-.file-upload-box {
-    position: relative;
-    cursor: pointer;
-    border: 2px dashed $color-border;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    background-color: #fafafa; // Nền upload box hơi xám nhẹ
-    @include transition-default;
-    min-height: 60px;
-
-    &:hover {
-        border-color: $color-accent;
-        background-color: #f0f0f0;
-    }
-}
-
-.file-input {
+// Hero Section
+.hero-section {
+  height: 280px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%),
+              url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  }
+}
+
+.hero-overlay {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.hero-content {
+  text-align: center;
+  padding: 0 20px;
+//   max-width: 800px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.hero-icon {
+  font-size: 60px;
+  color: white;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.hero-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.hero-subtitle {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+// Registration Container
+.registration-container {
+  width: 68%;
+//   margin: 0px auto 60px;
+margin: 0 auto;
+//   padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    margin: -40px auto 40px;
+    padding: 0 16px;
+  }
+}
+
+.registration-card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-2xl;
+  overflow: hidden;
+  animation: slideIn 0.6s ease-out;
+}
+
+// Progress Steps
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 40px 0;
+//   background: $gray-50;
+  
+  @media (max-width: 768px) {
+    padding: 24px 20px 0;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-width: 100px;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  
+  .step-active & {
+    background: $primary-gradient;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+  
+  &:not(.step-active) {
+    background: $gray-200;
+    color: $gray-500;
+  }
+}
+
+.step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-600;
+  text-align: center;
+  
+  .step-active & {
+    color: $primary-color;
+  }
+}
+
+.step-divider {
+  width: 60px;
+  height: 2px;
+  background: $gray-300;
+  margin: 0 20px;
+  
+  @media (max-width: 768px) {
+    width: 2px;
+    height: 40px;
+    margin: 0;
+  }
+}
+
+// Registration Header
+.registration-header {
+  padding: 40px 40px 32px;
+  border-bottom: 1px solid $gray-200;
+  
+  @media (max-width: 768px) {
+    padding: 32px 24px 24px;
+  }
+}
+
+.header-content {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.registration-title {
+  font-size: 25px;
+  font-weight: 700;
+  color: $gray-800;
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.title-icon {
+  color: $primary-color;
+  font-size: 25px;
+}
+
+.registration-subtitle {
+  font-size: 12px;
+  color: $gray-600;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// Error Banner
+.error-banner {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+  
+  @media (max-width: 768px) {
+    padding: 16px 24px;
+  }
+}
+
+// Registration Form
+.registration-form {
+  padding: 32px 40px;
+  
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+}
+
+// Form Section
+.form-section {
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 32px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: $gray-300;
+    box-shadow: $shadow-md;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
+
+.section-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-color;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: $gray-800;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.section-description {
+  font-size: 12px;
+  color: $gray-600;
+  line-height: 1.6;
+  margin: -16px 0 24px 0;
+}
+
+// Form Grid
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.col-span-2 {
+  grid-column: span 2;
+  
+  @media (max-width: 1024px) {
+    grid-column: span 1;
+  }
+}
+
+// Form Group
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $gray-700;
+  margin-bottom: 8px;
+  
+  .label-icon {
+    color: $gray-400;
+    font-size: 14px;
+  }
+}
+
+.required {
+  color: $danger-color;
+  font-weight: 700;
+}
+
+// Input Styles
+.input-wrapper {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid $gray-200;
+  border-radius: 8px;
+  font-size: 11px;
+  color: $gray-800;
+  background: white;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+  
+  &:hover:not(:focus) {
+    border-color: $gray-300;
+  }
+}
+
+.input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: $primary-color;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  
+  .form-input:focus ~ & {
+    transform: scaleX(1);
+  }
+}
+
+// Textarea Styles
+.textarea-wrapper {
+  position: relative;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid $gray-200;
+  border-radius: 8px;
+  font-size: 12px;
+  color: $gray-800;
+  background: white;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+.character-count {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 12px;
+  color: $gray-400;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+// Image Grid
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  display: flex;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.image-upload-card {
+    // justify-content: center;
+  background: $gray-50;
+  border: 2px dashed $gray-300;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: $primary-color;
+    background: #f8faff;
+  }
+  
+  &.wide {
+    grid-column: span 2;
+    
+    @media (max-width: 768px) {
+      grid-column: span 1;
+    }
+  }
+}
+
+.upload-label {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.upload-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  
+  span {
+    font-size: 16px;
+    font-weight: 600;
+    color: $gray-800;
+  }
+}
+
+.upload-icon {
+  color: $primary-color;
+  font-size: 18px;
+}
+
+.upload-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: $gray-500;
+}
+
+.upload-ratio, .upload-formats {
+  background: $gray-200;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+// Upload Area
+.upload-area {
+  position: relative;
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: white;
+  border: 1px solid $gray-200;
+  
+  &.wide {
+    height: 120px;
+  }
+}
+
+.file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.upload-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: $gray-400;
+  transition: all 0.3s ease;
+  
+  .upload-area:hover & {
+    color: $primary-color;
+  }
+  
+  &.wide {
+    flex-direction: row;
+    gap: 16px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.placeholder-icon {
+  font-size: 32px;
+}
+
+.placeholder-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.placeholder-subtext {
+  font-size: 12px;
+  color: $gray-400;
+}
+
+// Image Preview
+.image-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  
+  &.wide {
+    .preview-image {
+      object-fit: cover;
+    }
+  }
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  .image-preview:hover & {
+    opacity: 1;
+  }
+}
+
+// Submit Section
+.submit-section {
+  padding: 32px 0;
+  text-align: center;
+}
+
+.privacy-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  color: $gray-600;
+  font-size: 14px;
+  line-height: 1.5;
+  
+  .privacy-icon {
+    color: $primary-color;
+    font-size: 9px;
+    flex-shrink: 0;
+    padding-bottom: 2px;
+  }
+
+  span {
+    font-size: 0.9rem;
+  }
+}
+
+// Submit Button
+.submit-button {
+  padding: 18px 40px;
+  background: $primary-gradient;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  min-width: 280px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.file-placeholder {
-    display: block;
-    color: #888;
-    font-size: 0.95rem;
-}
-
-
-// --- BUTTON XÁC NHẬN ---
-.submit-button {
-    padding: 18px 30px;
-    background-image: radial-gradient( circle farthest-corner at -24.7% -47.3%,  rgba(6,130,165,1) 0%, rgba(34,48,86,1) 66.8%, rgba(15,23,42,1) 100.2% );
-    color: $color-bg-secondary; // Text trắng trên nền xanh
-    border: none;
-    border-radius: 10px;
-    font-size: 1.15rem;
-    font-weight: 700;
-    cursor: pointer;
-    @include transition-default;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    letter-spacing: 0.5px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
     
-    &:hover:not(:disabled) {
-        background-color: $color-accent-hover;
-        transform: translateY(-3px);
-        @include shadow-elevated;
+    &::before {
+      left: 100%;
     }
-    
-    &:disabled {
-        background-color: #adb5bd; // Màu xám nhạt khi disable
-        cursor: not-allowed;
-        opacity: 0.8;
-        transform: none;
-        box-shadow: none;
-    }
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &.loading {
+    background: linear-gradient(135deg, $gray-500 0%, $gray-600 100%);
+  }
 }
 
-// --- SPINNER (LOADING ICON) ---
-.spinner {
-    border: 4px solid rgba($color-bg-secondary, 0.3);
-    border-top: 4px solid $color-bg-secondary;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    animation: spin 1s linear infinite;
+.button-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.footer-note {
+// Responsive Design
+@media (max-width: 768px) {
+  .hero-section {
+    height: 220px;
+  }
+  
+  .hero-title {
+    font-size: 32px;
+  }
+  
+  .hero-subtitle {
+    font-size: 16px;
+  }
+  
+  .progress-steps {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .step-divider {
+    width: 2px;
+    height: 40px;
+  }
+  
+  .registration-form {
+    padding: 20px 16px;
+  }
+  
+  .form-section {
+    padding: 20px;
+  }
+  
+  .section-header {
+    flex-direction: column;
     text-align: center;
-    font-size: 0.9rem;
-    color: $color-text-secondary;
-    margin-top: 25px;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .col-span-2 {
+    grid-column: span 1;
+  }
+  
+  .image-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .image-upload-card.wide {
+    grid-column: span 1;
+  }
+  
+  .submit-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    height: 180px;
+  }
+  
+  .hero-title {
+    font-size: 24px;
+  }
+  
+  .hero-subtitle {
+    font-size: 14px;
+  }
+  
+  .registration-title {
+    font-size: 20px;
+  }
+  
+  .section-title {
+    font-size: 18px;
+  }
 }

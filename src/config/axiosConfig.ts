@@ -17,16 +17,16 @@ export const setupAxiosInterceptors = (logoutHandler: () => void, navigate: (pat
             // 1. Lỗi chính thức: 401/403
             if (status === 401 || status === 403) {
                 console.warn("401/403 received. Logging out.");
-                logoutHandler(); 
-                toast.error("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.");
+                // logoutHandler(); 
+                // toast.error("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.");
             } 
             // 2. Lỗi Network Error (status === null)
             else if (isNetworkError && hasAuthHeader) {
                 // Đây là kịch bản token hết hạn gây ra lỗi kết nối theo kinh nghiệm của bạn
                 console.warn("Network Error while authenticated. Assuming expired token and forcing logout.");
-                logoutHandler(); 
-                navigate("/login");
-                toast.dark("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.");
+                // logoutHandler(); 
+                // navigate("/login");
+                // toast.dark("Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.");
             }
             // // 3. Lỗi Network Error thông thường (server down/mất mạng)
             // else if (isNetworkError) {

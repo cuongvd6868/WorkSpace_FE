@@ -19,9 +19,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, count, description, icon: fa
         <div className={cx('task-card')}>
             <div className={cx('header-row')}>
                 <div className={cx('icon-container', color)}>
-                    <FontAwesomeIcon icon={faIcon} /> 
+                    <FontAwesomeIcon icon={faIcon} className={cx('icon')}/> 
                 </div>
-                <div className={cx('count-display', color)}>{count}</div>
+                
+                <div className={cx('count-display', color)}>
+                    <p className={cx('count-display_detail')}>{count}</p>
+                </div>
             </div>
             
             <div className={cx('content')}>

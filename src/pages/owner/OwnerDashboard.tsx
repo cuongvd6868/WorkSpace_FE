@@ -12,6 +12,8 @@ import { getOwnerStats } from "~/services/OwnerService";
 import WeeklyRevenueChart from "~/components/OwnerComponents/Charts/WeeklyRevenueChart";
 import FinanceSection from "~/components/OwnerComponents/FinanceSection/FinanceSection";
 import OwnerBookingsSection from "~/components/OwnerComponents/OwnerBookingsSection/OwnerBookingsSection";
+import { CreateWorkspaceForm } from "~/components/OwnerComponents/CreateWorkspaceForm/CreateWorkspaceForm";
+import OwnerWorkspacesTable from "~/components/OwnerComponents/OwnerWorkspacesTable/OwnerWorkspacesTable";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -24,15 +26,58 @@ enum OwnerPage {
 
 
 
-const ListingsManagementSection: React.FC = () => (
-    <div className={cx('listings-management')}>
-        <h3>🏢 Quản Lý Workspace Của Bạn</h3>
-        <p className={cx('placeholder')}>
-            [Bảng chi tiết: Tên Workspace, Loại, Địa chỉ, Giá/Giờ, Trạng thái (Active/Pending), Action (Edit/View Bookings)]
-        </p>
-        <button className={cx('add-btn')}>+ Thêm Workspace Mới</button>
-    </div>
-);
+
+const ListingsManagementSection: React.FC = () => {
+    const [isCreating, setIsCreating] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0); 
+
+    const handleCreationSuccess = () => {
+        setIsCreating(false);
+        toast.success("Workspace mới đã được tạo thành công! Vui lòng chờ hệ thống duyệt.");
+        setReloadKey(prev => prev + 1); 
+    };
+
+    const handleAddRoom = (id: number) => {
+        // Logic chuyển hướng/mở modal thêm phòng
+        toast.info(`Chuyển đến trang thêm phòng cho Workspace ID: ${id}`);
+    };
+
+    const handleViewDetails = (id: number) => {
+        toast.info(`Chuyển đến trang chi tiết cho Workspace ID: ${id}`);
+    };
+
+
+    if (isCreating) {
+        return (
+            <div className={cx('create-form-wrapper')}>
+                <h3>➕ Thêm Workspace Mới</h3>
+                <CreateWorkspaceForm 
+                    onSuccess={handleCreationSuccess}
+                    onCancel={() => setIsCreating(false)}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div className={cx('listings-management')}>
+            <div className={cx('header-with-action')}>
+                <button 
+                    className={cx('add-btn')} 
+                    onClick={() => setIsCreating(true)} 
+                >
+                    + Thêm Workspace Mới
+                </button>
+            </div>
+
+            <OwnerWorkspacesTable 
+                key={reloadKey} 
+                onAddRoom={handleAddRoom}
+                onViewDetails={handleViewDetails}
+            />
+        </div>
+    );
+};
 
 const BookingsManagementSection: React.FC = () => (
     <div className={cx('bookings-management')}>
