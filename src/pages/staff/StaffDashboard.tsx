@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { CancelledBooking, StaffDashboardStats } from "~/types/Staff";
 import { getStaffDashboard } from "~/services/StaffService";
 import CancelledBookingList from "~/components/StaffComponents/CancelledBookingList/CancelledBookingList";
+import SupportTicketList from "~/components/StaffComponents/SupportTicketList/SupportTicketList";
 
 const cx = classNames.bind(styles);
 
@@ -34,7 +35,8 @@ const SupportSection: React.FC = () => (
     <div className={cx('support-section')}>
         <h3>💬 Hộp Thư Hỗ Trợ Trực Tuyến</h3>
         <p className={cx('placeholder-long')}>
-            [Giao diện Chat: Danh sách Ticket/User đang chờ, ô trả lời nhanh, bộ lọc theo trạng thái (Open/Resolved)]
+            <SupportTicketList />
+            {/* [Giao diện Chat: Danh sách Ticket/User đang chờ, ô trả lời nhanh, bộ lọc theo trạng thái (Open/Resolved)] */}
         </p>
         <button className={cx('view-all-btn')}>Xem Tất Cả Ticket (15 Mới)</button>
     </div>

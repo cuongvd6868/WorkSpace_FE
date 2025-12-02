@@ -213,7 +213,7 @@ const SupportPage: React.FC = () => {
                                     type="text"
                                     value={formData.subject}
                                     onChange={handleInputChange}
-                                    placeholder="Ví dụ: Lỗi đăng nhập trên ứng dụng di động..."
+                                    placeholder="Ví dụ: Lỗi đăng nhập trên ứng dụng..."
                                     required
                                     className={cx('input-field')}
                                     maxLength={100}

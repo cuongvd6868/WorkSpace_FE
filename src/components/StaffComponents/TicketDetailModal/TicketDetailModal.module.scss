@@ -1,0 +1,187 @@
+// TicketDetailModal.module.scss
+$primary-color: #4361ee;
+$text-dark: #333;
+$text-muted: #6c757d;
+$border-color: #e0e6ed;
+$bg-light: #f4f6f9;
+$shadow-deep: 0 10px 20px rgba(0, 0, 0, 0.15);
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: $shadow-deep;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid $border-color;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.5em;
+    color: $primary-color;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: $text-muted;
+    cursor: pointer;
+    transition: color 0.2s;
+    
+    &:hover {
+        color: #dc3545;
+    }
+}
+
+.modal-body {
+    padding: 30px;
+    display: grid;
+    gap: 25px;
+}
+
+// --- Info Grid ---
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background-color: $bg-light;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+
+    .info-item {
+        font-size: 0.95em;
+        strong {
+            display: block;
+            color: $text-dark;
+            margin-bottom: 3px;
+        }
+    }
+}
+
+// --- Status Update ---
+.status-update {
+    display: flex;
+    flex-direction: column;
+
+    .status-dropdown-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-top: 5px;
+
+        .current-status-display {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 700;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .status-select {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0; /* Ẩn dropdown gốc, chỉ dùng để chọn */
+            cursor: pointer;
+        }
+    }
+}
+
+// --- History Box ---
+.history-box {
+    h3 {
+        font-size: 1.2em;
+        color: $primary-color;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    .placeholder-history {
+        background-color: #fcfcfc;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        color: $text-muted;
+        font-style: italic;
+    }
+}
+
+// --- Reply Form ---
+.reply-form-box {
+    h3 {
+        font-size: 1.2em;
+        color: $primary-color;
+        margin-bottom: 15px;
+    }
+
+    .reply-textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        resize: vertical;
+        font-size: 1em;
+        transition: border-color 0.2s;
+        
+        &:focus {
+            border-color: $primary-color;
+            outline: none;
+        }
+    }
+
+    .send-btn {
+        background-color: #06d6a0; // Màu xanh lá cho hành động gửi
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s;
+        
+        &:hover:not(:disabled) {
+            background-color: #04b380;
+        }
+
+        &:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    }
+}

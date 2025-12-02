@@ -15,3 +15,20 @@ export interface StaffDashboardStats {
   bookingsTodayCount: number;
   cancelledBookings: CancelledBooking[];
 }
+
+export interface SupportTickets {
+    id: number,
+    subject: string,
+    ticketType: number,
+    status: number,
+    createUtc: string,
+    submittedByUserName: string
+}
+
+export interface ReplyTicketPayload {
+    message: string;
+}
+
+export interface UpdateStatusPayload {
+    status: number;
+}
