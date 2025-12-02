@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './SearchRoomModal.module.scss';
 import classNames from 'classnames/bind';
-import { X, Search, CalendarCheck, Clock, Users, Loader2, RefreshCcw } from 'lucide-react'; 
-import DatePicker from 'react-datepicker'; 
-import 'react-datepicker/dist/react-datepicker.css'; 
-import { format } from 'date-fns'; 
-
-// Vẫn giữ import này (cần nếu có)
-import { RoomSearchParams } from '~/services/WorkSpaceRoomService'; 
+import { X, Search, Clock, Users, Loader2, RefreshCcw } from 'lucide-react';
+import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+import { CalendarCheck } from 'lucide-react'; 
 
 const cx = classNames.bind(styles);
 
 // --- Interface KHÔNG ĐỔI ---
 interface SearchParamsOutput {
     startTime: string; 
-    endTime: string;    
+    endTime: string;    
     capacity: number;
 }
 
@@ -28,16 +24,43 @@ interface SearchRoomModalProps {
 }
 // --------------------------------------------------------
 
-/**
- * Hàm helper để lấy thời điểm cuối ngày (23:59:59)
- * Dùng để giới hạn maxTime cho DatePicker khi chọn cùng ngày.
- */
-const getEndOfDay = (date: Date): Date => {
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-    return end;
+// --- HẰNG SỐ CỐ ĐỊNH (Chỉ cần cho logic lịch) ---
+const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'CN', 'T7']; // Sửa lại T7/CN
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTES = [0, 15, 30, 45];
+
+// Kiểm tra ngày có thể chọn được (không cho chọn ngày đã qua)
+const isDateSelectable = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+    return checkDate >= today;
 };
 
+// Hàm tạo lịch (Giữ nguyên logic)
+const generateCalendar = (month: Date) => {
+    const year = month.getFullYear();
+    const monthIndex = month.getMonth();
+    const firstDay = new Date(year, monthIndex, 1);
+    // getDay: CN=0, T2=1, ..., T7=6. Điều chỉnh để T2 là 0 trong mảng WEEK_DAYS
+    const firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; 
+    
+    const startDay = new Date(firstDay);
+    startDay.setDate(firstDay.getDate() - firstDayOfWeek);
+    
+    const calendar = [];
+    const currentDate = new Date(startDay);
+    
+    // Tạo 6 hàng * 7 cột = 42 ô
+    while (calendar.length < 42) {
+        calendar.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return calendar;
+};
+// -------------------------------------------------------------
 
 const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     isOpen,
@@ -46,37 +69,129 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     onClear,
     isLoading
 }) => {
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    // --- STATE ĐÃ ĐƠN GIẢN HÓA (Chỉ giữ lại Hourly) ---
+    // Loại bỏ bookingType state
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Chỉ cần 1 ngày
     const [capacity, setCapacity] = useState(1);
+    const [startTime, setStartTime] = useState({ hour: 9, minute: 0 });
+    const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
 
+    // Đồng bộ lại ngày/giờ khi mở modal (tùy chọn)
+    useEffect(() => {
+        if (isOpen) {
+            // Đặt ngày chọn mặc định là ngày hôm nay nếu chưa chọn
+            if (!selectedDate) {
+                setSelectedDate(new Date());
+            }
+            setCurrentMonth(new Date());
+            setCapacity(1);
+            setStartTime({ hour: 9, minute: 0 });
+            setEndTime({ hour: 17, minute: 0 });
+        }
+    }, [isOpen]);
+
+    // Format đúng chuẩn ISO 8601 (không bao gồm giây)
     const formatDateTime = (date: Date | null): string => {
         if (!date) return '';
-        return format(date, "yyyy-MM-dd'T'HH:mm");
+        return format(date, "yyyy-MM-dd'T'HH:mm"); 
     };
 
+    // Hàm xử lý chọn ngày (Chỉ cho phép chọn 1 ngày)
+    const handleDateClick = (date: Date) => {
+        if (!isDateSelectable(date)) return;
+        setSelectedDate(date);
+    };
+    
+    // Hàm chọn nhanh khoảng thời gian
+    const handleQuickTimeSelect = (startHour: number, endHour: number) => {
+        setStartTime({ hour: startHour, minute: 0 });
+        setEndTime({ hour: endHour, minute: 0 });
+    };
+
+    const navigateMonth = (direction: number) => {
+        const newMonth = new Date(currentMonth);
+        newMonth.setMonth(currentMonth.getMonth() + direction);
+        
+        const today = new Date();
+        today.setDate(1);
+        today.setHours(0, 0, 0, 0);
+        
+        if (direction === -1) {
+             // Chỉ cho phép quay lại tháng hiện tại (nếu đang ở tháng hiện tại)
+            if (newMonth.getFullYear() < today.getFullYear() || (newMonth.getFullYear() === today.getFullYear() && newMonth.getMonth() < today.getMonth())) {
+                return;
+            }
+        }
+        setCurrentMonth(newMonth);
+    };
+
+    const isDateSelected = (date: Date) => {
+        return selectedDate?.toDateString() === date.toDateString();
+    };
+
+    const formatTimeDisplay = () => {
+        if (!selectedDate) return "Chọn ngày trước";
+        
+        const startStr = `${startTime.hour.toString().padStart(2, '0')}:${startTime.minute.toString().padStart(2, '0')}`;
+        const endStr = `${endTime.hour.toString().padStart(2, '0')}:${endTime.minute.toString().padStart(2, '0')}`;
+        
+        return `${startStr} - ${endStr}`;
+    };
+
+    const currentMonthCalendar = generateCalendar(currentMonth);
+    const nextMonth = new Date(currentMonth);
+    nextMonth.setMonth(currentMonth.getMonth() + 1);
+    const nextMonthCalendar = generateCalendar(nextMonth);
+
+    // Kiểm tra xem có thể thực hiện tìm kiếm không
+    const canSearch = selectedDate !== null && 
+        capacity >= 1 && 
+        (endTime.hour > startTime.hour || 
+        (endTime.hour === startTime.hour && endTime.minute > startTime.minute));
+
+    // === HÀM XỬ LÝ TÌM KIẾM (onSubmit) ===
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!startDate || !endDate) {
-            alert("Vui lòng chọn ngày giờ bắt đầu và kết thúc.");
+
+        if (!canSearch) {
+            toast.error("Vui lòng chọn ngày, thời gian hợp lệ và số người > 0.");
             return;
         }
-        if (startDate >= endDate) { 
-            toast.info('Thời gian kết thúc phải sau thời gian bắt đầu.');
+
+        let startDateTime: Date;
+        let endDateTime: Date;
+        
+        const selectedDateFinal = selectedDate!;
+        
+        // TẠO DATE OBJECT CHÍNH XÁC (bao gồm cả giờ, phút)
+        startDateTime = new Date(selectedDateFinal);
+        startDateTime.setHours(startTime.hour, startTime.minute, 0, 0);
+        
+        endDateTime = new Date(selectedDateFinal);
+        endDateTime.setHours(endTime.hour, endTime.minute, 0, 0);
+
+        // Kiểm tra thời gian bắt đầu có trước thời gian hiện tại không
+        if (startDateTime < new Date()) {
+            toast.error("Thời gian bắt đầu không thể là thời điểm đã qua.");
             return;
         }
 
         onSearch({
-            startTime: formatDateTime(startDate),
-            endTime: formatDateTime(endDate),
+            startTime: formatDateTime(startDateTime),
+            endTime: formatDateTime(endDateTime),
             capacity: Number(capacity) || 1
         });
+        // Không đóng modal để người dùng có thể chỉnh sửa và tìm kiếm lại
     };
 
     const handleClear = () => {
-        setStartDate(null);
-        setEndDate(null);
+        // Đặt lại các state về giá trị mặc định của mode "Theo Giờ"
+        setSelectedDate(null);
+        setCurrentMonth(new Date());
         setCapacity(1);
+        setStartTime({ hour: 9, minute: 0 });
+        setEndTime({ hour: 17, minute: 0 });
         onClear(); 
         onClose(); 
     };
@@ -85,75 +200,43 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
 
     return (
         <div className={cx('modalOverlay')} onClick={onClose}>
+            {/* Sử dụng :global(.is-open) để điều khiển transition CSS */}
             <div className={cx('modalContent')} onClick={(e) => e.stopPropagation()}>
-                
-                {/* Header */}
-                <div className={cx('modalHeader')}>
-                    <h2 className={cx('modalTitle')}>
-                        <Search size={24} className={cx('titleIcon')} />
-                        Tìm Kiếm Phòng Trống 
-                    </h2>
-                    <button className={cx('modalCloseButton')} onClick={onClose}>
-                        <X size={20} />
-                    </button>
-                </div>
+                <form className={cx('searchForm')} onSubmit={handleSubmit}>
+                    
+                    {/* Header */}
+                    <div className={cx('modalHeader')}>
+                        <h2 className={cx('modalTitle')}>
+                            <Search size={24} className={cx('titleIcon')} />
+                            Tìm Kiếm Phòng Trống (Theo Giờ) 
+                        </h2>
+                        <button type="button" className={cx('modalCloseButton')} onClick={onClose}>
+                            <X size={20} />
+                        </button>
+                    </div>
 
-                {/* Body */}
-                <div className={cx('modalBody')}>
-                    <form className={cx('searchForm')} onSubmit={handleSubmit}>
-                        <div className={cx('formGrid')}>
-                            
-                            {/* START TIME */}
-                            <div className={cx('formGroup', 'startTimeGroup')}>
-                                <label htmlFor="start-time" className={cx('inputLabel')}>
-                                    <CalendarCheck size={16} /> Thời gian bắt đầu
-                                </label>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={(date: Date | null) => setStartDate(date)} 
-                                    showTimeSelect
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    minDate={new Date()}
-                                    className={cx('inputField')} 
-                                    placeholderText="Chọn ngày giờ bắt đầu"
-                                    required
-                                    popperClassName={cx('customDatePopper')}
-                                />
+                    {/* Body */}
+                    <div className={cx('modalBody')}>
+                        
+                        {/* Selected Date & Time Display & Capacity */}
+                        <div className={cx('info-grid')}>
+                            <div className={cx('selection-display')}>
+                                <div className={cx('selected-info')}>
+                                    <span className={cx('label')}>Ngày & giờ:</span>
+                                    <span className={cx('value', { placeholder: selectedDate === null })}>
+                                        {selectedDate ? (
+                                            <>
+                                                {selectedDate.toLocaleDateString('vi-VN', { 
+                                                     weekday: 'long', day: '2-digit', month: '2-digit' 
+                                                 })} • **{formatTimeDisplay()}**
+                                            </>
+                                        ) : (
+                                            `Chưa chọn ngày`
+                                        )}
+                                    </span>
+                                </div>
                             </div>
 
-                            {/* END TIME */}
-                            <div className={cx('formGroup', 'endTimeGroup')}>
-                                <label htmlFor="end-time" className={cx('inputLabel')}>
-                                    <Clock size={16} /> Thời gian kết thúc
-                                </label>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={(date: Date | null) => setEndDate(date)} 
-                                    showTimeSelect
-                                    dateFormat="dd/MM/yyyy HH:mm"
-                                    // Không cho chọn ngày trước ngày bắt đầu
-                                    minDate={startDate || new Date()} 
-                                    
-                                    // LOGIC SỬA LỖI minTime/maxTime: Yêu cầu cả hai prop khi giới hạn giờ
-                                    minTime={
-                                        (startDate && endDate && startDate.toDateString() === endDate.toDateString())
-                                        ? startDate 
-                                        : undefined 
-                                    }
-                                    maxTime={
-                                        (startDate && endDate && startDate.toDateString() === endDate.toDateString())
-                                        ? getEndOfDay(endDate) 
-                                        : undefined 
-                                    }
-                                    // END LOGIC SỬA LỖI
-
-                                    className={cx('inputField')}
-                                    placeholderText="Chọn ngày giờ kết thúc"
-                                    required
-                                    popperClassName={cx('customDatePopper')}
-                                />
-                            </div>
-                            
                             {/* Số người */}
                             <div className={cx('formGroup', 'capacityGroup')}>
                                 <label htmlFor="capacity" className={cx('inputLabel')}>
@@ -169,34 +252,184 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                     className={cx('inputField', 'capacityInput')}
                                 />
                             </div>
+                        </div>
 
-                            {/* Nút bấm */}
-                            <div className={cx('formActions')}>
-                                <button 
-                                    type="submit" 
-                                    className={cx('actionButton', 'searchButton')} 
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? (
-                                        <Loader2 size={18} className={cx('buttonLoader')} />
-                                    ) : (
-                                        <Search size={18} />
-                                    )}
-                                    Tìm Phòng
+                        {/* Quick Selection */}
+                        <div className={cx('quick-selection')}>
+                            <h3 className={cx('section-title')}>Chọn nhanh khoảng giờ</h3>
+                            <div className={cx('quick-options')}>
+                                {/* Các nút chọn nhanh theo giờ được giữ nguyên */}
+                                <button type="button" className={cx('quick-option')} onClick={() => handleQuickTimeSelect(8, 12)} disabled={selectedDate === null}>
+                                    Sáng (8:00-12:00)
                                 </button>
-                                <button 
-                                    type="button" 
-                                    className={cx('actionButton', 'clearButton')} 
-                                    onClick={handleClear}
-                                    disabled={isLoading}
-                                >
-                                    <RefreshCcw size={18} /> 
-                                    Đặt Lại
+                                <button type="button" className={cx('quick-option')} onClick={() => handleQuickTimeSelect(13, 18)} disabled={selectedDate === null}>
+                                    Chiều (13:00-18:00)
+                                </button>
+                                <button type="button" className={cx('quick-option')} onClick={() => handleQuickTimeSelect(9, 17)} disabled={selectedDate === null}>
+                                    Cả ngày (9:00-17:00)
                                 </button>
                             </div>
                         </div>
-                    </form>
-                </div>
+
+                        {/* Time Picker (Đã loại bỏ điều kiện hiển thị vì đây là mode mặc định) */}
+                        <div className={cx('time-picker-section')}>
+                            <h3 className={cx('section-title')}>Chọn giờ chi tiết</h3>
+                            <div className={cx('time-picker')}>
+                                {/* Start Time */}
+                                <div className={cx('time-input-group')}>
+                                    <label className={cx('time-label')}>Bắt đầu</label>
+                                    <div className={cx('time-selectors')}>
+                                        <select 
+                                            value={startTime.hour}
+                                            onChange={(e) => setStartTime(prev => ({ ...prev, hour: parseInt(e.target.value) }))}
+                                            className={cx('time-select')}
+                                            disabled={selectedDate === null}
+                                        >
+                                            {HOURS.map(hour => (
+                                                <option key={`start-hour-${hour}`} value={hour}>
+                                                    {hour.toString().padStart(2, '0')}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <span className={cx('time-separator')}>:</span>
+                                        <select 
+                                            value={startTime.minute}
+                                            onChange={(e) => setStartTime(prev => ({ ...prev, minute: parseInt(e.target.value) }))}
+                                            className={cx('time-select')}
+                                            disabled={selectedDate === null}
+                                        >
+                                            {MINUTES.map(minute => (
+                                                <option key={`start-minute-${minute}`} value={minute}>
+                                                    {minute.toString().padStart(2, '0')}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* <div className={cx('time-to')}>đến</div> */}
+
+                                {/* End Time */}
+                                <div className={cx('time-input-group')}>
+                                    <label className={cx('time-label')}>Kết thúc</label>
+                                    <div className={cx('time-selectors')}>
+                                        <select 
+                                            value={endTime.hour}
+                                            onChange={(e) => setEndTime(prev => ({ ...prev, hour: parseInt(e.target.value) }))}
+                                            className={cx('time-select')}
+                                            disabled={selectedDate === null}
+                                        >
+                                            {HOURS.map(hour => (
+                                                <option key={`end-hour-${hour}`} value={hour}>
+                                                    {hour.toString().padStart(2, '0')}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <span className={cx('time-separator')}>:</span>
+                                        <select 
+                                            value={endTime.minute}
+                                            onChange={(e) => setEndTime(prev => ({ ...prev, minute: parseInt(e.target.value) }))}
+                                            className={cx('time-select')}
+                                            disabled={selectedDate === null}
+                                        >
+                                            {MINUTES.map(minute => (
+                                                <option key={`end-minute-${minute}`} value={minute}>
+                                                    {minute.toString().padStart(2, '0')}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Calendar Section */}
+                        <div className={cx('calendar-section')}>
+                            <h3 className={cx('section-title')}>Chọn ngày</h3>
+                            <div className={cx('calendar-nav')}>
+                                <button type="button" className={cx('nav-button')} onClick={() => navigateMonth(-1)}>
+                                    ‹
+                                </button>
+                                <div className={cx('month-display')}>
+                                    <span>{currentMonth.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}</span>
+                                    <span>{nextMonth.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}</span>
+                                </div>
+                                <button type="button" className={cx('nav-button')} onClick={() => navigateMonth(1)}>
+                                    ›
+                                </button>
+                            </div>
+                        </div>
+                            
+                        <div className={cx('calendars-grid')}>
+                            {/* Calendar Views */}
+                            {[currentMonthCalendar, nextMonthCalendar].map((calendar, calIndex) => (
+                                <div key={calIndex} className={cx('calendar-view')}>
+                                    <div className={cx('week-days')}>
+                                        {WEEK_DAYS.map(day => (
+                                            <div key={day} className={cx('week-day-cell')}>{day}</div>
+                                        ))}
+                                    </div>
+                                    <div className={cx('days-grid')}>
+                                        {calendar.map((date, index) => {
+                                            const monthToCheck = calIndex === 0 ? currentMonth : nextMonth;
+                                            const isCurrentDisplayMonth = date.getMonth() === monthToCheck.getMonth() && date.getFullYear() === monthToCheck.getFullYear();
+                                            const isToday = new Date().toDateString() === date.toDateString();
+                                            const selected = isDateSelected(date);
+                                            const selectable = isDateSelectable(date) && isCurrentDisplayMonth; 
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={cx(
+                                                        'day-cell',
+                                                        {
+                                                            'other-month': !isCurrentDisplayMonth,
+                                                            'today': isToday && isCurrentDisplayMonth, 
+                                                            'selected': selected,
+                                                            'selectable': selectable,
+                                                            'disabled': !selectable,
+                                                        }
+                                                    )}
+                                                    onClick={() => selectable && handleDateClick(date)}
+                                                >
+                                                    {date.getDate()}
+                                                    {isToday && isCurrentDisplayMonth && <div className={cx('today-indicator')}></div>}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Footer với nút Tìm kiếm */}
+                    <div className={cx('modalFooter')}>
+                        <div className={cx('action-buttons')}>
+                            <button 
+                                type="button" 
+                                className={cx('actionButton', 'clearButton')} 
+                                onClick={handleClear}
+                                disabled={isLoading}
+                            >
+                                <RefreshCcw size={18} /> 
+                                Đặt Lại
+                            </button>
+                            <button 
+                                type="submit" 
+                                className={cx('actionButton', 'searchButton')} 
+                                disabled={isLoading || !canSearch}
+                            >
+                                {isLoading ? (
+                                    <Loader2 size={18} className={cx('buttonLoader')} />
+                                ) : (
+                                    <Search size={18} />
+                                )}
+                                Tìm Phòng
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     );
