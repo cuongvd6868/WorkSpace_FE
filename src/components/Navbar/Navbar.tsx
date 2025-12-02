@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
               <div className={cx('right-section')}>
                 <p className={cx('flag_payment')}>VND</p>
                 <img src={flagImg} alt="" className={cx('flag')}/>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/help', 'Vui lòng đăng nhập để hỏi đáp')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
+                <div onClick={(e) => handleProtectedLinkClick(e, '/support', 'Vui lòng đăng nhập để yêu cầu hỗ trợ')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/messages', 'Vui lòng đăng nhập để truy cập tin nhắn')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
                 <div onClick={(e) => handleProtectedLinkClick(e, '/booking-list', 'Vui lòng đăng nhập để truy cập danh sách đặt chỗ')} className={cx('top-nav-item')}>Danh sách đặt chỗ</div>  

@@ -98,7 +98,7 @@ const OwnerDashboard: React.FC = () => {
         const fetchStats = async () => {
         try {
             setIsLoading(true);
-            const data = await getOwnerStats(); // Dữ liệu trả về đã là kiểu OwnerStats
+            const data = await getOwnerStats(); 
             setStats(data);
         } catch (err) {
             setError(err + '');

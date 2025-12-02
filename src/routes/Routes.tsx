@@ -12,6 +12,7 @@ import AdminDasdboard from "~/pages/admin/AdminDasdboard";
 import OwnerDashboard from "~/pages/owner/OwnerDashboard";
 import StaffDashboard from "~/pages/staff/StaffDashboard";
 import HostRegistrationPage from "~/pages/host/HostRegistrationPage/HostRegistrationPage";
+import SupportPage from "~/pages/support/SupportPage";
 
 export const router = createBrowserRouter([{
     path: "/",
@@ -29,5 +30,6 @@ export const router = createBrowserRouter([{
         {path: "/admin", element: <AdminDasdboard/>},
         {path: "/owner", element: <OwnerDashboard/>},
         {path: "/staff", element: <StaffDashboard/>},
+        {path: "/support", element: <SupportPage/>},
     ]
 }]);

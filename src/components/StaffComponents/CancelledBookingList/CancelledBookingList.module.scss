@@ -1,0 +1,173 @@
+/* File: CancelledBookingList.module.scss */
+
+// --- Base styles ---
+.cancelled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.cancelled-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    margin-bottom: 12px;
+    
+    // Phong cách thẻ (Card-based)
+    background-color: #ffffff;
+    border: 1px solid #ffe5e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+    cursor: default;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(255, 77, 79, 0.1); /* Bóng đỏ nhẹ khi hover */
+        transform: translateY(-1px);
+    }
+}
+
+// --- Header (Mã đơn hàng & Thời gian hủy) ---
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed #f5f5f5;
+}
+
+.booking-code {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ff4d4f; /* Màu đỏ nổi bật */
+}
+
+.time {
+    font-size: 0.8rem;
+    color: #8c8c8c;
+    
+    .svg-inline--fa {
+        margin-right: 4px;
+        color: #bfbfbf;
+    }
+}
+
+// --- Body (Tên Workspace & Metadata) ---
+.body {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Tên Workspace chiếm 2 phần, Metadata chiếm 1 phần */
+    align-items: center;
+}
+
+.workspace-name {
+    font-weight: 500;
+    color: #262626;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.metadata {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+// --- Amount (Số tiền) ---
+.amount {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 1rem;
+    
+    .svg-inline--fa {
+        margin-right: 5px;
+        font-size: 0.8rem;
+    }
+}
+
+.danger {
+    color: #ff4d4f; /* Màu đỏ */
+}
+
+// --- Reason Tooltip (Lý do hủy) ---
+.reason-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: #1890ff; /* Màu xanh dương cho thông tin */
+    font-size: 0.85rem;
+    cursor: help; /* Con trỏ giúp người dùng biết đây là tooltip */
+
+    .info-icon {
+        margin-right: 5px;
+    }
+
+    .tooltip-box {
+        visibility: hidden;
+        opacity: 0;
+        
+        // Vị trí và style của tooltip
+        position: absolute;
+        bottom: 120%; /* Đặt tooltip phía trên */
+        right: 0;
+        z-index: 10;
+        
+        width: 250px;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #333;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 400;
+        line-height: 1.4;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        
+        // Hiệu ứng chuyển động
+        transition: opacity 0.3s, visibility 0.3s;
+
+        &::after {
+            // Tam giác trỏ xuống
+            content: "";
+            position: absolute;
+            top: 100%;
+            right: 15px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+    }
+
+    &:hover .tooltip-box {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+// --- No Data State ---
+.no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: #bfbfbf;
+    text-align: center;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    border: 1px dashed #e6e6e6;
+    
+    .svg-inline--fa {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    p {
+        margin: 0;
+        font-size: 1rem;
+    }
+}

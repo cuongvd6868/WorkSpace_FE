@@ -208,3 +208,16 @@ $shadow-base: rgba(0, 0, 0, 0.1);
     text-align: center;
     font-style: italic;
 }
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.logo-icon {
+    font-size: 2.2rem;
+    padding-bottom: 2px;
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    cursor: pointer;
+    color: #2980B9;
+  }

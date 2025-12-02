@@ -131,8 +131,7 @@ const OwnerWorkspacesTable: React.FC<OwnerWorkspacesTableProps> = ({
                     <div className={cx('header-text')}>
                         <h1 className={cx('dashboard-title')}>Quản lý Workspace</h1>
                         <p className={cx('dashboard-subtitle')}>
-                            {/* Tổng cộng <span className={cx('highlight')}>{workspaces.length}</span> workspace đang quản lý */}
-                            Tổng cộng <span className={cx('highlight')}></span> workspace đang quản lý
+                            Tổng cộng <span className={cx('highlight')}>{workspaces.length}</span> workspace đang quản lý
                         </p>
                     </div>
                 </div>
