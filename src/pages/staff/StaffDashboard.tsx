@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faComments, faCheckSquare, faEye, faUserCog, 
     faEnvelopeOpenText, faGlobe, faBuilding, faStar, 
-    IconDefinition 
+    IconDefinition, 
+    faRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
 import styles from './StaffDashboard.module.scss';
 import TaskCard from '~/components/TaskCard/TaskCard'; 
+import { useAuth } from "~/context/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { CancelledBooking, StaffDashboardStats } from "~/types/Staff";
+import { getStaffDashboard } from "~/services/StaffService";
+import CancelledBookingList from "~/components/StaffComponents/CancelledBookingList/CancelledBookingList";
 
 const cx = classNames.bind(styles);
 
@@ -18,13 +25,9 @@ enum StaffPage {
     Settings = 'settings',
 }
 
-// Dữ liệu mẫu cho các nhiệm vụ chính của Staff
-const taskData: { title: string; count: number; description: string; icon: IconDefinition; color: 'orange' | 'purple' | 'green' | 'blue' }[] = [
-    { title: "Yêu Cầu Hỗ Trợ Mới", count: 15, description: "Xử lý các khiếu nại, yêu cầu đơn giản.", icon: faEnvelopeOpenText, color: "orange" },
-    { title: "Review Chờ Duyệt", count: 42, description: "Kiểm tra đánh giá trước khi hiển thị công khai.", icon: faStar, color: "purple" },
-    { title: "Workspace Chờ Duyệt", count: 3, description: "Duyệt thông tin và hình ảnh workspace mới.", icon: faBuilding, color: "green" },
-    { title: "Booking Trong Ngày", count: 68, description: "Giám sát các đơn hàng đang diễn ra.", icon: faEye, color: "blue" },
-];
+
+
+
 
 // Nội dung cho mục Hỗ trợ Khách hàng
 const SupportSection: React.FC = () => (
@@ -53,6 +56,40 @@ const ReviewSection: React.FC = () => (
 
 
 const StaffDashboard: React.FC = () => {
+    const [stats, setStats] = useState<StaffDashboardStats | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const {user, logout, isLoggedIn} = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        navigate('/'); 
+        toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
+    };
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getStaffDashboard();
+                setStats(data);
+            } catch (error) {
+                
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        fetchStats();
+    },[])
+
+
+
+    const taskData: { title: string; count: number; description: string; icon: IconDefinition; color: 'orange' | 'purple' | 'green' | 'blue' }[] = [
+        { title: "Yêu Cầu Hỗ Trợ Mới", count: Number(stats?.newSupportTicketsCount ?? 0), description: "Xử lý các khiếu nại, yêu cầu đơn giản.", icon: faEnvelopeOpenText, color: "orange" },
+        { title: "Review Chờ Duyệt", count: Number(stats?.pendingReviewsCount ?? 0), description: "Kiểm tra đánh giá trước khi hiển thị công khai.", icon: faStar, color: "purple" },
+        { title: "Workspace Chờ Duyệt", count: Number(stats?.pendingWorkspacesCount ?? 0), description: "Duyệt thông tin và hình ảnh workspace mới.", icon: faBuilding, color: "green" },
+        { title: "Booking Trong Ngày", count: Number(stats?.bookingsTodayCount ?? 0), description: "Giám sát các đơn hàng đang diễn ra.", icon: faEye, color: "blue" },
+    ];
     const [activePage, setActivePage] = useState<StaffPage>(StaffPage.Support);
 
     const renderContent = () => {
@@ -66,7 +103,13 @@ const StaffDashboard: React.FC = () => {
                         <div className={cx('monitoring-grid')}>
                             <div className={cx('sub-box')}>
                                 <h3>Hủy Đơn Gần Đây</h3>
-                                <p className={cx('placeholder-small')}>[Bảng: Mã đơn, Lý do hủy]</p>
+                                    <div className={cx('data-display')}>
+                                        {stats?.cancelledBookings && <CancelledBookingList bookings={stats.cancelledBookings} />}
+                                        {
+                                        /* Hiển thị thông báo khi đang tải hoặc không có dữ liệu */
+                                        !stats && isLoading && <p>Đang tải dữ liệu...</p>
+                                        } 
+                                    </div>
                             </div>
                             <div className={cx('sub-box')}>
                                 <h3>Vấn Đề Thanh Toán</h3>
@@ -112,7 +155,7 @@ const StaffDashboard: React.FC = () => {
         <div className={cx('wrapper')}>
             {/* Sidebar (Menu Điều Hướng) */}
             <nav className={cx('sidebar')}>
-                <div className={cx('logo')}>STAFF PORTAL</div>
+                <div className={cx('logo')}>CBS STAFF</div>
                 <ul className={cx('nav-list')}>
                     <li className={cx('nav-item', { active: activePage === StaffPage.Support })} onClick={() => setActivePage(StaffPage.Support)}>
                         <FontAwesomeIcon icon={faComments} /> <span>Hỗ Trợ</span>
@@ -137,13 +180,14 @@ const StaffDashboard: React.FC = () => {
             <div className={cx('main-content')}>
                 <header className={cx('header')}>
                     <h1 className={cx('page-header')}>{activePage.toUpperCase()}</h1>
-                    <div className={cx('user-profile')}>
-                        <span>Xin chào, [Tên Staff]!</span>
-                        {/* 
-
-[Image of User Avatar]
- */}
-                    </div>
+                    {isLoggedIn() ? (
+                        <div className={cx('user-profile')}>
+                            <span>Xin chào, {user?.userName}</span>
+                            <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
+                        </div>
+                        ) : (
+                            <span>Bạn chưa đăng nhập</span>
+                        )}
                 </header>
                 
                 <main className={cx('content-area')}>
