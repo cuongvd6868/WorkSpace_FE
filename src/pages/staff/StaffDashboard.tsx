@@ -16,6 +16,9 @@ import { CancelledBooking, StaffDashboardStats } from "~/types/Staff";
 import { getStaffDashboard } from "~/services/StaffService";
 import CancelledBookingList from "~/components/StaffComponents/CancelledBookingList/CancelledBookingList";
 import SupportTicketList from "~/components/StaffComponents/SupportTicketList/SupportTicketList";
+import BookingTodayListTable from "~/components/StaffComponents/BookingTodayListTable/BookingTodayListTable";
+import ReviewsPendingList from "~/components/StaffComponents/ReviewsPendingList/ReviewsPendingList";
+import WorkspacesPendingList from "~/components/StaffComponents/WorkspacesPendingList/WorkspacesPendingList";
 
 const cx = classNames.bind(styles);
 
@@ -26,6 +29,57 @@ enum StaffPage {
     Settings = 'settings',
 }
 
+enum ReviewType {
+    Reviews = 'reviews',
+    Listings = 'listings',
+}
+
+interface ReviewSectionProps {
+    pendingReviewsCount: number;
+    pendingWorkspacesCount: number;
+}
+
+const ContentReviewSection: React.FC<ReviewSectionProps> = ({ pendingReviewsCount, pendingWorkspacesCount }) => {
+    const [activeTab, setActiveTab] = useState<ReviewType>(ReviewType.Reviews);
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case ReviewType.Reviews:
+                return <ReviewsPendingList />;
+            case ReviewType.Listings:
+                return <WorkspacesPendingList />;
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div className={cx('review-section')}>
+            <div className={cx('review-tabs-container')}>
+                <h3>📝 Nhiệm Vụ Kiểm Duyệt</h3>
+                <div className={cx('review-tabs')}>
+                    <button
+                        className={cx('tab-btn', { active: activeTab === ReviewType.Reviews })}
+                        onClick={() => setActiveTab(ReviewType.Reviews)}
+                    >
+                        Reviews ({pendingReviewsCount})
+                    </button>
+                    <button
+                        className={cx('tab-btn', { active: activeTab === ReviewType.Listings })}
+                        onClick={() => setActiveTab(ReviewType.Listings)}
+                    >
+                        Listings ({pendingWorkspacesCount})
+                    </button>
+                </div>
+            </div>
+            {/* Hiển thị danh sách tương ứng với tab */}
+            <div className={cx('tab-content')}>
+                {renderContent()}
+            </div>
+        </div>
+    );
+};
+
 
 
 
@@ -34,11 +88,11 @@ enum StaffPage {
 const SupportSection: React.FC = () => (
     <div className={cx('support-section')}>
         <h3>💬 Hộp Thư Hỗ Trợ Trực Tuyến</h3>
-        <p className={cx('placeholder-long')}>
+        <div className={cx('placeholder-long')}>
             <SupportTicketList />
             {/* [Giao diện Chat: Danh sách Ticket/User đang chờ, ô trả lời nhanh, bộ lọc theo trạng thái (Open/Resolved)] */}
-        </p>
-        <button className={cx('view-all-btn')}>Xem Tất Cả Ticket (15 Mới)</button>
+        </div>
+        {/* <button className={cx('view-all-btn')}>Xem Tất Cả Ticket (15 Mới)</button> */}
     </div>
 );
 
@@ -122,20 +176,23 @@ const StaffDashboard: React.FC = () => {
                 );
             case StaffPage.ContentReview:
                 return (
-                    <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>📝 KIỂM DUYỆT NỘI DUNG</h2>
-                        <ReviewSection />
-                    </div>
-                );
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>📝 KIỂM DUYỆT NỘI DUNG</h2>
+                        <ContentReviewSection 
+                            pendingReviewsCount={Number(stats?.pendingReviewsCount ?? 0)}
+                            pendingWorkspacesCount={Number(stats?.pendingWorkspacesCount ?? 0)}
+                        />
+                    </div>
+                );
             case StaffPage.Monitoring:
                 return (
                     <div className={cx('content-section')}>
                         <h2 className={cx('section-title')}>👁️ GIÁM SÁT HOẠT ĐỘNG</h2>
                         <div className={cx('monitoring-main-box')}>
                             <h3>Booking Đang Diễn Ra (Hôm Nay)</h3>
-                            <p className={cx('placeholder-long')}>
-                                [Bảng: Workspace, Giờ bắt đầu/kết thúc, Khách hàng, Trạng thái (On-going)]
-                            </p>
+                            <div className={cx('data-display')}>
+                                <BookingTodayListTable /> 
+                            </div>
                         </div>
                     </div>
                 );

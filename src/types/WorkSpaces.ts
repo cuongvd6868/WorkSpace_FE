@@ -15,7 +15,8 @@ export type WorkSpaceSearch = {
     hostName: string,
     amenities?: string[],
     latitude: number,
-    longitude: number
+    longitude: number,
+    thumbnailUrl: string
 }
 
 export type WorkSpaceDetail = {

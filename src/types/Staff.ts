@@ -32,3 +32,62 @@ export interface ReplyTicketPayload {
 export interface UpdateStatusPayload {
     status: number;
 }
+
+export interface BookingTodayList {
+  id: number;
+  bookingCode: string;
+  customerName: string;
+  customerEmail: string;
+  workSpaceRoomTitle: string;
+  startTimeUtc: string;
+  endTimeUtc: string;
+  numberOfParticipants: number;
+  finalAmount: number
+}
+
+export interface ReviewsStaffView {
+  id: number;
+  bookingCode: string;
+  userName: string;
+  workSpaceRoomTitle: string;
+  workSpaceName: string;
+  rating: number;
+  comment: string;
+  isVerified: boolean;
+  isPublic: boolean;
+}
+
+export interface Room {
+    id: number;
+    title: string;
+    workSpaceId: number;
+    workSpaceTitle: string;
+    city: string;
+    thumbnailUrl: string | null;
+    imageUrls: string[];
+    pricePerDay: number;
+    capacity: number;
+    area: number;
+    isVerified: boolean;
+    averageRating: number;
+    ratingCount: number;
+}
+
+export interface WorkspaceItem {
+    id: number;
+    title: string;
+    description: string;
+    hostName: string;
+    hostEmail: string;
+    workSpaceTypeName: string;
+    addressLine: string;
+    city: string;
+    isActive: boolean;
+    isVerified: boolean;
+    createdDate: string;
+
+    totalRooms: number;
+    imageUrls: string[];
+
+    rooms: Room[];
+}

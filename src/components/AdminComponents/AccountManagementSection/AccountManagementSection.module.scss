@@ -1,0 +1,184 @@
+/* src/components/AccountManagementSection/AccountManagementSection.module.scss */
+
+// SOFT DARK THEME VARIABLES
+$admin-bg-primary: #1e2531; // Nền chính (Navy Blue/Dark Slate)
+$card-bg-secondary: #27303f; // Nền thẻ/nền bảng (Slightly lighter)
+$text-light: #e0e5eb; // Màu chữ sáng
+$border-soft: #394353; // Màu viền mềm
+$primary-accent: #6699ff; // Xanh dương mềm (Blue/Indigo)
+$secondary-accent: #00bcd4; // Màu nhấn phụ (Cyan)
+
+$success-soft: #4caf50; // Xanh lá cây mềm
+$warning-soft: #ff9800; // Cam/Vàng ấm
+$danger-soft: #f44336; // Đỏ mềm
+
+.account-management {
+    padding: 30px;
+    background-color: $card-bg-secondary;
+    color: $text-light;
+    border-radius: 12px; // Bo góc mềm mại hơn
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); // Shadow sâu hơn
+}
+
+// Tabs Styling
+.tabs {
+    display: flex;
+    margin-bottom: 30px;
+    background-color: $admin-bg-primary;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); // Hiệu ứng lõm nhẹ
+
+    .tab-btn {
+        flex-grow: 1;
+        padding: 12px 15px;
+        border: none;
+        background-color: transparent;
+        color: rgba($text-light, 0.75);
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border-radius: 6px; // Bo góc mềm
+
+        &.active {
+            background: linear-gradient(135deg, $primary-accent, darken($primary-accent, 5%)); // Gradient nhẹ
+            color: $text-light;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba($primary-accent, 0.4); // Shadow nổi
+        }
+        &:hover:not(.active) {
+            background-color: rgba($border-soft, 0.5);
+            color: $text-light;
+        }
+        svg {
+            margin-right: 8px;
+        }
+    }
+}
+
+// Table Styling
+.user-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+
+    thead {
+        th {
+            background-color: lighten($card-bg-secondary, 5%);
+            color: $text-light;
+            padding: 18px 20px; // Padding lớn hơn
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+    }
+
+    tbody {
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid $border-soft;
+            color: rgba($text-light, 0.85);
+            background-color: $card-bg-secondary; // Đảm bảo màu nền thống nhất
+
+            &:last-child {
+                display: flex;
+                gap: 10px;
+            }
+        }
+        tr:hover {
+            background-color: lighten($card-bg-secondary, 3%);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+    }
+
+    // Status Colors
+    .status-active {
+        color: $success-soft;
+        font-weight: 600;
+    }
+    .status-blocked {
+        color: $danger-soft;
+        font-weight: 600;
+    }
+
+    // Action Buttons
+    .action-btn {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        font-size: 0.9em;
+        font-weight: 500;
+
+        svg {
+            margin-right: 5px;
+        }
+
+        &.btn-block {
+            background-color: $warning-soft;
+            color: $admin-bg-primary;
+            &:hover { 
+                background-color: darken($warning-soft, 5%); 
+                transform: translateY(-1px);
+            }
+        }
+        &.btn-unblock {
+            background-color: $success-soft;
+            color: white;
+            &:hover { 
+                background-color: darken($success-soft, 5%); 
+                transform: translateY(-1px);
+            }
+        }
+        &.btn-delete {
+            background-color: $danger-soft;
+            color: white;
+            &:hover { background-color: darken($danger-soft, 5%); }
+        }
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+    }
+}
+
+.loading, .no-data {
+    text-align: center;
+    padding: 30px;
+    color: rgba($text-light, 0.6);
+    font-size: 1.1em;
+}
+
+// Add User Button
+.add-user-btn {
+    margin-top: 30px;
+    padding: 14px 30px;
+    background: linear-gradient(90deg, $secondary-accent, lighten($secondary-accent, 10%)); // Gradient nổi bật
+    color: $admin-bg-primary;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    display: block;
+    box-shadow: 0 4px 15px rgba($secondary-accent, 0.4);
+
+    &:hover {
+        background: linear-gradient(90deg, darken($secondary-accent, 5%), $secondary-accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba($secondary-accent, 0.6);
+    }
+    svg {
+        margin-right: 8px;
+    }
+}
