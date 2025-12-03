@@ -46,3 +46,88 @@ export const updateTicketStatus = async (ticketId: number, payload: { status: nu
         throw error;
     }
 }
+
+export const getAllBookingToday = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/bookings/today`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;  
+    }
+}
+
+export const getAllReviews = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/reviews`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;  
+    }
+}
+
+export const handleApproveReview = async (id: number) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}v1/staff/reviews/${id}/approve`, 
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+
+export const handleToggleVisibilityReview = async (id: number) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}v1/staff/reviews/${id}/toggle-visibility`,
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+
+export const getAllWorkspaces = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/workspaces`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;  
+    }
+}
+
+export const getAllPendingWorkspaces = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/workspaces/pending`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;  
+    }
+}
+
+// StaffService.ts: Cấu hình lại yêu cầu PUT
+export const handleApproveWorkspace = async (id: number) => {
+    try {
+
+        const response = await axios.put(
+            `${API_BASE_URL}v1/staff/workspaces/${id}/approve`,
+            {} 
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+

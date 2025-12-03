@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
-// Font Awesome Imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faDollarSign, faUsers, faBuilding, faCog, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-
+import { faTachometerAlt, faDollarSign, faUsers, faBuilding, faCog, IconDefinition, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import styles from './AdminDasdboard.module.scss';
-// Thay đổi đường dẫn import KPICard cho phù hợp với cấu trúc dự án của bạn
 import KPICard from '~/components/KPICard/KPICard'; 
+import { useAuth } from "~/context/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AdminStats } from "~/types/Admin";
+import { getAdminDashboard } from "~/services/AdminService";
+import LineChartRevenue from "~/components/AdminComponents/LineChartRevenue/LineChartRevenue";
+import RevenueManagementSection from "~/components/AdminComponents/RevenueManagementSection/RevenueManagementSection";
+import AccountManagementSection from "~/components/AdminComponents/AccountManagementSection/AccountManagementSection";
 
 const cx = classNames.bind(styles);
 
@@ -18,28 +23,45 @@ enum AdminPage {
     Settings = 'settings',
 }
 
-// Dữ liệu mẫu cho KPICards (Giữ nguyên)
-const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
-    { title: "Tổng Doanh Thu (T.Này)", value: "185.000.000 VND", change: "+12.5%", icon: faDollarSign, color: "green" },
-    { title: "Booking Mới (T.Này)", value: "450 Đơn", change: "+8%", icon: faBuilding, color: "blue" },
-    { title: "Tài Khoản Mới", value: "95 Users", change: "+3.2%", icon: faUsers, color: "purple" },
-    { title: "Lấp Đầy Trung Bình", value: "78%", change: "-1.1%", icon: faTachometerAlt, color: "red" },
-];
+
 
 // Hàm giả lập nội dung cho Quản lý Tài khoản (Giữ nguyên)
-const AccountManagementSection: React.FC = () => (
-    <div className={cx('account-management')}>
-        <h3>👥 Danh Sách Người Dùng</h3>
-        {/* Ở đây sẽ là component <AccountTable /> */}
-        <p className={cx('placeholder')}>
-            [Bảng dữ liệu: Tên, Email, SĐT, Ngày Đăng Ký, Trạng Thái (Active/Blocked), Action (Edit/Delete)]
-        </p>
-        <button className={cx('add-user-btn')}>+ Thêm Tài Khoản Mới</button>
-    </div>
-);
+
 
 const AdminDasdboard: React.FC = () => {
+    const [stats, setStats] = useState<AdminStats | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);   
+
+    useEffect(() => {
+            const fetchStats = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getAdminDashboard(); 
+                setStats(data);
+            } catch (err) {
+                setError(err + '');
+            } finally {
+                setIsLoading(false);
+            }
+            };
+    
+        fetchStats();
+    }, []);
+    const {user, logout, isLoggedIn} = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        navigate('/'); 
+        toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
+    };
     const [activePage, setActivePage] = useState<AdminPage>(AdminPage.Overview);
+    const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
+    { title: "Tổng Doanh Thu (T.Này)", value: `${stats?.totalRevenue} VND`, change: "+12.5%", icon: faDollarSign, color: "green" },
+    { title: "Booking Mới (T.Này)", value: `${stats?.newBookingsThisMonth} Đơn`, change: "+8%", icon: faBuilding, color: "blue" },
+    { title: "Tài Khoản Mới", value: `${stats?.newUsersThisMonth} Users`, change: "+3.2%", icon: faUsers, color: "purple" },
+    { title: "Tất cả tài khoản", value: `${stats?.totalUsers} Users`, change: "-----", icon: faTachometerAlt, color: "red" },
+    ];
 
     const renderContent = () => {
         switch (activePage) {
@@ -60,7 +82,13 @@ const AdminDasdboard: React.FC = () => {
                             <h3 className={cx('chart-title')}>DOANH THU THEO THÁNG</h3>
                             {/* <LineChartRevenue /> */}
                             <div className={cx('placeholder', 'chart-placeholder')}>
-                                [Biểu đồ đường thể hiện Doanh thu 12 tháng gần nhất]
+                                {isLoading ? (
+                                <p className={cx('placeholder', 'chart-placeholder')}>Đang tải biểu đồ...</p>
+                            ) : error ? (
+                                <p className={cx('placeholder', 'chart-placeholder')} style={{ color: 'red' }}>Lỗi tải dữ liệu: {error}</p>
+                            ) : (
+                                <LineChartRevenue data={stats?.revenueChart || []} />
+                            )}
                             </div>
                         </div>
 
@@ -79,7 +107,14 @@ const AdminDasdboard: React.FC = () => {
                     </div>
                 );
             case AdminPage.Revenue:
-                return <h2 className={cx('section-title')}>💰 QUẢN LÝ DOANH THU</h2>;
+                return <div className={cx('content-section')}>
+                        {/* SỬ DỤNG COMPONENT MỚI */}
+                        <RevenueManagementSection 
+                            stats={stats} 
+                            isLoading={isLoading} 
+                            error={error} 
+                        />
+                    </div>;
             case AdminPage.Workspaces:
                 return <h2 className={cx('section-title')}>🏢 QUẢN LÝ WORKSPACE</h2>;
             case AdminPage.Settings:
@@ -93,7 +128,7 @@ const AdminDasdboard: React.FC = () => {
         <div className={cx('wrapper')}>
             {/* Sidebar (Menu Điều Hướng) */}
             <nav className={cx('sidebar')}>
-                <div className={cx('logo')}>BOOKSPACE ADMIN</div>
+                <div className={cx('logo')}>CBS ADMIN</div>
                 <ul className={cx('nav-list')}>
                     <li className={cx('nav-item', { active: activePage === AdminPage.Overview })} onClick={() => setActivePage(AdminPage.Overview)}>
                         <FontAwesomeIcon icon={faTachometerAlt} /> <span>Dashboard</span>
@@ -117,13 +152,14 @@ const AdminDasdboard: React.FC = () => {
             <div className={cx('main-content')}>
                 <header className={cx('header')}>
                     <h1 className={cx('page-header')}>{activePage.toUpperCase()}</h1>
-                    <div className={cx('user-profile')}>
-                        <span>Xin chào, Admin!</span>
-                        {/* 
-
-[Image of User Avatar]
- */}
-                    </div>
+                    {isLoggedIn() ? (
+                        <div className={cx('user-profile')}>
+                            <span>Xin chào, ADMIN</span>
+                            <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
+                        </div>
+                        ) : (
+                            <span>Bạn chưa đăng nhập</span>
+                    )}
                 </header>
                 
                 <main className={cx('content-area')}>

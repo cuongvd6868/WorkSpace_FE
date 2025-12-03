@@ -12,6 +12,7 @@ import {
 } from "~/services/WorkSpaceFavoriteService"; 
 import { isToken } from "~/services/JwtService";
 import { toast } from "react-toastify";
+import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 
 interface WorkSpaceProp {
     workspace: WorkSpaceSearch;
@@ -80,12 +81,13 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
     }
 
 
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('item')}>
                 <div className={cx('thumb')}>
                     <img 
-                        src="https://plus.unsplash.com/premium_photo-1684769161054-2fa9a998dcb6?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1504" 
+                        src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${workspace.thumbnailUrl}`} 
                         alt="" 
                         className={cx('thumb-img')}
                     />
