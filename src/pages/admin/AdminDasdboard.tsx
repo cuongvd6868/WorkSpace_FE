@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt, faDollarSign, faUsers, faBuilding, faCog, IconDefinition, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faTachometerAlt, faDollarSign, faUsers, faBuilding, faCog, IconDefinition, faRightFromBracket, faCheckSquare } from '@fortawesome/free-solid-svg-icons';
 import styles from './AdminDasdboard.module.scss';
 import KPICard from '~/components/KPICard/KPICard'; 
 import { useAuth } from "~/context/useAuth";
@@ -12,13 +12,14 @@ import { getAdminDashboard } from "~/services/AdminService";
 import LineChartRevenue from "~/components/AdminComponents/LineChartRevenue/LineChartRevenue";
 import RevenueManagementSection from "~/components/AdminComponents/RevenueManagementSection/RevenueManagementSection";
 import AccountManagementSection from "~/components/AdminComponents/AccountManagementSection/AccountManagementSection";
+import OwnerRegistrationCensorSection from "~/components/AdminComponents/OwnerRegistrationCensorSection/OwnerRegistrationCensorSection";
 
 const cx = classNames.bind(styles);
 
 enum AdminPage {
     Overview = 'overview',
     Revenue = 'revenue',
-    Workspaces = 'workspaces',
+    Censor = 'censor',
     Accounts = 'accounts',
     Settings = 'settings',
 }
@@ -115,8 +116,13 @@ const AdminDasdboard: React.FC = () => {
                             error={error} 
                         />
                     </div>;
-            case AdminPage.Workspaces:
-                return <h2 className={cx('section-title')}>🏢 QUẢN LÝ WORKSPACE</h2>;
+            case AdminPage.Censor:
+                return (
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>🏢 KIỂM DUYỆT ĐĂNG KÝ OWNER</h2>
+                        <OwnerRegistrationCensorSection />
+                    </div>
+                );
             case AdminPage.Settings:
                 return <h2 className={cx('section-title')}>⚙️ CÀI ĐẶT HỆ THỐNG</h2>;
             default:
@@ -136,8 +142,8 @@ const AdminDasdboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === AdminPage.Revenue })} onClick={() => setActivePage(AdminPage.Revenue)}>
                         <FontAwesomeIcon icon={faDollarSign} /> <span>Doanh Thu</span>
                     </li>
-                    <li className={cx('nav-item', { active: activePage === AdminPage.Workspaces })} onClick={() => setActivePage(AdminPage.Workspaces)}>
-                        <FontAwesomeIcon icon={faBuilding} /> <span>Workspaces</span>
+                    <li className={cx('nav-item', { active: activePage === AdminPage.Censor })} onClick={() => setActivePage(AdminPage.Censor)}>
+                        <FontAwesomeIcon icon={faCheckSquare} /> <span>Kiểm duyệt</span>
                     </li>
                     <li className={cx('nav-item', { active: activePage === AdminPage.Accounts })} onClick={() => setActivePage(AdminPage.Accounts)}>
                         <FontAwesomeIcon icon={faUsers} /> <span>Tài Khoản</span>

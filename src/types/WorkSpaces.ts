@@ -4,6 +4,7 @@ export type WorkSpace = {
     id: number,
     title: string,
     description: string,
+    thumbnailUrl: string
 }
 
 export type WorkSpaceSearch = {
@@ -23,6 +24,7 @@ export type WorkSpaceDetail = {
     id: number,
     title: string,
     description: string,
+    hostId: number,
     hostName: string,
     hostCompanyName: string,
     hostContactPhone: string,

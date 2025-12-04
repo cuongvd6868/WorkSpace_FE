@@ -2,7 +2,8 @@ import axios from 'axios';
 import {
   CreateBookingRequestForGuest,
   CreatePaymentUrlResponse,
-  CreateBookingRequestForCustomer
+  CreateBookingRequestForCustomer,
+  ReviewData
 } from '~/types/Booking'; 
 import { API_BASE_URL } from '~/utils/API';
 import { handleError } from '~/utils/handleError';
@@ -66,3 +67,19 @@ export const createPaymentUrl = async (bookingId: number): Promise<string> => {
     throw new Error(error?.response?.data?.message || 'Không thể tạo URL thanh toán. Vui lòng thử lại sau.');
   }
 };
+
+export const postReview = async (bookingId: number, reviewData: ReviewData) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}v1/bookings/${bookingId}/reviews`, 
+      reviewData
+    );
+    
+    return response.data; 
+
+  } catch (error) {
+    console.error(`Lỗi gửi đánh giá cho booking ${bookingId}:`, error);
+    handleError(error); 
+    throw error;
+  }
+}

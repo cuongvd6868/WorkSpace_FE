@@ -422,10 +422,10 @@ const WorkspaceDetail: React.FC = () => {
                     
                     {/* THÔNG TIN CHỦ HỘ/HOST */}
                     <HostInfo 
-                        hostName="Nguyễn Văn A"
-                        hostPhone="0901 234 567"
-                        hostEmail="van.a@host.com"
-                        hostAvatarUrl="https://i.pravatar.cc/150?img=1" // Mock Avatar
+                        hostName={workspace.hostName}
+                        hostPhone={workspace.hostContactPhone}
+                        hostEmail={workspace.hostCompanyName}
+                        hostAvatarUrl="https://i.pravatar.cc/150?img=1" 
                         workspaceTitle={workspace.title}
                     />
 
