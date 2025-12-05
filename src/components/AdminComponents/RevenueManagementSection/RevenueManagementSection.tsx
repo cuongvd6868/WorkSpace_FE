@@ -1,4 +1,3 @@
-// src/components/RevenueManagementSection/RevenueManagementSection.tsx
 import React from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,11 +19,9 @@ interface RevenueManagementSectionProps {
 
 const RevenueManagementSection: React.FC<RevenueManagementSectionProps> = ({ stats, isLoading, error }) => {
 
-    // KPI Data cho trang Doanh Thu
     const kpiDataRevenue: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
         { 
             title: "Doanh Thu Hôm Nay (Giả Định)", 
-            // Sửa lỗi: Gọi toLocaleString trên number
             value: `${Math.round((stats?.totalRevenue ?? 0) / 30).toLocaleString('vi-VN')} VND`, 
             change: "+5%", 
             icon: faDollarSign, 
@@ -39,7 +36,6 @@ const RevenueManagementSection: React.FC<RevenueManagementSectionProps> = ({ sta
         },
         { 
             title: "Doanh Thu Năm Nay (Giả Định)", 
-            // Sửa lỗi: Gọi toLocaleString trên number
             value: `${((stats?.totalRevenue ?? 0) * 12).toLocaleString('vi-VN')} VND`, 
             change: "+10%", 
             icon: faDollarSign, 
@@ -48,7 +44,6 @@ const RevenueManagementSection: React.FC<RevenueManagementSectionProps> = ({ sta
         { 
             title: "Doanh Thu TB/Booking", 
             value: `${(stats?.totalRevenue && stats?.newBookingsThisMonth) 
-                // Sửa lỗi: Gọi Math.round trước khi gọi toLocaleString trên number
                 ? Math.round(stats.totalRevenue / stats.newBookingsThisMonth).toLocaleString('vi-VN') 
                 : 0} VND`, 
             change: "---", 
@@ -63,7 +58,6 @@ const RevenueManagementSection: React.FC<RevenueManagementSectionProps> = ({ sta
     
     return (
         <div className={cx('revenue-management')}>
-            {/* <h2 className={cx('section-title')}>💰 QUẢN LÝ DOANH THU & PHÂN TÍCH</h2> */}
 
             {/* 1. KPI Cards dành riêng cho Doanh Thu */}
             <div className={cx('kpi-grid')}>

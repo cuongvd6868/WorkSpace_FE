@@ -1,7 +1,5 @@
-// src/components/FloatingChatWidget/FloatingChatWidget.module.scss
-
-$primary-gradient-start: #6a11cb; // Deep purple
-$primary-gradient-end: #2575fc;   // Vibrant blue
+$primary-gradient-start: #6a11cb; 
+$primary-gradient-end: #2575fc;   
 $accent-red: #dc3545;
 $chat-bubble-size: 60px;
 $chat-box-width: 380px;
@@ -17,13 +15,11 @@ $right-spacing: 30px;
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Nút Bật/Tắt (Icon Bubble) */
 .chat-toggle-button {
     width: $chat-bubble-size;
     height: $chat-bubble-size;
     border-radius: 50%;
 
-    /* Gradient nền cố định */
     background: linear-gradient(135deg, $primary-gradient-start, $primary-gradient-end);
 
     color: white;

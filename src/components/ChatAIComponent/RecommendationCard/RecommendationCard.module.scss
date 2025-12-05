@@ -1,8 +1,6 @@
-// src/components/RecommendationCard/RecommendationCard.module.scss
-
-$primary-color: #0077b6; // Sky Blue
-$primary-dark: #005f73; // Darker Blue
-$accent-color: #ef476f;  // Vibrant Pink/Red for Price
+$primary-color: #0077b6; 
+$primary-dark: #005f73; 
+$accent-color: #ef476f;  
 $background-light: #ffffff;
 $text-dark: #212529;
 $text-light: #f8f9fa;
@@ -12,24 +10,23 @@ $border-light: #e0e0e0;
 .wrapper {
     display: flex;
     flex-direction: column;
-    border-radius: 12px; // Bo góc vừa phải
+    border-radius: 12px; 
     overflow: hidden;
     background: $background-light;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); // Shadow trung bình
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); 
     transition: all 0.3s ease-in-out;
     width: 100%;
-    max-width: 320px; // Chiều rộng tối ưu cho card dọc trong chat
+    max-width: 320px; 
 
     &:hover {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        transform: translateY(-3px); // Lift nhẹ
+        transform: translateY(-3px); 
     }
 }
 
-// --- Phần Ảnh ---
 .image-wrapper {
     position: relative;
-    height: 160px; // Chiều cao ảnh vừa phải
+    height: 160px; 
     overflow: hidden;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;

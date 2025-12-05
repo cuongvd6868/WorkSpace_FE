@@ -1,13 +1,12 @@
-/* Cố định các biến màu sắc cho Dark Mode */
-$bg-main: #1D1E22; // Màu nền chính
-$bg-card: #282C34; // Màu card/box
-$bg-sidebar: #1C232B; // Sidebar tối hơn
-$bg-sidebar-hover: #2F3640; // Hover sidebar
-$text-primary: #ECF0F1; // Text chính màu trắng sáng
-$text-secondary: #BDC3C7; // Text phụ
-$color-accent: #3498DB; // Màu xanh dương chủ đạo
-$color-border: #3D4148; // Màu border tối
-$shadow-base: rgba(0, 0, 0, 0.5); // Shadow đậm
+$bg-main: #1D1E22; 
+$bg-card: #282C34; 
+$bg-sidebar: #1C232B; 
+$bg-sidebar-hover: #2F3640; 
+$text-primary: #ECF0F1; 
+$text-secondary: #BDC3C7; 
+$color-accent: #3498DB; 
+$color-border: #3D4148;
+$shadow-base: rgba(0, 0, 0, 0.5); 
 
 .wrapper {
     display: flex;
@@ -16,7 +15,6 @@ $shadow-base: rgba(0, 0, 0, 0.5); // Shadow đậm
     margin-top: -60px;
 }
 
-/* --- SIDEBAR STYLES --- */
 .sidebar {
     width: 250px;
     background-image: radial-gradient( circle farthest-corner at 50.3% 47.3%,  rgba(113,42,92,1) 0.1%, rgba(40,25,46,1) 90% );

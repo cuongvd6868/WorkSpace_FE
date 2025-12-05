@@ -21,7 +21,6 @@ const Navbar: React.FC = () => {
 
   
 
-  // === DÙNG CONTEXT HOOK VÀ NAVIGATE ===
   const { 
     searchState, 
     setLocation, 

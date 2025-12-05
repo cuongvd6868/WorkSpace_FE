@@ -3,11 +3,10 @@ import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faSpinner, faCheckCircle, faEnvelope, faClock, faSearch, faEllipsisV, faTags, faFileText, faCalendarAlt, faUser, faEye 
-} from '@fortawesome/free-solid-svg-icons'; // Thêm faEye
+} from '@fortawesome/free-solid-svg-icons'; 
 import styles from './SupportTicketList.module.scss'; 
 import { SupportTickets } from '~/types/Staff'; 
 import { getAllSupportTickets } from '~/services/StaffService';
-// Import Modal mới
 import TicketDetailModal from '../TicketDetailModal/TicketDetailModal'; 
 
 const cx = classNames.bind(styles);

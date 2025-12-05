@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faTimesCircle, faSpinner, faBuilding, faUserTie, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import styles from './OwnerRegistrationCensorSection.module.scss'; // Tạo file SCSS tương ứng
+import styles from './OwnerRegistrationCensorSection.module.scss'; 
 import {
     getAllOwnerRegistration,
     handleApproveOwner,

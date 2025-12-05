@@ -1,4 +1,3 @@
-// BookingTodayListTable.tsx
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from './BookingTodayListTable.module.scss'; 
