@@ -1,41 +1,39 @@
 import React from "react";
 import classNames from "classnames/bind";
 import styles from './RecommendationCard.module.scss';
-import { Recommendation } from '~/types/Chat'; 
+import { Recommendation } from '~/types/Chat';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarker, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
 }
 
-const formatPrice = (price: number) => 
+const formatPrice = (price: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
 const cx = classNames.bind(styles);
 
-
 const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation }) => {
-  const { 
-    title, 
-    street, 
-    averagePricePerDay, 
-    minCapacity, 
-    maxCapacity, 
-    availableAmenities,
-    imageUrls 
+  const {
+    title,
+    street,
+    averagePricePerDay,
+    minCapacity,
+    maxCapacity,
+    imageUrls,
+    thumbnailUrl
   } = recommendation;
-  
-  const displayAmenities = availableAmenities.slice(0, 4); // Hiển thị ít tiện nghi hơn
-  const remainingAmenities = availableAmenities.length - displayAmenities.length;
 
   return (
     <div className={cx('wrapper')}>
-      {/* 1. Hình ảnh */}
+      
+      {/* 1. Phần Ảnh (Trên cùng) */}
       <div className={cx('image-wrapper')}>
         {imageUrls && imageUrls.length > 0 ? (
           <img 
-            src={imageUrls[0]} 
+            src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${thumbnailUrl}`} 
             alt={title} 
             className={cx('image')} 
           />
@@ -43,18 +41,25 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
           <div className={cx('image-placeholder')}>
             
 
-
+[Image of Placeholder]
 
           </div>
         )}
-        <div className={cx('image-overlay')}></div>
       </div>
 
+      {/* 2. Phần Nội dung (Dưới cùng) */}
       <div className={cx('content')}>
-        {/* 2. Tiêu đề */}
+        
+        {/* Tiêu đề */}
         <h3 className={cx('title')}>{title}</h3>
         
-        {/* 3. Chi tiết */}
+        {/* Giá */}
+        <div className={cx('price-info')}>
+            <span className={cx('price')}>{formatPrice(averagePricePerDay)}</span>
+            <span className={cx('price-label')}>/ ngày</span>
+        </div>
+        
+        {/* Chi tiết (Địa điểm & Sức chứa) */}
         <div className={cx('details')}>
           <div className={cx('detail-item')}>
             <span className={cx('icon')}><FontAwesomeIcon icon={faMapMarker}/></span> 
@@ -65,14 +70,8 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
             <span className={cx('text')}>{minCapacity} - {maxCapacity} người</span>
           </div>
         </div>
-
-        {/* 4. Giá */}
-        <div className={cx('price-info')}>
-            <span className={cx('price-label')}>Giá TB/ngày</span>
-            <span className={cx('price')}>{formatPrice(averagePricePerDay)}</span>
-        </div>
-
-        {/* 6. Nút hành động */}
+        
+        {/* Nút hành động */}
         <button className={cx('action-button')}>
           Xem chi tiết 
           <span className={cx('arrow-icon')}>→</span>

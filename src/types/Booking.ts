@@ -56,6 +56,7 @@ export type workSpaceRoom = {
 }
 
 export type BookingListType = {
+  id: number,
   bookingCode: string,
   workSpaceRoomId: number,
   startTimeUtc: string,
@@ -67,4 +68,9 @@ export type BookingListType = {
   isReviewed: boolean,
   paymentMethodID: number,
   workSpaceRoom: workSpaceRoom
+}
+
+export interface ReviewData {
+  rating: number; // Tương ứng với 'rating': integer(int32) trong API
+  comment: string; // Tương ứng với 'comment': "string" trong API
 }

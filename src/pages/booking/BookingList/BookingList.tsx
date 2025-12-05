@@ -4,7 +4,9 @@ import styles from './BookingList.module.scss';
 import { GetBookingsByUser } from "~/services/BookingService"; 
 import { BookingListType } from "~/types/Booking";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboardList, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faClipboardList, faUser, faStar } from "@fortawesome/free-solid-svg-icons"; // Thêm faStar
+import ReviewModal from "./ReviewModal/ReviewModal";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -15,7 +17,7 @@ const BOOKING_STATUS_MAP = {
     6: { description: 'Đã check-out', className: 'checked-out' },
     7: { description: 'Đã hủy', className: 'cancelled' },
     8: { description: 'Không đến', className: 'no-show' },
-    9: { description: 'Đã thanh toán', className: 'completed' },
+    9: { description: 'Đã hoàn thành', className: 'completed' }, // 👈 Target Status
     10: { description: 'Thanh toán thất bại', className: 'failed' },
 };
 
@@ -36,7 +38,12 @@ const BookingList: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    // 💥 STATE CHO MODAL
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<BookingListType | null>(null);
+
     useEffect(() => {
+        // ... (Logic fetchBookings giữ nguyên)
         const fetchBookings = async () => {
             setIsLoading(true);
             setError(null);
@@ -53,7 +60,21 @@ const BookingList: React.FC = () => {
         fetchBookings();
     }, []);
 
+    // 💥 HÀM MỞ MODAL
+    const handleOpenReviewModal = (booking: BookingListType) => {
+        setSelectedBooking(booking);
+        setIsReviewModalOpen(true);
+    };
+
+    // 💥 HÀM ĐÓNG MODAL
+    const handleCloseReviewModal = () => {
+        setIsReviewModalOpen(false);
+        setSelectedBooking(null);
+        // Có thể thêm logic refresh danh sách đặt chỗ tại đây nếu cần
+    };
+
     // ------------------ HIỂN THỊ CÁC TRẠNG THÁI ------------------
+    // ... (Phần hiển thị Loading, Error, No Bookings giữ nguyên)
 
     if (isLoading) {
         return (
@@ -82,6 +103,10 @@ const BookingList: React.FC = () => {
         );
     }
 
+    const handleReviewSuccess = () => {
+        toast.success("review successful")
+    }
+
     // ------------------ HIỂN THỊ DANH SÁCH CHUYÊN NGHIỆP ------------------
 
     return (
@@ -99,6 +124,10 @@ const BookingList: React.FC = () => {
                     
                     const statusInfo = BOOKING_STATUS_MAP[statusKey] || 
                                        { description: 'Không rõ', className: 'unknown' };
+
+                    // 💥 XÁC ĐỊNH NÚT HÀNH ĐỘNG
+                    const isCompleted = booking.bookingStatusId === 9; // Trạng thái 'Đã hoàn thành'
+                    const canReview = isCompleted && !booking.isReviewed; // Giả định có trường 'hasReviewed'
 
                     return (
                         <div key={booking.bookingCode} className={cx('booking-card', statusInfo.className)}>
@@ -134,11 +163,35 @@ const BookingList: React.FC = () => {
                                         </span>
                                     </div>
                                 </div>
+
+                                {/* 💥 NÚT HÀNH ĐỘNG - ĐÁNH GIÁ */}
+                                {canReview && (
+                                    <div className={cx('action-area')}>
+                                        <button 
+                                            className={cx('review-button')}
+                                            onClick={() => handleOpenReviewModal(booking)}
+                                        >
+                                            <FontAwesomeIcon icon={faStar} /> Gửi đánh giá
+                                        </button>
+                                    </div>
+                                )}
+                                {/* Thêm các nút khác (Ví dụ: Hủy, Xem chi tiết...) tại đây nếu cần */}
                             </div>
                         </div>
                     );
                 })}
             </div>
+
+            {/* 💥 MODAL ĐÁNH GIÁ */}
+            {isReviewModalOpen && selectedBooking && (
+                <ReviewModal 
+                    isOpen={isReviewModalOpen}
+                    onClose={handleCloseReviewModal}
+                    booking={selectedBooking}
+                    // 💥 THÊM PROP MỚI ĐƯỢC YÊU CẦU
+                    onReviewSuccess={handleReviewSuccess}
+                />
+            )}
         </div>
     )
 }

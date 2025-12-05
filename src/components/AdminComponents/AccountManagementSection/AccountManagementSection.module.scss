@@ -1,33 +1,30 @@
-/* src/components/AccountManagementSection/AccountManagementSection.module.scss */
+$admin-bg-primary: #1e2531; 
+$card-bg-secondary: #27303f; 
+$text-light: #e0e5eb; 
+$border-soft: #394353; 
+$primary-accent: #6699ff; 
+$secondary-accent: #00bcd4; 
 
-// SOFT DARK THEME VARIABLES
-$admin-bg-primary: #1e2531; // Nền chính (Navy Blue/Dark Slate)
-$card-bg-secondary: #27303f; // Nền thẻ/nền bảng (Slightly lighter)
-$text-light: #e0e5eb; // Màu chữ sáng
-$border-soft: #394353; // Màu viền mềm
-$primary-accent: #6699ff; // Xanh dương mềm (Blue/Indigo)
-$secondary-accent: #00bcd4; // Màu nhấn phụ (Cyan)
-
-$success-soft: #4caf50; // Xanh lá cây mềm
-$warning-soft: #ff9800; // Cam/Vàng ấm
-$danger-soft: #f44336; // Đỏ mềm
+$success-soft: #4caf50; 
+$warning-soft: #ff9800; 
+$danger-soft: #f44336; 
 
 .account-management {
     padding: 30px;
     background-color: $card-bg-secondary;
     color: $text-light;
-    border-radius: 12px; // Bo góc mềm mại hơn
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); // Shadow sâu hơn
+    border-radius: 12px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); 
 }
 
-// Tabs Styling
+
 .tabs {
     display: flex;
     margin-bottom: 30px;
     background-color: $admin-bg-primary;
     border-radius: 8px;
     padding: 4px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); // Hiệu ứng lõm nhẹ
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3); 
 
     .tab-btn {
         flex-grow: 1;

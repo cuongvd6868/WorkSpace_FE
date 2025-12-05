@@ -257,3 +257,36 @@ $color-failed: #e67e22;     // Cam (Lỗi thanh toán)
         padding: 15px;
     }
 }
+
+.action-area {
+    margin-top: 15px; // Khoảng cách với summary-info
+    display: flex;
+    justify-content: flex-end; // Đẩy nút về phía bên phải
+}
+
+.review-button {
+    background-color: $color-completed; // Xanh đậm, chuyên nghiệp
+    color: $color-white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 8px rgba($color-completed, 0.2);
+
+    &:hover {
+        background-color: $color-accent; // Chuyển sang màu nổi bật khi hover
+        box-shadow: 0 6px 12px rgba($color-accent, 0.3);
+        transform: translateY(-2px);
+    }
+    
+    // Icon ngôi sao bên trong
+    .svg-inline--fa {
+        font-size: 1em;
+    }
+}

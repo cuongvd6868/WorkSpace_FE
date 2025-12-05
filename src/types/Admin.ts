@@ -20,3 +20,12 @@ export interface UserAdminView {
     fullName: string;
     isActive: boolean;
 }
+
+export interface OwnerRegistrationsView {
+    id: number;
+    companyName: string;
+    description: string;
+    contactPhone: string;
+    userEmail: string;
+    avatar: string;
+}

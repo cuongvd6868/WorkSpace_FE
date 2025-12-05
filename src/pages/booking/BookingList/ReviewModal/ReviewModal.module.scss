@@ -1,0 +1,198 @@
+// src/components/BookingList/ReviewModal.module.scss (THIẾT KẾ LẠI)
+
+// Biến màu (Dựa trên các biến phổ biến của bạn)
+$primary-color: #005461;     // Xanh đậm, chuyên nghiệp (Thường dùng cho nút chính)
+$accent-color: #008234;      // Xanh lá, nổi bật (Dùng cho thành công/hover)
+$star-color: #ffc107;        // Vàng/Gold cho Sao
+$background-dark: rgba(0, 0, 0, 0.7); // Overlay background tối hơn
+$background-light: #ffffff;
+$text-dark: #212529;
+$text-muted: #6c757d;
+$border-light: #e9ecef;
+$danger-color: #e74c3c;      // Đỏ cho lỗi
+
+// 1. Modal Overlay
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: $background-dark;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; 
+    
+    // Áp dụng hiệu ứng fade-in & pop-up
+    opacity: 1; 
+    pointer-events: all; 
+    .modal-content { 
+        animation: modalFadeIn 0.3s forwards; 
+    }
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// 2. Modal Content (Hộp thoại chính)
+.modal-content {
+    background: $background-light;
+    border-radius: 16px; // Bo góc lớn hơn, mềm mại hơn
+    width: 95%;
+    max-width: 550px; // Kích thước rộng hơn một chút
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35); // Shadow sâu hơn
+    overflow: hidden;
+    position: relative;
+}
+
+// 3. Header
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    background-color: #f8f9fa; // Thêm màu nền nhẹ
+    border-bottom: 1px solid $border-light;
+
+    h2 {
+        margin: 0;
+        font-size: 1.5rem; // Tiêu đề lớn hơn
+        font-weight: 700;
+        color: $primary-color;
+    }
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: $text-muted;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: $danger-color;
+        transform: rotate(90deg);
+    }
+}
+
+// 4. Body
+.modal-body {
+    padding: 25px;
+    
+    .room-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin-bottom: 5px;
+    }
+
+    .booking-code {
+        font-size: 0.9rem;
+        color: $text-muted;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed $border-light;
+    }
+}
+
+// 5. Form Group
+.form-group {
+    margin-bottom: 20px;
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: $text-dark;
+        font-size: 1.05rem;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid $border-light;
+        border-radius: 10px;
+        resize: vertical;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+        
+        &:focus {
+            border-color: $primary-color;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba($primary-color, 0.15);
+        }
+    }
+}
+
+// 6. Star Rating (Thiết kế lại)
+.star-rating {
+    font-size: 2.5rem; // Sao lớn và dễ nhìn hơn
+    color: lighten($star-color, 35%); // Màu nền sao nhẹ
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+
+    .star {
+        cursor: pointer;
+        transition: color 0.2s ease-in-out, transform 0.1s;
+
+        &.active {
+            color: $star-color; // Màu sao đã chọn
+        }
+
+        &:hover,
+        &:hover ~ .star {
+            color: $star-color;
+            transform: scale(1.05);
+        }
+    }
+}
+
+// 7. Submission Button (Sử dụng $primary-color)
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background: $primary-color; 
+    color: $background-light;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.1s;
+    text-transform: uppercase;
+
+    &:hover:not(:disabled) {
+        background: $accent-color; // Màu xanh nổi bật (Accent) khi hover
+        box-shadow: 0 5px 15px rgba($accent-color, 0.4);
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        background: $text-muted;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+.error-message {
+    color: $danger-color;
+    background: lighten($danger-color, 40%);
+    border: 1px solid lighten($danger-color, 20%);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+}

@@ -55,3 +55,26 @@ export const handleBlockUser = async (id: number) => {
         throw error;
     }
 };
+
+export const getAllOwnerRegistration = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/owner-registrations`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;       
+    }
+}
+
+export const handleApproveOwner = async (id: number) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}v1/admin/approve-owner/${id}`, 
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};

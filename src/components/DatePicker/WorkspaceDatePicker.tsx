@@ -4,7 +4,6 @@ import styles from './WorkspaceDatePicker.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
-// === IMPORT useSearch HOOK VÀ TYPES TỪ CONTEXT ===
 import { useSearch, BookingType, SelectedTimeState } from '~/context/SearchContext'; 
 
 const cx = classNames.bind(styles);
@@ -22,34 +21,27 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
   isOpen, 
   onClose
 }) => {
-  // === SỬ DỤNG useSearch HOOK ===
   const { searchState, setSelectedTime, setBookingType: setGlobalBookingType } = useSearch();
 
-  // State nội bộ
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [bookingType, setLocalBookingType] = useState<BookingType>(searchState.bookingType);
 
-  // State cho giờ bắt đầu và kết thúc (dùng cho hourly)
   const [startTime, setStartTime] = useState({ hour: 9, minute: 0 });
   const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
   
-  // === ĐỒNG BỘ STATE KHI MODAL MỞ ===
   useEffect(() => {
     if (isOpen) {
       setLocalBookingType(searchState.bookingType);
       
       const { date, startTime: contextStartTime, endTime: contextEndTime } = searchState.selectedTime;
       
-      // Khôi phục SelectedDates
       if (date) {
-        // Tạm thời chỉ khôi phục ngày đầu tiên. (Cần logic phức tạp hơn cho daily multi-date)
         setSelectedDates([date]); 
       } else {
         setSelectedDates([]);
       }
       
-      // Khôi phục Giờ
       if (contextStartTime && contextEndTime) {
           setStartTime({ 
               hour: contextStartTime.getHours(), 

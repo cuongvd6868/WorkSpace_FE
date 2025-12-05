@@ -27,6 +27,7 @@ export interface Recommendation {
   recommendationScore: number;
   recommendationReason: string;
   matchedFeatures: string[];
+  thumbnailUrl: string
 }
 
 export interface ChatbotResponse {
