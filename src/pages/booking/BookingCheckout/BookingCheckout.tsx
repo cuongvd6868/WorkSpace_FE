@@ -6,17 +6,26 @@ import { useBooking } from '~/context/BookingContext';
 import { 
     CreditCard, Calendar, Clock, Users, DollarSign, MapPin, 
     User, Lock, Home, Loader, ChevronLeft, Tag,
-    CheckCircle, AlertCircle, Phone, Mail, FileText, Briefcase
+    CheckCircle, AlertCircle, Phone, Mail, FileText
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-import { createBookingCustomer, createBookingGuest, createPaymentUrl } from '~/services/BookingService';
+import { 
+    createBookingCustomer, 
+    createBookingGuest, 
+    createVnpayPaymentUrl, // Giữ lại
+    createPayOsPaymentUrl, // Thêm mới
+} from '~/services/BookingService'; 
 import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse, CustomerDetails, CreateBookingRequestForCustomer } from '~/types/Booking'; 
 import { getEmailByToken, isToken, isTokenExpired } from '~/services/JwtService';
 import { Promotions } from '~/types/Promotions';
 import { GetPromotionByCode } from '~/services/PromotionService';
+import payos_logo from '~/assets/img/payment/payos_logo.svg';
+import vnpay_logo from '~/assets/img/payment/vnpay_logo.svg';
 
 const cx = classNames.bind(styles);
+
+type PaymentMethod = 'vnpay' | 'payos';
 
 const BookingCheckout: React.FC = () => {
     const token = localStorage.getItem('token');
@@ -25,6 +34,9 @@ const BookingCheckout: React.FC = () => {
     const { bookingData, clearBookingData } = useBooking();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
+    
+    // --- State cho Phương Thức Thanh Toán ---
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('vnpay'); // Mặc định là VNPAY
     
     // State cho Form Thông Tin Khách Hàng
     const [firstName, setFirstName] = useState('');
@@ -93,7 +105,8 @@ const BookingCheckout: React.FC = () => {
         }
         
         return 0;
-    }   
+    } 
+    
     const handleApplyPromotion = async () => {
         if (isProcessing) return;
         if(!isLoggedIn) {
@@ -136,7 +149,7 @@ const BookingCheckout: React.FC = () => {
                 setPromotion(undefined);
                 setIsCodeApplied(false);
                 setDiscountAmount(0);
-                toast.error(errorMessage);                
+                toast.error(errorMessage);             
             } finally {
                 setPromotionLoading(false);
             }
@@ -181,46 +194,50 @@ const BookingCheckout: React.FC = () => {
                 finalAmount: finalAmount, // Tổng cuối cùng sau giảm giá
             };
 
-            // Chuẩn bị dữ liệu GuestDetails
-            const guestDetails: GuestDetails = {
-                firstName: firstName.trim(),
-                lastName: lastName.trim(),
-                email: email.trim(),
-                phoneNumber: phoneNumber.trim(),
-            };
-
-            const customerDetails: CustomerDetails = {
-                firstName: firstName.trim(),
-                lastName: lastName.trim(),
-                phoneNumber: phoneNumber.trim(),
-            };
+            let bookingResponse: CreateBookingResponse;
 
             if(!isLoggedIn) {
+                // Đặt chỗ với tư cách khách
+                const guestDetails: GuestDetails = {
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    email: email.trim(),
+                    phoneNumber: phoneNumber.trim(),
+                };
                 const requestData: CreateBookingRequestForGuest = {
                     guestDetails,
                     bookingDetails,
                 };
-                const bookingResponse: CreateBookingResponse = await createBookingGuest(requestData);
-                const bookingId = bookingResponse.bookingId;
-                
-                toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
-                const paymentUrl = await createPaymentUrl(bookingId);
-    
-                window.location.href = paymentUrl; 
+                bookingResponse = await createBookingGuest(requestData);
             } else {
+                // Đặt chỗ với tư cách khách hàng đã đăng nhập
+                const customerDetails: CustomerDetails = {
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    phoneNumber: phoneNumber.trim(),
+                };
                 const requestData: CreateBookingRequestForCustomer = {
                     customerDetails,
                     bookingDetails,
                 };
-                const bookingResponse: CreateBookingResponse = await createBookingCustomer(requestData);
-                const bookingId = bookingResponse.bookingId;
-                
-                toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán...`);
-    
-                const paymentUrl = await createPaymentUrl(bookingId);
-
-                window.location.href = paymentUrl; 
+                bookingResponse = await createBookingCustomer(requestData);
             }
+
+            const bookingId = bookingResponse.bookingId;
+            toast.success(`Đặt chỗ thành công (ID: ${bookingId}). Đang chuyển hướng đến trang thanh toán ${selectedPaymentMethod.toUpperCase()}...`);
+            
+            // 2. Tạo URL thanh toán dựa trên phương thức đã chọn
+            let paymentUrl: string;
+            if (selectedPaymentMethod === 'vnpay') {
+                paymentUrl = await createVnpayPaymentUrl(bookingId);
+            } else if (selectedPaymentMethod === 'payos') {
+                paymentUrl = await createPayOsPaymentUrl(bookingId); // Gọi hàm tạo URL PayOS
+            } else {
+                throw new Error('Phương thức thanh toán không hợp lệ.');
+            }
+
+            // 3. Chuyển hướng
+            window.location.href = paymentUrl; 
 
         } catch (error: any) {
             console.error('Lỗi quy trình đặt chỗ:', error);
@@ -259,7 +276,6 @@ const BookingCheckout: React.FC = () => {
                             <User size={20} />
                             Thông tin của bạn
                         </h2>
-                        {/* Bọc form với onSubmit để kích hoạt handlePlaceBooking */}
                         <form onSubmit={handlePlaceBooking} id="booking-form" className={cx('contact-form')}>
                             <div className={cx('form-row')}>
                                 <div className={cx('form-group')}>
@@ -319,7 +335,7 @@ const BookingCheckout: React.FC = () => {
                                                 type="email"
                                                 value={email}
                                                 required
-                                                disabled={isProcessing}
+                                                disabled={true} // Email của user đăng nhập không thay đổi
                                                 placeholder="email@example.com"
                                             />
                                         </div>
@@ -362,38 +378,50 @@ const BookingCheckout: React.FC = () => {
                     </div>
 
 
-                    {/* =========================================PHƯƠNG THỨC THANH TOÁN=================================== */}
+                    {/* =========================================PHƯƠNG THỨC THANH TOÁN (Cập nhật)=================================== */}
                     <div className={cx('section-card', 'payment-method-section')}>
                         <h2 className={cx('card-title')}>
                             <Lock size={20} />
                             Chọn phương thức thanh toán
                         </h2>
                         <div className={cx('payment-options-grid')}>
-                            <label className={cx('payment-option-card')}>
-                                <input type="radio" name="paymentMethod" value="transfer" defaultChecked disabled={isProcessing} />
+                            <label 
+                                className={cx('payment-option-card', { selected: selectedPaymentMethod === 'vnpay' })}
+                            >
+                                <input 
+                                    type="radio" 
+                                    name="paymentMethod" 
+                                    value="vnpay" 
+                                    checked={selectedPaymentMethod === 'vnpay'}
+                                    onChange={() => setSelectedPaymentMethod('vnpay')}
+                                    disabled={isProcessing} 
+                                />
                                 <div className={cx('option-content')}>
-                                    <CreditCard size={24} />
-                                    <span className={cx('option-title')}>Chuyển khoản trực tuyến</span>
-                                    <span className={cx('option-description')}>VietQR, Momo, ZaloPay (qua cổng VNPAY)</span>
+                                    <img src={vnpay_logo} alt="VNPAY Logo" className={cx('payment-logo')}/>
+                                    <span className={cx('option-title')}>Thanh toán VNPAY</span>
+                                    <span className={cx('option-description')}>
+                                        VietQR, Mobile Banking, Ví VNPAY
+                                    </span>
                                 </div>
                             </label>
-                            
-                            {/* Các phương thức thanh toán khác */}
-                            <label className={cx('payment-option-card')}>
-                                <input type="radio" name="paymentMethod" value="card" disabled={isProcessing} />
+
+                            <label 
+                                className={cx('payment-option-card', { selected: selectedPaymentMethod === 'payos' })}
+                            >
+                                <input 
+                                    type="radio" 
+                                    name="paymentMethod" 
+                                    value="payos" 
+                                    checked={selectedPaymentMethod === 'payos'}
+                                    onChange={() => setSelectedPaymentMethod('payos')}
+                                    disabled={isProcessing} 
+                                />
                                 <div className={cx('option-content')}>
-                                    <CreditCard size={24} />
-                                    <span className={cx('option-title')}>Thẻ tín dụng/ghi nợ</span>
-                                    <span className={cx('option-description')}>Visa, Mastercard, JCB (bảo mật bởi Stripe)</span>
-                                </div>
-                            </label>
-                            
-                            <label className={cx('payment-option-card')}>
-                                <input type="radio" name="paymentMethod" value="onsite" disabled={isProcessing} />
-                                <div className={cx('option-content')}>
-                                    <Briefcase size={24} />
-                                    <span className={cx('option-title')}>Thanh toán tại chỗ</span>
-                                    <span className={cx('option-description')}>Áp dụng cho đơn hàng nhỏ hơn 1.000.000 VNĐ</span>
+                                    <img src={payos_logo} alt="PayOS Logo" className={cx('payment-logo')}/>
+                                    <span className={cx('option-title')}>Thanh toán PayOS</span>
+                                    <span className={cx('option-description')}>
+                                        Chuyển khoản nhanh qua PayOS, nhận diện tự động
+                                    </span>
                                 </div>
                             </label>
                         </div>
@@ -401,7 +429,7 @@ const BookingCheckout: React.FC = () => {
                 </div>
 
                 <div className={cx('right-panel')}>
-                    {/* TÓM TẮT ĐƠN HÀNG - Giữ nguyên */}
+                    {/* TÓM TẮT ĐƠN HÀNG */}
                     <div className={cx('summary-card')}>
                         <h2 className={cx('summary-card-title')}>
                             <Home size={20} />
@@ -433,7 +461,7 @@ const BookingCheckout: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* MÃ KHUYẾN MÃI - Giữ nguyên */}
+                    {/* MÃ KHUYẾN MÃI */}
                     <div className={cx('promo-card')}>
                         <h3 className={cx('promo-card-title')}>
                             <Tag size={18} />
@@ -471,7 +499,7 @@ const BookingCheckout: React.FC = () => {
                         )}
                     </div>
 
-                    {/* TỔNG THANH TOÁN - Giữ nguyên */}
+                    {/* TỔNG THANH TOÁN */}
                     <div className={cx('total-payment-card')}>
                         <h2 className={cx('total-payment-title')}>
                             <DollarSign size={20} />
@@ -522,9 +550,8 @@ const BookingCheckout: React.FC = () => {
                 </div>
             </div>
             
-            
             <div className={cx('footer-note')}>
-                Bằng việc xác nhận, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.
+                Bằng việc xác nhận, bạn đồng ý với **Điều khoản dịch vụ** và **Chính sách bảo mật** của chúng tôi.
             </div>
         </div>
     );

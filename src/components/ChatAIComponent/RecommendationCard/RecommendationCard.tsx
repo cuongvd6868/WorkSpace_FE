@@ -19,7 +19,8 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
   const {
     title,
     street,
-    averagePricePerDay,
+    averagePricePerHour,
+    minPricePerHour,
     minCapacity,
     maxCapacity,
     imageUrls,
@@ -55,8 +56,9 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
         
         {/* Giá */}
         <div className={cx('price-info')}>
-            <span className={cx('price')}>{formatPrice(averagePricePerDay)}</span>
-            <span className={cx('price-label')}>/ ngày</span>
+            <span className={cx('price-label')}>Chỉ từ</span>
+            <span className={cx('price')}>{formatPrice(minPricePerHour)}</span>
+            <span className={cx('price-label')}>/ giờ</span>
         </div>
         
         {/* Chi tiết (Địa điểm & Sức chứa) */}

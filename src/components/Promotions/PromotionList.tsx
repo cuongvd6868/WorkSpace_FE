@@ -9,6 +9,8 @@ import 'swiper/css';
 import PromotionItem from '~/components/Promotions/PromotionItem/PromotionItem';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGift } from "@fortawesome/free-solid-svg-icons";
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'; // Đảm bảo đã import CSS
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +25,35 @@ const ChevronRightIcon = () => (
     </svg>
 );
 
+const PromotionSkeleton: React.FC = () => {
+    return (
+        <div className={cx('promotion-slide-skeleton')}>
+            <SkeletonTheme baseColor="#EBEBEB" highlightColor="#F5F5F5">
+                <div className={cx('skeleton-image')}>
+                    <Skeleton height={40} /> 
+                </div>
+                <div style={{ padding: '10px 0' }}>
+                    <Skeleton count={2} height={23} width={200}/>
+                </div>
+                <div className={cx('skeleton-button')}>
+                </div>
+            </SkeletonTheme>
+        </div>
+    );
+}
+
+const LoadingSlider: React.FC = () => (
+    <div className={cx('slider-container')}>
+        <div className={cx('promotion-slider-skeleton')}>
+            <PromotionSkeleton />
+            <PromotionSkeleton />
+            <PromotionSkeleton />
+        </div>
+
+    </div>
+);
+
+
 const PromotionList: React.FC = () => {
     const [promotions, setPromotions] = useState<Promotions[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -31,6 +62,8 @@ const PromotionList: React.FC = () => {
     useEffect(() => {
         const fetchPromotions = async () => {
             try {
+                // Giả định thời gian tải tối thiểu để người dùng thấy skeleton
+                await new Promise(resolve => setTimeout(resolve, 800)); 
                 setLoading(true);
                 setError(null);
                 const apiResponse = await GetAllPromotions();
@@ -45,16 +78,31 @@ const PromotionList: React.FC = () => {
         fetchPromotions();
     }, []);
 
+    // 1. Logic Loading
     if (loading) {
-        return <div className={cx('wrapper', 'status-message')}>Đang tải khuyến mãi...</div>;
+        return (
+            <div className={cx('wrapper')}>
+                <div className={cx('promotion_header')}>
+                    <FontAwesomeIcon icon={faGift} className={cx('icon')}/>
+                    <h2 className={cx('title')}>Mã Ưu Đãi Tặng Khách Hàng</h2>
+                </div>
+                {/* Hiển thị Loading Slider */}
+                <LoadingSlider /> 
+            </div>
+        );
     }
+    
+    // 2. Logic Error
     if (error) {
         return <div className={cx('wrapper', 'status-message', 'error')}>{error}</div>;
     }
+    
+    // 3. Logic No Data
     if (promotions.length === 0) {
         return <div className={cx('wrapper', 'status-message')}>Không có khuyến mãi nào.</div>;
     }
 
+    // 4. Logic Data Loaded
     return(
         <div className={cx('wrapper')}>
             <div className={cx('promotion_header')}>
@@ -96,7 +144,3 @@ const PromotionList: React.FC = () => {
 }
 
 export default PromotionList;
-            // <div className={cx('title_container')}>
-            //     <FontAwesomeIcon icon={faHandshake} className={cx('icon')}/>
-            //     <h2>Vì sao bạn lại chọn CSB?</h2>
-            // </div>

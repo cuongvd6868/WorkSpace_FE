@@ -109,3 +109,37 @@
         right: 0;
     }
 }
+
+.promotion-slider-skeleton {
+    display: flex;
+    justify-content: space-between;
+    // Điều chỉnh cột để khớp với slidesPerView={3}
+    gap: 24px; // Khoảng cách giữa các item
+    width: 100%;
+
+    // Điều chỉnh breakpoint để khớp với Swiper breakpoints
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 16px;
+    }
+}
+
+.promotion-slide-skeleton {
+    // Đảm bảo Skeleton có kích thước và hình dạng tương tự PromotionItem
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #ffffff; /* Hoặc màu nền của item */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Nếu item có shadow */
+    width: 35%;
+}
+
+.skeleton-image {
+    height:40px; 
+    .react-loading-skeleton {
+        border-radius: 8px; /* Nếu ảnh có border-radius */
+    }
+}
