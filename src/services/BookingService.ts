@@ -48,12 +48,32 @@ export const createBookingCustomer = async (bookingData: CreateBookingRequestFor
   }
 };
 
-export const createPaymentUrl = async (bookingId: number): Promise<string> => {
+export const createVnpayPaymentUrl = async (bookingId: number): Promise<string> => {
   try {
     console.log('Creating payment URL for booking:', bookingId);
 
     const response = await axios.get<CreatePaymentUrlResponse>(
       `${API_BASE_URL}v1/vnpay/create-payment-url?bookingId=${bookingId}`
+    );
+
+    if (!response.data?.url) {
+      console.warn('Unexpected response structure:', response.data);
+      throw new Error('Cấu trúc phản hồi từ máy chủ không hợp lệ');
+    }
+
+    return response.data.url;
+  } catch (error: any) {
+    console.error('Lỗi tạo URL thanh toán:', error?.response?.data || error.message);
+    throw new Error(error?.response?.data?.message || 'Không thể tạo URL thanh toán. Vui lòng thử lại sau.');
+  }
+};
+
+export const createPayOsPaymentUrl = async (bookingId: number): Promise<string> => {
+  try {
+    console.log('Creating payment URL for booking:', bookingId);
+
+    const response = await axios.get<CreatePaymentUrlResponse>(
+      `${API_BASE_URL}v1/payos/create-payment-url?bookingId=${bookingId}`
     );
 
     if (!response.data?.url) {

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ChatbotResponse } from '../types/Chat';
+import { API_BASE_URL } from '~/utils/API';
 
-// Cập nhật URL API chính xác của bạn tại đây
-const API_URL = 'https://localhost:7105/api/v1/ai-chatbot/chat'; 
+const API_URL = `${API_BASE_URL}v1/ai-chatbot/chat`; 
 
 export const getChatResponse = async (message: string): Promise<ChatbotResponse> => {
   const payload = { message };
@@ -12,7 +12,6 @@ export const getChatResponse = async (message: string): Promise<ChatbotResponse>
       headers: {
         'Content-Type': 'application/json',
       },
-      // Có thể thêm chứng thực (Authorization header) nếu cần
     });
 
     return response.data;

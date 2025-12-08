@@ -11,9 +11,9 @@ export interface Recommendation {
   street: string;
   latitude: number;
   longitude: number;
-  minPricePerDay: number;
-  maxPricePerDay: number;
-  averagePricePerDay: number;
+  minPricePerHour: number;
+  maxPricePerHour: number;
+  averagePricePerHour: number;
   totalRooms: number;
   availableRooms: number;
   minCapacity: number;

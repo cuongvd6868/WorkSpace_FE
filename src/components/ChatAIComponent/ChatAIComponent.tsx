@@ -2,7 +2,7 @@ import React, { useState, FormEvent, useRef, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ChatAIComponent.module.scss';
 import { ChatbotResponse, ChatMessage } from '~/types/Chat';
-import { getChatResponse } from '~/services/chatService'; 
+import { getChatResponse } from '~/services/ChatAIService'; 
 import RecommendationCard from './RecommendationCard/RecommendationCard'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBrain, faRobot, faUser } from '@fortawesome/free-solid-svg-icons';

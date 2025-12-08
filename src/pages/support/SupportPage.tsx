@@ -29,24 +29,24 @@ const TICKET_TYPES = [
       icon: faCode, 
       color: "#4361ee" 
     },
-    { 
-      id: 2, 
-      name: "Thanh toán/Hóa đơn", 
-      icon: faCreditCard, 
-      color: "#7209b7" 
-    },
+    // { 
+    //   id: 2, 
+    //   name: "Thanh toán/Hóa đơn", 
+    //   icon: faCreditCard, 
+    //   color: "#7209b7" 
+    // },
     { 
       id: 3, 
       name: "Yêu cầu tính năng mới", 
       icon: faLightbulb, 
       color: "#f72585" 
     },
-    { 
-      id: 4, 
-      name: "Khác", 
-      icon: faFileAlt, 
-      color: "#4cc9f0" 
-    },
+    // { 
+    //   id: 4, 
+    //   name: "Khác", 
+    //   icon: faFileAlt, 
+    //   color: "#4cc9f0" 
+    // },
 ];
 
 const SupportPage: React.FC = () => {
