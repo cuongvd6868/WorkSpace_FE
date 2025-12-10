@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 import classNames from "classnames/bind";
 import styles from './HostRegistrationPage.module.scss';
-import { saveHostProfile } from '~/services/HostProfileService'; 
-import { HostProfileData } from '~/types/HostProfile'; 
+import { saveHostProfile } from '~/services/HostProfileService'; // HÀM API THẬT CỦA BẠN
+import { HostProfileData } from '~/types/HostProfile'; // Giả định
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "~/context/useAuth";
+import { useAuth } from "~/context/useAuth"; // Giả định
 import { toast } from "react-toastify";
 import { 
     faHandshake, 
@@ -19,8 +19,15 @@ import {
     faLock
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import HostContractModal from "~/components/HostContractModal/HostContractModal"; 
+import SignaturePad from 'react-signature-canvas'; 
 
 const cx = classNames.bind(styles);
+
+// Giả định HostProfileData cần trường này để gửi chữ ký
+interface ExtendedHostProfileData extends HostProfileData {
+    signatureDataUrl?: string;
+}
 
 const initialProfileData: HostProfileData = {
     companyName: '',
@@ -33,7 +40,7 @@ const initialProfileData: HostProfileData = {
 };
 
 const HostRegistrationPage: React.FC = () => {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth(); // Giả định useAuth
     const navigate = useNavigate();
     const [profileData, setProfileData] = useState<HostProfileData>(initialProfileData);
     const [isLoading, setIsLoading] = useState(false);
@@ -41,11 +48,19 @@ const HostRegistrationPage: React.FC = () => {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
+    // --- LOGIC MODAL & CHỮ KÝ ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const signatureRef = useRef<SignaturePad>(null); 
+    
+    // Refs cho file upload 
     const logoFileRef = useRef<HTMLInputElement>(null);
     const avatarFileRef = useRef<HTMLInputElement>(null);
     const coverFileRef = useRef<HTMLInputElement>(null);
     
-    const authToken = localStorage.getItem('token') || '';
+    // Giả định lấy token từ localStorage
+    const authToken = localStorage.getItem('token') || ''; 
+
+    // --- HÀM XỬ LÝ CHUNG (Giữ nguyên) ---
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -74,71 +89,97 @@ const HostRegistrationPage: React.FC = () => {
             reader.readAsDataURL(file);
         }
     };
+    
+    // --- HÀM XỬ LÝ MODAL & SUBMIT MỚI NHẤT (Đã sửa lỗi báo thất bại) ---
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleOpenModal = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); 
+
         setError(null);
-
+        
         if (!isLoggedIn) {
             setError('Bạn cần đăng nhập để đăng ký Host. Vui lòng đăng nhập lại.');
             return;
         }
         
-        if (!profileData.companyName.trim()) {
-            setError('Tên công ty không được để trống.');
+        if (!profileData.companyName.trim() || !profileData.contactPhone.trim()) {
+            setError('Tên công ty và Số điện thoại liên hệ không được để trống.');
             return;
         }
 
-        setIsLoading(true);
+        // Mở Modal Hợp đồng
+        setIsModalOpen(true);
+    };
 
-        try {
-            const avatarFile = avatarFileRef.current?.files?.[0];
-            const coverPhotoFile = coverFileRef.current?.files?.[0];
-
-            const result = await saveHostProfile(
-                { 
-                    profileData, 
-                    avatarFile, 
-                    coverPhotoFile 
-                }, 
-                authToken
-            );
-            
-            console.log('API Response:', result);
-
-            navigate('/host-register');
-            toast.success('Đăng ký Host thành công! Bạn sẽ được hệ thống liên hệ xác nhận lại');
-
-        } catch (err: any) {
-            console.error('Lỗi khi đăng ký Host:', err);
-            setError(err.message || 'Có lỗi xảy ra khi đăng ký Host. Vui lòng thử lại.');
-        } finally {
-            setIsLoading(false);
+    const handleClearSignature = () => {
+        if (signatureRef.current) {
+            signatureRef.current.clear();
         }
     };
 
+const handleSaveSignatureAndSubmit = async () => {
+    if (!signatureRef.current || signatureRef.current.isEmpty()) {
+        toast.error('Vui lòng ký tên vào hợp đồng trước khi xác nhận.');
+        return;
+    }
+    
+    const signatureDataURL = signatureRef.current.getCanvas().toDataURL('image/png');
+    setIsLoading(true);
+    setError(null); // Reset error
+
+    try {
+        const avatarFile = avatarFileRef.current?.files?.[0];
+        const coverPhotoFile = coverFileRef.current?.files?.[0];
+
+        const profileDataWithSignature: ExtendedHostProfileData = {
+            ...profileData,
+            signatureDataUrl: signatureDataURL,
+        };
+
+        // Gọi API - KHÔNG cần kiểm tra response phức tạp
+        // Nếu API không throw error, coi như thành công
+        await saveHostProfile(
+            { profileData: profileDataWithSignature, avatarFile, coverPhotoFile }, 
+            authToken
+        );
+
+        // Nếu chạy đến đây mà không có lỗi → Thành công
+        setIsModalOpen(false);
+        navigate('/host-register');
+        toast.success('Đăng ký Host thành công! Hợp đồng đã được ký kết và gửi đi.');
+
+    } catch (err: any) {
+        console.error('Lỗi khi đăng ký Host:', err);
+        
+        // Phân biệt lỗi mạng và lỗi business logic
+        if (err.response) {
+            // Lỗi từ server (4xx, 5xx)
+            const serverError = err.response.data?.message || 
+                              err.response.data?.error || 
+                              `Lỗi server: ${err.response.status}`;
+            setError(serverError);
+            toast.error(serverError);
+        } else if (err.request) {
+            // Lỗi không nhận được response
+            setError('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
+            toast.error('Mất kết nối đến máy chủ.');
+        } else {
+            // Lỗi khác
+            setError(err.message || 'Có lỗi xảy ra khi gửi hồ sơ.');
+            toast.error('Gửi hồ sơ thất bại. Vui lòng thử lại.');
+        }
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+    // --- RENDER JSX (Giữ nguyên) ---
+
     return (
         <div className={cx('page-container')}>
-            {/* Hero Section */}
-            {/* <div className={cx('hero-section')}>
-                <div className={cx('hero-overlay')}>
-                    <div className={cx('hero-content')}>
-                        <div className={cx('hero-icon')}>
-                            <FontAwesomeIcon icon={faHandshake} />
-                        </div>
-                        <h1 className={cx('hero-title')}>
-                            Trở Thành Đối Tác Chính Thức
-                        </h1>
-                        <p className={cx('hero-subtitle')}>
-                            Khám phá cơ hội hợp tác và phát triển cùng chúng tôi
-                        </p>
-                    </div>
-                </div>
-            </div> */}
-
             <div className={cx('registration-container')}>
                 <div className={cx('registration-card')}>
-                    {/* Progress Steps */}
+                    
                     <div className={cx('progress-steps')}>
                         <div className={cx('step', 'step-active')}>
                             <div className={cx('step-number')}>1</div>
@@ -156,7 +197,6 @@ const HostRegistrationPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Registration Header */}
                     <div className={cx('registration-header')}>
                         <div className={cx('header-content')}>
                             <h2 className={cx('registration-title')}>
@@ -165,20 +205,19 @@ const HostRegistrationPage: React.FC = () => {
                             </h2>
                             <p className={cx('registration-subtitle')}>
                                 Vui lòng cung cấp đầy đủ thông tin để xét duyệt trở thành đối tác chính thức.
-                                Sau khi được phê duyệt, tài khoản của bạn sẽ được nâng cấp lên chế độ Owner Dashboard.
                             </p>
                         </div>
                     </div>
 
-                    {/* Error Message */}
                     {error && (
                         <div className={cx('error-banner')}>
-                            <FontAwesomeIcon icon={faCheckCircle} />
+                            <FontAwesomeIcon icon={faLock} />
                             <span>{error}</span>
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className={cx('registration-form')}>
+                    <form onSubmit={handleOpenModal} className={cx('registration-form')}>
+                        
                         {/* Basic Information Section */}
                         <div className={cx('form-section')}>
                             <div className={cx('section-header')}>
@@ -282,20 +321,14 @@ const HostRegistrationPage: React.FC = () => {
                             
                             <p className={cx('section-description')}>
                                 Sử dụng hình ảnh chất lượng cao để xây dựng thương hiệu chuyên nghiệp.
-                                Định dạng tối ưu: PNG hoặc JPEG.
                             </p>
 
                             <div className={cx('image-grid')}>
-                                {/* Avatar Upload */}
                                 <div className={cx('image-upload-card')}>
                                     <label className={cx('upload-label')}>
                                         <div className={cx('upload-header')}>
                                             <FontAwesomeIcon icon={faCamera} className={cx('upload-icon')} />
                                             <span>Ảnh đại diện Host</span>
-                                        </div>
-                                        <div className={cx('upload-info')}>
-                                            <span className={cx('upload-ratio')}>Tối ưu: 1:1</span>
-                                            <span className={cx('upload-formats')}>PNG, JPEG</span>
                                         </div>
                                     </label>
                                     
@@ -324,22 +357,16 @@ const HostRegistrationPage: React.FC = () => {
                                             <div className={cx('upload-placeholder')}>
                                                 <FontAwesomeIcon icon={faUpload} className={cx('placeholder-icon')} />
                                                 <span className={cx('placeholder-text')}>Kéo thả hoặc click để tải lên</span>
-                                                <span className={cx('placeholder-subtext')}>Kích thước tối đa: 5MB</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
-                                {/* Cover Photo Upload */}
                                 <div className={cx('image-upload-card', 'wide')}>
                                     <label className={cx('upload-label')}>
                                         <div className={cx('upload-header')}>
                                             <FontAwesomeIcon icon={faImage} className={cx('upload-icon')} />
                                             <span>Ảnh bìa (Cover Photo)</span>
-                                        </div>
-                                        <div className={cx('upload-info')}>
-                                            <span className={cx('upload-ratio')}>Tối ưu: 16:9</span>
-                                            <span className={cx('upload-formats')}>PNG, JPEG</span>
                                         </div>
                                     </label>
                                     
@@ -368,7 +395,6 @@ const HostRegistrationPage: React.FC = () => {
                                             <div className={cx('upload-placeholder', 'wide')}>
                                                 <FontAwesomeIcon icon={faUpload} className={cx('placeholder-icon')} />
                                                 <span className={cx('placeholder-text')}>Kéo thả hoặc click để tải lên</span>
-                                                <span className={cx('placeholder-subtext')}>Kích thước tối đa: 10MB</span>
                                             </div>
                                         )}
                                     </div>
@@ -376,13 +402,12 @@ const HostRegistrationPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Submit Section */}
+                        {/* Submit Section (Gọi Modal) */}
                         <div className={cx('submit-section')}>
                             <div className={cx('privacy-note')}>
                                 <FontAwesomeIcon icon={faLock} className={cx('privacy-icon')} />
                                 <span>
-                                    Chúng tôi cam kết bảo mật thông tin kinh doanh của bạn. 
-                                    Dữ liệu sẽ được mã hóa và chỉ sử dụng cho mục đích xác thực.
+                                    Dữ liệu của bạn được bảo mật. Nhấn tiếp tục để xem và ký kết hợp đồng điện tử.
                                 </span>
                             </div>
                             
@@ -394,12 +419,12 @@ const HostRegistrationPage: React.FC = () => {
                                 {isLoading ? (
                                     <>
                                         <div className={cx('button-spinner')}></div>
-                                        Đang gửi hồ sơ...
+                                        Đang kiểm tra...
                                     </>
                                 ) : (
                                     <>
                                         <FontAwesomeIcon icon={faCheckCircle} />
-                                        Hoàn tất Đăng ký Đối tác
+                                        Tiếp tục đến Ký Hợp đồng
                                     </>
                                 )}
                             </button>
@@ -407,6 +432,19 @@ const HostRegistrationPage: React.FC = () => {
                     </form>
                 </div>
             </div>
+
+            {/* MODAL HỢP ĐỒNG */}
+            {isModalOpen && (
+                <HostContractModal 
+                    profileData={profileData}
+                    signatureRef={signatureRef}
+                    onSaveAndSubmit={handleSaveSignatureAndSubmit}
+                    onClearSignature={handleClearSignature}
+                    onClose={() => setIsModalOpen(false)}
+                    isLoading={isLoading}
+                    dataState="open" 
+                />
+            )}
         </div>
     );
 }

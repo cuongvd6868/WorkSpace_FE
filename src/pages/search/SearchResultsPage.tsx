@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Slider from 'rc-slider'; 
 import 'rc-slider/assets/index.css'; 
 import WorkSpaceSearchItem from '~/components/WorkSpaces/search/WorkSpaceSearchItem';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 const Range = Slider;
 
 
@@ -216,12 +217,48 @@ const SearchResultsPage: React.FC = () => {
             <hr className={cx('divider')} />
 
             {loading && (
-                <div className={cx('loading-state')}>
-                    {/* Sử dụng FontAwesomeIcon nếu không muốn import LoadingSpinner */}
-                    <FontAwesomeIcon icon={faSpinner} spin className={cx('spinner-icon')} />
-                    <p>Đang tải kết quả và tiện ích...</p>
+                <div className={cx('main-content', 'loading-animated')}>
+                    <div className={cx('filter-sidebar_loading')}>
+                        <SkeletonTheme baseColor="#EBEBEB" highlightColor="#F5F5F5">
+                            <div className={cx('skeleton-image')}>
+                                <Skeleton height={140} />
+                            </div>
+                            <div style={{ padding: '10px 0' }}>
+                                <Skeleton height={70} />
+                            </div>
+                            <div style={{ padding: '10px 0' }}>
+                                <Skeleton count={15} height={23} />
+                            </div>
+                        </SkeletonTheme>
+                    </div>
+
+                    <div className={cx('results-area_loading')}>
+                        <SkeletonTheme baseColor="#EBEBEB" highlightColor="#F5F5F5">
+                            <div className={cx('skeleton-image_result')}>
+                                <Skeleton count={2} height={30} />
+                                <Skeleton count={2} height={23} width={500}/>
+                                <Skeleton count={1} height={23} width={650}/>
+                            </div>
+                            <div className={cx('skeleton-image_result')} style={{ margin: '13px 0' }}>
+                                <Skeleton count={2} height={30} />
+                                <Skeleton count={2} height={23} width={500}/>
+                                <Skeleton count={1} height={23} width={650}/>
+                            </div>
+                            <div className={cx('skeleton-image_result')} style={{ margin: '13px 0' }}>
+                                <Skeleton count={2} height={30} />
+                                <Skeleton count={2} height={23} width={500}/>
+                                <Skeleton count={1} height={23} width={650}/>
+                            </div>  
+                            <div className={cx('skeleton-image_result')} style={{ margin: '13px 0' }}>
+                                <Skeleton count={2} height={30} />
+                                <Skeleton count={2} height={23} width={500}/>
+                                <Skeleton count={1} height={23} width={650}/>
+                            </div>                                                      
+                        </SkeletonTheme>
+                    </div>
                 </div>
             )}
+
             
             {/* HIỂN THỊ TRẠNG THÁI LỖI */}
             {error && !loading && (

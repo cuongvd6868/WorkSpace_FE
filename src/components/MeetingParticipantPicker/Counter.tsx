@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import styles from './Counter.module.scss'; // Đảm bảo đường dẫn đúng
+import styles from './Counter.module.scss';
 
 const cx = classNames.bind(styles);
 

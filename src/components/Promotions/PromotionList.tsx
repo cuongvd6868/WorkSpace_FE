@@ -27,7 +27,7 @@ const ChevronRightIcon = () => (
 
 const PromotionSkeleton: React.FC = () => {
     return (
-        <div className={cx('promotion-slide-skeleton')}>
+        <div className={cx('promotion-slide-skeleton', 'shimmer-enabled')}>
             <SkeletonTheme baseColor="#EBEBEB" highlightColor="#F5F5F5">
                 <div className={cx('skeleton-image')}>
                     <Skeleton height={40} /> 
@@ -43,7 +43,7 @@ const PromotionSkeleton: React.FC = () => {
 }
 
 const LoadingSlider: React.FC = () => (
-    <div className={cx('slider-container')}>
+    <div className={cx('slider-container_loading')}>
         <div className={cx('promotion-slider-skeleton')}>
             <PromotionSkeleton />
             <PromotionSkeleton />

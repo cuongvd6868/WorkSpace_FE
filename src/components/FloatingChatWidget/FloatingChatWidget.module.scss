@@ -1,5 +1,5 @@
 $primary-gradient-start: #6a11cb; 
-$primary-gradient-end: #2575fc;   
+$primary-gradient-end: #880e4f;   
 $accent-red: #dc3545;
 $chat-bubble-size: 60px;
 $chat-box-width: 380px;
@@ -80,7 +80,7 @@ $right-spacing: 30px;
     width: $chat-box-width;
     height: $chat-box-height;
     background-color: #fff;
-    border-radius: 16px;
+    border-radius: 9px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
@@ -112,7 +112,7 @@ $right-spacing: 30px;
 
 .header-title {
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
 }

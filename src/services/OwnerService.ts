@@ -28,7 +28,7 @@ export interface RawWorkspaceData {
     latitude: number;
     longitude: number;
     workSpaceTypeId: number;
-    imageFiles: File[]; // Mảng các đối tượng File từ input
+    imageFiles: File[]; 
 }
 
 

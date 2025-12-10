@@ -1,10 +1,9 @@
-// src/components/AccountManagementSection/AccountManagementSection.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faCheckCircle, faSpinner, faPlus, faUserTie, faUser, faBuildingUser, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import styles from './AccountManagementSection.module.scss'; // Tạo file SCSS tương ứng
+import styles from './AccountManagementSection.module.scss';
 import { 
     getStaffsAccount, 
     getOwnersAccount, 
