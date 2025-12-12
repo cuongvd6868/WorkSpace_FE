@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 import classNames from "classnames/bind";
 import styles from './HostRegistrationPage.module.scss';
-import { saveHostProfile } from '~/services/HostProfileService'; // HÀM API THẬT CỦA BẠN
-import { HostProfileData } from '~/types/HostProfile'; // Giả định
+import { saveHostProfile } from '~/services/HostProfileService'; 
+import { HostProfileData } from '~/types/HostProfile'; 
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "~/context/useAuth"; // Giả định
+import { useAuth } from "~/context/useAuth"; 
 import { toast } from "react-toastify";
 import { 
     faHandshake, 
@@ -21,10 +21,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HostContractModal from "~/components/HostContractModal/HostContractModal"; 
 import SignaturePad from 'react-signature-canvas'; 
+import axios from 'axios'; 
 
 const cx = classNames.bind(styles);
 
-// Giả định HostProfileData cần trường này để gửi chữ ký
 interface ExtendedHostProfileData extends HostProfileData {
     signatureDataUrl?: string;
 }
@@ -37,10 +37,11 @@ const initialProfileData: HostProfileData = {
     logoUrl: '',
     avatar: '',
     coverPhoto: '',
+    documentUrls: [] 
 };
 
 const HostRegistrationPage: React.FC = () => {
-    const { isLoggedIn } = useAuth(); // Giả định useAuth
+    const { isLoggedIn } = useAuth(); 
     const navigate = useNavigate();
     const [profileData, setProfileData] = useState<HostProfileData>(initialProfileData);
     const [isLoading, setIsLoading] = useState(false);
@@ -48,19 +49,15 @@ const HostRegistrationPage: React.FC = () => {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
 
-    // --- LOGIC MODAL & CHỮ KÝ ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const signatureRef = useRef<SignaturePad>(null); 
     
-    // Refs cho file upload 
     const logoFileRef = useRef<HTMLInputElement>(null);
     const avatarFileRef = useRef<HTMLInputElement>(null);
     const coverFileRef = useRef<HTMLInputElement>(null);
     
-    // Giả định lấy token từ localStorage
     const authToken = localStorage.getItem('token') || ''; 
 
-    // --- HÀM XỬ LÝ CHUNG (Giữ nguyên) ---
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -89,8 +86,14 @@ const HostRegistrationPage: React.FC = () => {
             reader.readAsDataURL(file);
         }
     };
-    
-    // --- HÀM XỬ LÝ MODAL & SUBMIT MỚI NHẤT (Đã sửa lỗi báo thất bại) ---
+
+    const handleSetContractDocuments = (urls: string[]) => {
+        setProfileData(prev => ({ 
+            ...prev, 
+            documentUrls: urls 
+        }));
+    };
+
 
     const handleOpenModal = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
@@ -117,61 +120,65 @@ const HostRegistrationPage: React.FC = () => {
         }
     };
 
-const handleSaveSignatureAndSubmit = async () => {
-    if (!signatureRef.current || signatureRef.current.isEmpty()) {
-        toast.error('Vui lòng ký tên vào hợp đồng trước khi xác nhận.');
-        return;
-    }
-    
-    const signatureDataURL = signatureRef.current.getCanvas().toDataURL('image/png');
-    setIsLoading(true);
-    setError(null); // Reset error
-
-    try {
-        const avatarFile = avatarFileRef.current?.files?.[0];
-        const coverPhotoFile = coverFileRef.current?.files?.[0];
-
-        const profileDataWithSignature: ExtendedHostProfileData = {
-            ...profileData,
-            signatureDataUrl: signatureDataURL,
-        };
-
-        // Gọi API - KHÔNG cần kiểm tra response phức tạp
-        // Nếu API không throw error, coi như thành công
-        await saveHostProfile(
-            { profileData: profileDataWithSignature, avatarFile, coverPhotoFile }, 
-            authToken
-        );
-
-        // Nếu chạy đến đây mà không có lỗi → Thành công
-        setIsModalOpen(false);
-        navigate('/host-register');
-        toast.success('Đăng ký Host thành công! Hợp đồng đã được ký kết và gửi đi.');
-
-    } catch (err: any) {
-        console.error('Lỗi khi đăng ký Host:', err);
-        
-        // Phân biệt lỗi mạng và lỗi business logic
-        if (err.response) {
-            // Lỗi từ server (4xx, 5xx)
-            const serverError = err.response.data?.message || 
-                              err.response.data?.error || 
-                              `Lỗi server: ${err.response.status}`;
-            setError(serverError);
-            toast.error(serverError);
-        } else if (err.request) {
-            // Lỗi không nhận được response
-            setError('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.');
-            toast.error('Mất kết nối đến máy chủ.');
-        } else {
-            // Lỗi khác
-            setError(err.message || 'Có lỗi xảy ra khi gửi hồ sơ.');
-            toast.error('Gửi hồ sơ thất bại. Vui lòng thử lại.');
+    const handleSaveSignatureAndSubmit = async () => {
+        if (!signatureRef.current || signatureRef.current.isEmpty()) {
+            toast.error('Vui lòng ký tên vào hợp đồng trước khi xác nhận.');
+            return;
         }
-    } finally {
-        setIsLoading(false);
-    }
-};
+        
+        // KIỂM TRA TÀI LIỆU
+        // if (profileData.documentUrls.length !== 2) {
+        //      toast.error('Vui lòng cung cấp đủ 2 ảnh tài liệu hợp đồng.');
+        //      return;
+        // }
+
+        const signatureDataURL = signatureRef.current.getCanvas().toDataURL('image/png');
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const avatarFile = avatarFileRef.current?.files?.[0];
+            const coverPhotoFile = coverFileRef.current?.files?.[0];
+
+            // Gộp chữ ký vào profileData (tạm thời) để service có thể lấy ra upload
+            const profileDataWithSignature: ExtendedHostProfileData = {
+                ...profileData,
+                signatureDataUrl: signatureDataURL,
+            };
+
+            // Gọi API - profileDataWithSignature chứa Data URL của tài liệu và chữ ký
+            await saveHostProfile(
+                { 
+                    profileData: profileDataWithSignature, 
+                    avatarFile, 
+                    coverPhotoFile 
+                }, 
+                authToken
+            );
+
+            // Nếu chạy đến đây mà không có lỗi → Thành công
+            setIsModalOpen(false);
+            navigate('/host-register');
+            toast.success('Đăng ký Host thành công! Hồ sơ đang chờ xét duyệt.');
+
+        } catch (err: any) {
+            console.error('Lỗi khi đăng ký Host:', err);
+            
+            const userFriendlyError = err.message || 'Gửi hồ sơ thất bại do lỗi không xác định.';
+
+            // SỬA LỖI TS2304 TẠI ĐÂY BẰNG CÁCH IMPORT AXIOS
+            if (axios.isAxiosError(err) && err.response) { 
+                 const serverError = err.response.data?.message || err.response.data?.error || `Lỗi server: ${err.response.status}`;
+                 setError(serverError);
+                 toast.error(serverError);
+            } else {
+                 setError(userFriendlyError);
+                 toast.error(userFriendlyError);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // --- RENDER JSX (Giữ nguyên) ---
 
@@ -443,6 +450,10 @@ const handleSaveSignatureAndSubmit = async () => {
                     onClose={() => setIsModalOpen(false)}
                     isLoading={isLoading}
                     dataState="open" 
+                    // --- PROP MỚI TRUYỀN VÀO MODAL (Đã sửa lỗi) ---
+                    onSetDocumentUrls={handleSetContractDocuments} // <-- Prop này phải có trong HostContractModalProps
+                    existingDocumentUrls={profileData.documentUrls} 
+                    // ------------------------------------
                 />
             )}
         </div>

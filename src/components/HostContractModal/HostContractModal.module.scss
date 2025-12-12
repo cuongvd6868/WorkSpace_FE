@@ -1,16 +1,14 @@
-/* --- Biến CSS/SCSS Globals --- */
-$primary-color: #00897b; // Teal đậm
+$primary-color: #00897b; 
 $primary-light: #4db6ac;
-$secondary-color: #ff9800; // Amber
-$background-dark: #121212; // Nền tối
-$surface-dark: #1e1e1e; // Bề mặt tối
-$text-light: #e0e0e0; // Chữ sáng
+$secondary-color: #ff9800; 
+$background-dark: #121212; 
+$surface-dark: #1e1e1e; 
+$text-light: #e0e0e0; 
 $border-color-dark: #3a3a3a;
 $success-color: #4caf50;
 $warning-color: #ffc107;
 $error-color: #f44336;
 
-/* --- Keyframes for Animations --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -545,4 +543,32 @@ $error-color: #f44336;
         margin-right: 8px;
         box-shadow: 0 0 5px $success-color;
     }
+}
+
+.title-header {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.title-main {
+    text-align: center;
+    margin: 25px 0;
+    font-size: 2.4rem;
+    color: #00897b;
+}
+
+.title-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.day {
+    text-align: end;
+    margin: 40px 0;
+    font-size: 1.3rem;
 }

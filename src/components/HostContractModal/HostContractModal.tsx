@@ -1,7 +1,4 @@
-// --- 1. Thư viện React và Hooks ---
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-
-// --- 2. Thư viện bên ngoài (External Libraries) ---
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
@@ -13,32 +10,24 @@ import {
     faDownload,
     faChevronRight,
     faEye,
-    faMousePointer
+    faMousePointer,
+    faSpinner,
+    faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import { jsPDF } from 'jspdf'; 
 import html2canvas from 'html2canvas'; 
 import SignaturePad from 'react-signature-canvas';
 import { toast } from 'react-toastify';
-
-// --- 3. Internal Modules và Assets ---
 import styles from './HostContractModal.module.scss'; 
-// Giả định: Import này cần được đảm bảo là file tồn tại
-// import { HostProfileData } from '~/types/HostProfile'; 
-
-// ------------------------------------------------------------------
-// Bắt đầu code module
-// ------------------------------------------------------------------
 
 const cx = classNames.bind(styles);
 
-// Giả định: Khai báo interface nếu không có file HostProfileData
 interface HostProfileData {
     companyName: string;
     contactPhone: string;
     websiteUrl?: string;
 } 
 
-// --- Cấu trúc props ---
 interface HostContractModalProps {
     profileData: HostProfileData;
     signatureRef: React.RefObject<any>;
@@ -47,10 +36,13 @@ interface HostContractModalProps {
     onClose: () => void;
     isLoading: boolean;
     dataState?: "open" | "closed"; 
+    // Props DÙNG ĐỂ LƯU ẢNH HỢP ĐỒNG ĐÃ KÝ (2 PHẦN)
+    onSetDocumentUrls: (urls: string[]) => void; 
+    existingDocumentUrls: string[]; 
 }
 
-// --- Bước của Modal ---
 type ModalStep = 'REVIEW' | 'SIGNING' | 'CONFIRMATION';
+
 
 const HostContractModal: React.FC<HostContractModalProps> = ({ 
     profileData, 
@@ -59,29 +51,27 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
     onClearSignature, 
     onClose, 
     isLoading,
-    dataState = "closed"
+    dataState = "closed",
+    onSetDocumentUrls, 
+    existingDocumentUrls,
 }) => {
-    // Ref cũ: dùng để kiểm tra việc cuộn (scroll)
     const contentRef = useRef<HTMLDivElement>(null); 
-    // Ref MỚI: dùng để chụp toàn bộ nội dung PDF
     const pdfContentRef = useRef<HTMLDivElement>(null); 
-    
+
     const [currentStep, setCurrentStep] = useState<ModalStep>('REVIEW');
     const [isSigned, setIsSigned] = useState(false);
     const [isScrolledToEnd, setIsScrolledToEnd] = useState(false); 
     const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null); 
     
-    // Cờ để kích hoạt tải PDF sau khi ký và Data URL đã có
     const [triggerPdfDownload, setTriggerPdfDownload] = useState(false);
 
-    const totalPages = 4; // Giả lập tổng số trang
-    
-    // --- Logic ScrolledToEnd & Cập nhật chữ ký ---
+    const totalPages = 4; 
+
     useEffect(() => {
         const checkScroll = () => {
             if (contentRef.current) {
                 const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-                // Kiểm tra nếu cuộn gần đến cuối (còn lại < 50px)
+                // Cuộn gần đến cuối (dưới 50px)
                 if (scrollHeight - clientHeight - scrollTop < 50) { 
                     setIsScrolledToEnd(true);
                 } else {
@@ -101,7 +91,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         };
     }, [currentStep]);
     
-    // Cập nhật trạng thái ký VÀ LẤY DATA URL
     const handleSignatureEnd = () => {
         if (signatureRef.current && !signatureRef.current.isEmpty()) {
             setIsSigned(true);
@@ -110,7 +99,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         }
     };
     
-    // Nút Xóa
     const handleClear = () => {
         onClearSignature();
         setIsSigned(false);
@@ -119,7 +107,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         toast.info("Chữ ký đã được xóa. Vui lòng ký lại.");
     };
 
-    // Hàm chuyển từ REVIEW sang SIGNING
     const handleProceedToSigning = () => {
         if (!isScrolledToEnd) {
             toast.warn('Vui lòng cuộn qua và xem hết các điều khoản hợp đồng trước khi ký.');
@@ -127,87 +114,167 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         }
         setCurrentStep('SIGNING');
     };
-    
-    /**
-     * Hàm TẠO VÀ TẢI PDF CỤC BỘ bằng cách chụp DOM.
-     * Sử dụng pdfContentRef để chụp toàn bộ nội dung.
-     */
-    const handleDownloadPdfLocally = () => {
-        // ⚠️ SỬ DỤNG pdfContentRef.current thay vì contentRef.current
-        if (pdfContentRef.current) { 
-            if (!signatureDataUrl) {
-                toast.error("Không tìm thấy chữ ký để tải PDF. Vui lòng ký tên trước.");
+
+    const forceDOMReflow = (element: HTMLDivElement | null) => {
+        // Buộc trình duyệt tính toán lại layout (Reflow)
+        if (element) {
+            element.style.display = 'none';
+            // Đọc offsetHeight để buộc Reflow
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const _ = element.offsetHeight; 
+            element.style.display = 'block';
+        }
+    };
+
+    const handleDownloadPdfAndCaptureUrl = async () => {
+        if (!pdfContentRef.current || !signatureDataUrl) {
+             toast.error("Không tìm thấy nội dung hợp đồng hoặc chữ ký.");
+             setTriggerPdfDownload(false);
+             return;
+        }
+
+        // --- BƯỚC 1: Đảm bảo phần tử cuộn về đầu và ổn định DOM ---
+        if (contentRef.current) {
+            contentRef.current.scrollTo(0, 0); 
+        }
+        // Đảm bảo cả cửa sổ trình duyệt cũng không cuộn
+        window.scrollTo(0, 0); 
+        
+        // Buộc Reflow/Repaint để đảm bảo chữ ký đã được render hoàn chỉnh
+        forceDOMReflow(pdfContentRef.current);
+
+        const currentRef = pdfContentRef.current;
+        const originalHeight = currentRef.offsetHeight;
+
+        if (currentRef.offsetWidth === 0 || originalHeight === 0) {
+            console.error("DOM element size is zero, likely not rendered correctly yet.");
+            toast.error("Lỗi: Không thể chụp ảnh hợp đồng (DOM chưa sẵn sàng).");
+            setTriggerPdfDownload(false);
+            return;
+        }
+
+        toast.info("Đang tạo và tải xuống bản PDF đã ký...");
+        
+        try {
+            // --- BƯỚC 2: Chụp toàn bộ nội dung hợp đồng (Một lần) ---
+            const canvas = await html2canvas(currentRef, { 
+                scale: 2, 
+                useCORS: true, 
+                logging: true, // Bật logging để debug trên console
+                backgroundColor: '#fff', 
+            });
+
+            const documentUrls: string[] = [];
+            const originalWidth = canvas.width;
+            const originalCaptureHeight = canvas.height;
+            const splitPoint = Math.round(originalCaptureHeight / 2); 
+            
+            console.log(`[LOG] Kích thước Canvas chụp được: ${originalWidth}x${originalCaptureHeight}px.`);
+            
+            if (originalCaptureHeight < 500) { 
+                 console.error("Canvas chụp được quá nhỏ:", originalCaptureHeight);
+                 toast.error("Lỗi chụp ảnh: Kích thước canvas quá nhỏ, có thể nội dung bị ẩn.");
+                 setTriggerPdfDownload(false);
+                 return;
+            }
+
+            // --- BƯỚC 3: CẮT ẢNH BẰNG API CANVAS CHUẨN ---
+            
+            // Hàm hỗ trợ cắt và thêm vào URLS
+            const captureAndPush = (yStart: number, height: number, pageName: string) => {
+                const canvasPage = document.createElement('canvas');
+                canvasPage.width = originalWidth;
+                canvasPage.height = height;
+
+                const ctx = canvasPage.getContext('2d');
+                
+                if (!ctx) {
+                    console.error(`Lỗi: Không thể lấy Context 2D cho ${pageName}.`);
+                    return false; 
+                }
+
+                // Vẽ phần đã cắt (Sử dụng canvas đã chụp toàn bộ làm nguồn)
+                ctx.drawImage(
+                    canvas, 
+                    0, yStart, originalWidth, height, // Source: x, y, width, height
+                    0, 0, originalWidth, height      // Destination: x, y, width, height
+                );
+                
+                documentUrls.push(canvasPage.toDataURL('image/jpeg', 1.0));
+                return true; 
+            };
+
+            // 1. TẠO ẢNH TRANG 1 (Từ đầu đến nửa ảnh)
+            const page1Success = captureAndPush(0, splitPoint, 'Trang 1');
+
+            // 2. TẠO ẢNH TRANG 2 (Từ nửa ảnh đến cuối)
+            const page2Success = captureAndPush(splitPoint, originalCaptureHeight - splitPoint, 'Trang 2');
+            
+            // --- KIỂM TRA LỖI CUỐI CÙNG ---
+            if (!page1Success || !page2Success || documentUrls.length < 2) {
+                console.error("Lỗi chia ảnh hợp đồng, không đủ 2 ảnh để lưu hồ sơ.", { documentUrlsLength: documentUrls.length });
+                toast.error("Lỗi chia ảnh hợp đồng, không đủ 2 ảnh để lưu hồ sơ.");
+                setTriggerPdfDownload(false);
                 return;
             }
             
-            toast.info("Đang tạo và tải xuống bản PDF đã ký...");
+            // 4. Gửi 2 Data URL lên Component cha
+            onSetDocumentUrls(documentUrls); 
+            toast.success(`Đã lưu ${documentUrls.length} ảnh hợp đồng đã ký vào hồ sơ Host.`);
+
+            // --- BƯỚC 4: Logic tạo PDF (Sử dụng ảnh chụp toàn bộ ban đầu) ---
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
             
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pdfWidth = pdf.internal.pageSize.getWidth(); 
             const pdfHeight = pdf.internal.pageSize.getHeight(); 
+            
+            const imgHeight = (originalCaptureHeight * pdfWidth) / originalWidth;
+            let heightLeft = imgHeight;
+            let position = 0; 
 
-            // ⚠️ Chụp toàn bộ nội dung hợp đồng từ ref mới
-            html2canvas(pdfContentRef.current, { 
-                scale: 2, // Tăng độ phân giải ảnh chụp
-                useCORS: true, 
-                logging: false,
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                const imgProps = pdf.getImageProperties(imgData);
-                
-                const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                let heightLeft = imgHeight;
-                let position = 0; 
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdfHeight;
 
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
                 pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
                 heightLeft -= pdfHeight;
+            }
+            
+            pdf.save(`HopDongHost_${profileData.companyName}_KyKet.pdf`);
+            toast.success("Đã tải xuống thành công bản PDF đã ký!");
+            setTriggerPdfDownload(false);
 
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-                    heightLeft -= pdfHeight;
-                }
-
-                pdf.save(`HopDongHost_${profileData.companyName}_KyKet.pdf`);
-                toast.success("Đã tải xuống thành công bản PDF xem trước!");
-                setTriggerPdfDownload(false); // Reset cờ tải xuống
-            }).catch(error => {
-                console.error("Lỗi khi tạo PDF cục bộ:", error);
-                toast.error("Không thể tạo file PDF. Vui lòng kiểm tra console log.");
-                setTriggerPdfDownload(false); // Reset cờ tải xuống
-            });
+        } catch (error) {
+            console.error("Lỗi tổng quát trong quy trình chụp ảnh:", error);
+            toast.error("Lỗi hệ thống: Không thể hoàn tất quy trình ký kết và chụp ảnh.");
+            setTriggerPdfDownload(false);
         }
     };
-
-
-    // Hàm Hoàn tất (Gửi)
+    
     const handleFinalSubmit = () => {
         if (!isSigned) {
             toast.error('Vui lòng ký tên xác nhận vào ô chữ ký.');
             return;
         }
+        
         setCurrentStep('CONFIRMATION');
-        
-        // 1. Gọi hàm submit API chính 
         onSaveAndSubmit(); 
-        
-        // 2. Kích hoạt tải PDF
         setTriggerPdfDownload(true);
     };
     
-    // --- EFFECT: Kích hoạt tải PDF sau khi signatureDataUrl có giá trị và cờ đã bật ---
+    // --- EFFECT: Kích hoạt tải PDF & Capture URL (TIMEOUT 500MS) ---
     useEffect(() => {
         if (triggerPdfDownload && signatureDataUrl && currentStep === 'CONFIRMATION') {
-            // Dùng setTimeout 0ms để đảm bảo mọi cập nhật DOM đã hoàn tất trước khi chụp
+            // Giữ timeout 500ms để đảm bảo DOM đã ổn định
             setTimeout(() => {
-                 handleDownloadPdfLocally();
-            }, 0);
+                handleDownloadPdfAndCaptureUrl();
+            }, 500); 
         }
     }, [triggerPdfDownload, signatureDataUrl, currentStep]);
 
-
-    // Hàm tạo tiêu đề bước
     const renderStepHeader = (step: ModalStep, index: number, title: string) => (
         <div className={cx('step-item', { 'active': currentStep === step, 'completed': index < (['REVIEW', 'SIGNING', 'CONFIRMATION'].indexOf(currentStep)) })}>
             <div className={cx('step-icon')}>{index + 1}</div>
@@ -215,9 +282,26 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         </div>
     );
 
-    // Dùng useMemo để tránh re-render body hợp đồng
     const ContractBody = useMemo(() => (
         <>
+            <div className={cx('title-container')}>
+                <div className={'title-header'}>
+                    <p className={'top'}>Cộng hòa xã hội chủ nghĩa Việt Nam</p> 
+                    <p className={'bottom'}>Độc lập - Tự do - Hạnh phúc</p>
+                </div>
+            </div>
+            {(() => {
+                const today = new Date();
+                const day = today.getDate();
+                const month = today.getMonth() + 1;
+                const year = today.getFullYear();
+
+                return (
+                    <p className={cx('day')}>Đà Nẵng, ngày {day} tháng {month} năm {year}</p>
+                );
+            })()}
+
+            <h2 className={cx('title-main')}>Biên Bản Cam Kết</h2>
             <div className={cx('contract-section-box')}>
                 <h4 className={cx('section-title-sub')}>I. THÔNG TIN CÁC BÊN</h4>
                 <table className={cx('info-table')}>
@@ -255,20 +339,20 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                 <span>Hợp đồng này có hiệu lực kể từ ngày được ký kết điện tử và được coi là bằng chứng pháp lý ràng buộc.</span>
             </div>
             
-            <div style={{ height: '300px' }}>&nbsp;</div> {/* Tạo thêm không gian cuộn */}
+            <div style={{ height: '300px' }}>&nbsp;</div>
             
             <div className={cx('contract-footer-phantom')}>
                 <p>--- Hết Văn Bản Hợp Đồng ---</p>
                 <p>Trang cuối cùng / Trang {totalPages}</p>
                 
-                {/* HIỂN THỊ CHỮ KÝ TRONG NỘI DUNG HỢP ĐỒNG KHI ĐÃ KÝ */}
+                {/* HIỂN THỊ CHỮ KÝ ĐỂ html2canvas CHỤP */}
                 {signatureDataUrl && (
                     <div className={cx('signature-placeholder-for-pdf')}>
                         <p style={{ marginTop: '20px', marginBottom: '5px', fontWeight: 'bold', textAlign: 'center' }}>Chữ ký Bên B (Host):</p>
                         <img 
                             src={signatureDataUrl} 
                             alt={`Chữ ký điện tử của ${profileData.companyName}`}
-                            // Các style quan trọng để chữ ký hiển thị gọn gàng trong PDF
+                            // Các style này là quan trọng để hình ảnh hiển thị đúng khi chụp
                             style={{ 
                                 width: '150px', 
                                 height: 'auto', 
@@ -281,7 +365,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                         <p style={{ fontWeight: 'bold', textAlign: 'center' }}>{profileData.companyName}</p>
                     </div>
                 )}
-                {/* KẾT THÚC VỊ TRÍ CHÈN CHỮ KÝ */}
 
                 {isSigned && (
                     <div className={cx('signed-stamp')}>
@@ -323,9 +406,8 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                     
                     {/* KHU VỰC XEM HỢP ĐỒNG (Luôn hiển thị) */}
                     <div className={cx('contract-viewport-panel', { 'blur': currentStep === 'CONFIRMATION' })}>
-                        {/* contentRef (ref cũ) vẫn ở đây để kiểm tra scroll */}
                         <div className={cx('contract-viewport', 'dark-mode')} ref={contentRef}>
-                            {/* pdfContentRef (ref MỚI) được dùng để chụp toàn bộ nội dung */}
+                            {/* pdfContentRef là vùng được html2canvas CHỤP */}
                             <div className={cx('contract-body-pdf')} ref={pdfContentRef}> 
                                 {ContractBody}
                             </div>
@@ -338,11 +420,16 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                         {currentStep === 'REVIEW' && (
                             <div className={cx('panel-step-content')}>
                                 <h4 className={cx('panel-title')}><FontAwesomeIcon icon={faEye} /> 1. Xem xét Tài liệu</h4>
-                                <p className={cx('panel-description')}>Vui lòng cuộn xem hết 4 trang điều khoản hợp tác trước khi ký.</p>
+                                <p className={cx('panel-description')}>Vui lòng cuộn xem hết **4 trang** điều khoản hợp tác để kích hoạt nút Ký kết.</p>
                                 
                                 <div className={cx('review-status-box', { 'complete': isScrolledToEnd })}>
                                     <FontAwesomeIcon icon={isScrolledToEnd ? faCheck : faMousePointer} />
                                     <span>{isScrolledToEnd ? 'Đã xem hết điều khoản.' : 'Vui lòng cuộn xuống...'}</span>
+                                </div>
+                                
+                                <div className={cx('document-status-note')}>
+                                    <FontAwesomeIcon icon={faLock} />
+                                    <span>Sau khi ký, hệ thống sẽ tự động chụp và chia hợp đồng thành **2 ảnh** để lưu vào hồ sơ Host của bạn (đảm bảo đủ số lượng ảnh tài liệu yêu cầu).</span>
                                 </div>
                                 
                                 <button 
@@ -378,8 +465,8 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                                             ref={signatureRef}
                                             canvasProps={{ width: 300, height: 120, className: cx('signature-canvas') }}
                                             onEnd={handleSignatureEnd}
-                                            penColor='rgb(0, 137, 123)' // Màu Teal đậm
-                                            backgroundColor='rgb(255, 255, 255)' // Màu nền trắng
+                                            penColor='rgb(0, 137, 123)' 
+                                            backgroundColor='rgb(255, 255, 255)' 
                                         />
                                     </div>
                                     
@@ -411,8 +498,10 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                                 <h4 className={cx('panel-title', 'confirmation')}><FontAwesomeIcon icon={faCheck} /> 3. Hoàn tất Ký kết</h4>
                                 {isLoading || triggerPdfDownload ? ( 
                                     <>
-                                        <div className={cx('loading-animation')}></div>
-                                        <p className={cx('panel-description')}>Đang mã hóa chữ ký và gửi hồ sơ Host lên máy chủ an toàn. Vui lòng chờ...</p>
+                                        <div className={cx('loading-animation')}>
+                                             <FontAwesomeIcon icon={faSpinner} spin className={cx('spinner-icon')} />
+                                        </div>
+                                        <p className={cx('panel-description')}>Đang tạo bản PDF đã ký, **chia thành 2 ảnh tài liệu** và gửi hồ sơ Host. Vui lòng chờ...</p>
                                     </>
                                 ) : (
                                     <>
