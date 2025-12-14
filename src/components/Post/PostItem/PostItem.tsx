@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames/bind";
 import styles from './PostItem.module.scss';
-import { Post } from "~/types/Posts";
+import { FeaturePost } from "~/types/Posts";
 import checkImg from '~/assets/img/check/checkv1.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDotCircle } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +10,7 @@ import { faDotCircle } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 
 interface postProp {
-    post: Post;
+    post: FeaturePost;
 }
 
 const PostItem: React.FC<postProp> = ({post}) => {

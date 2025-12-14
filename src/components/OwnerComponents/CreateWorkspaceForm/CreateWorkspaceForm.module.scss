@@ -1,731 +1,1044 @@
-// Variables
-$primary-gradient: linear-gradient( 90.2deg,  rgba(1,47,95,1) -0.4%, rgba(56,141,217,1) 106.1% );
-$secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-$success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-$gray-50: #f9fafb;
-$gray-100: #f3f4f6;
-$gray-200: #e5e7eb;
-$gray-300: #d1d5db;
-$gray-400: #9ca3af;
-$gray-500: #6b7280;
-$gray-600: #4b5563;
-$gray-700: #374151;
-$gray-800: #1f2937;
-$gray-900: #111827;
+// --- VARIABLES ---
+$primary-color: #007bff; // Màu xanh dương chính
+$secondary-color: #28a745; // Màu xanh lá (cho nút submit)
+$danger-color: #dc3545; // Màu đỏ (cho lỗi/xóa)
+$text-color: #333;
+$light-text-color: #6c757d;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$border-color: #dee2e6;
+$shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.1);
+$radius-base: 8px;
+$transition-speed: 0.3s;
+
+
+// --- MIXINS ---
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin button-base($bg, $color: white) {
+    padding: 10px 20px;
+    border: none;
+    border-radius: $radius-base;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color $transition-speed, opacity $transition-speed;
+    background-color: $bg;
+    color: $color;
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+// --- GLOBAL FORM STYLES ---
 
 .formOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(12px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    @include flex-center;
+    z-index: 1000;
+    padding: 20px;
 }
 
 .formContainer {
-  background: white;
-  border-radius: 24px;
-  box-shadow: 
-    0 32px 64px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 920px;
-  max-height: 95vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: $background-color;
+    border-radius: $radius-base * 2;
+    width: 100%;
+    max-width: 900px; 
+    box-shadow: $shadow-medium;
+    display: flex;
+    flex-direction: column;
+    max-height: 95vh;
+    overflow: hidden;
 }
 
 .formHeader {
-  padding: 20px 40px;
-  background: $primary-gradient;
-  color: white;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-shrink: 0;
-  
-  @media (max-width: 768px) {
-    padding: 24px 24px 20px;
-  }
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px 30px;
+    border-bottom: 1px solid $border-color;
+    background-color: $card-background;
+    border-top-left-radius: $radius-base * 2;
+    border-top-right-radius: $radius-base * 2;
 
-.headerContent {
-  display: flex;
-  align-items: flex-start;
-}
+    .headerContent {
+        display: flex;
+        align-items: center;
+    }
 
-.headerIcon {
-  font-size: 40px;
-  margin-top: 4px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-  
-  @media (max-width: 768px) {
-    font-size: 32px;
-  }
-}
+    .headerIcon {
+        color: $primary-color;
+        font-size: 28px;
+        margin-right: 15px;
+        stroke: $primary-color; // Áp dụng cho SVG
+        fill: none;
+    }
 
-.headerText {
-  flex: 1;
-}
+    .headerText {
+        .formTitle {
+            margin: 0;
+            font-size: 1.8rem;
+            color: $text-color;
+        }
 
-.formTitle {
-  font-size: 2.2rem;
-//   font-weight: 800;
-  margin: 0 0 4px 0;
-//   letter-spacing: -0.5px;
-  line-height: 1.2;
-  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  
-  @media (max-width: 768px) {
-    font-size: 26px;
-  }
-}
+        .formSubtitle {
+            margin: 0;
+            font-size: 0.9rem;
+            color: $light-text-color;
+        }
+    }
 
-.formSubtitle {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  margin: 0;
-  font-weight: 400;
-  line-height: 1.5;
-  
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
-}
+    .closeButton {
+        background: none;
+        border: none;
+        color: $light-text-color;
+        cursor: pointer;
+        padding: 5px;
 
-.closeButton {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  margin-left: 16px;
-  flex-shrink: 0;
-  
-  &:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.25);
-    transform: rotate(90deg);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+        svg {
+            stroke: $light-text-color;
+            transition: stroke $transition-speed;
+        }
+
+        &:hover {
+            svg {
+                stroke: $danger-color;
+            }
+        }
+    }
 }
 
 .formContent {
-  flex: 1;
-  overflow-y: auto;
-  background: $gray-50;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: $gray-100;
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: $gray-300;
-    border-radius: 4px;
-    
-    &:hover {
-      background: $gray-400;
+    padding: 30px;
+    overflow-y: auto;
+    flex-grow: 1;
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
     }
-  }
 }
 
-.form {
-  min-height: min-content;
-}
+// --- SECTION STYLES ---
 
 .formSection {
-  padding: 32px 40px;
-  background: white;
-  margin: 8px 0;
-  border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  width: 70%;
-  
-  @media (max-width: 768px) {
-    padding: 24px;
-    margin: 6px 0;
-  }
+    background-color: $card-background;
+    padding: 25px;
+    border-radius: $radius-base;
+    box-shadow: $shadow-light;
+
+    &.card {
+        border-left: 5px solid $primary-color;
+    }
 }
 
 .sectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed $border-color;
+
+    .sectionNumber {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: $primary-color;
+        margin-right: 15px;
+        background-color: lighten($primary-color, 45%);
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+
+    .sectionTitle {
+        margin: 0;
+        font-size: 1.4rem;
+        color: $text-color;
+    }
 }
 
-.sectionNumber {
-  width: 40px;
-  height: 40px;
-  background: $primary-gradient;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-  flex-shrink: 0;
+// --- ROOM SECTION SPECIFIC ---
+
+.roomSectionHeader {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 15px;
+    justify-content: space-between;
 }
 
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 700;
-  color: $gray-800;
-  margin: 0;
-  letter-spacing: -0.3px;
-  
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
+.addRoomBtn {
+    @include button-base($primary-color);
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+        stroke: white;
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
 }
+
+.noRoomsText {
+    text-align: center;
+    color: $light-text-color;
+    padding: 20px;
+    border: 1px dashed $border-color;
+    border-radius: $radius-base;
+    margin-top: 10px;
+}
+
+.roomCard {
+    border: 1px solid lighten($primary-color, 35%);
+    border-radius: $radius-base;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: lighten($primary-color, 50%);
+
+    h4 {
+        margin: 0;
+        color: $primary-color;
+        font-size: 1.1rem;
+    }
+
+    .roomHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px dotted lighten($primary-color, 20%);
+    }
+
+    .deleteRoomBtn {
+        @include button-base($danger-color, white);
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        svg {
+            stroke: white;
+            width: 16px;
+            height: 16px;
+        }
+
+        &:hover {
+            background-color: darken($danger-color, 10%);
+        }
+    }
+}
+
+// --- GRID & INPUT STYLES ---
 
 .formGrid {
-  display: grid;
-  gap: 24px;
-  
-  &.threeColumns {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-}
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
 
-.fullWidth {
-  grid-column: 1 / -1;
+    &.threeColumns {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .span-2 {
+        grid-column: span 2;
+    }
+
+    @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+        .span-2 {
+            grid-column: span 1;
+        }
+    }
 }
 
 .inputGroup {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .inputLabel {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 8px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: $text-color;
+    font-size: 0.95rem;
+
+    .required {
+        color: $danger-color;
+        margin-left: 4px;
+    }
 }
 
-.labelText {
-  font-size: 14px;
-  font-weight: 600;
-  color: $gray-700;
-  letter-spacing: -0.1px;
-}
+.inputField, .textareaField, select {
+    padding: 12px;
+    border: 1px solid $border-color;
+    border-radius: $radius-base / 2;
+    font-size: 1rem;
+    color: $text-color;
+    background-color: lighten($background-color, 2%);
+    transition: border-color $transition-speed, box-shadow $transition-speed;
 
-.required {
-  color: #ef4444;
-  font-weight: 700;
-}
-
-.inputField, .textareaField {
-  padding: 14px 16px;
-  border: 2px solid $gray-200;
-  border-radius: 14px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  background: white;
-  font-family: inherit;
-  
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 
-      0 0 0 4px rgba(102, 126, 234, 0.1),
-      0 4px 12px rgba(102, 126, 234, 0.1);
-    transform: translateY(-1px);
-  }
-  
-  &::placeholder {
-    color: $gray-400;
-  }
-  
-  &:hover:not(:focus) {
-    border-color: $gray-300;
-  }
+    &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+        outline: none;
+        background-color: $card-background;
+    }
 }
 
 .textareaField {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.5;
+    resize: vertical;
 }
+
+// --- FILE UPLOAD STYLES ---
 
 .fileUploadSection {
-  margin-top: 8px;
-}
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 
-.fileInputGroup {
-  width: 100%;
+    &.compact {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+    }
 }
 
 .fileInputLabel {
-  display: block;
-  cursor: pointer;
-  
-  &:hover .uploadArea:not(.hasFiles) {
-    border-color: #667eea;
-    background: #f8faff;
-    transform: translateY(-2px);
-  }
+    cursor: pointer;
+    flex-grow: 1; 
+    min-width: 250px;
 }
 
 .uploadArea {
-  border: 2px dashed $gray-300;
-  border-radius: 20px;
-  padding: 48px 32px;
-  text-align: center;
-  transition: all 0.4s ease;
-  background: $gray-50;
-  position: relative;
-  overflow: hidden;
-  
-  &.hasFiles {
-    padding: 32px;
-    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
-    border-color: #667eea;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  &:hover::before {
-    left: 100%;
-  }
-}
+    border: 2px dashed $border-color;
+    border-radius: $radius-base;
+    padding: 25px;
+    @include flex-center;
+    flex-direction: column;
+    text-align: center;
+    transition: border-color $transition-speed, background-color $transition-speed;
 
-.uploadIcon {
-  color: #667eea;
-  margin-bottom: 16px;
-  
-  svg {
-    display: block;
-    margin: 0 auto;
-  }
-}
+    &:hover {
+        border-color: $primary-color;
+        background-color: lighten($primary-color, 48%);
+    }
 
-.uploadText {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+    &.hasFiles {
+        border-style: solid; 
+        border-color: $secondary-color;
+    }
+    
+    &.small {
+        padding: 15px;
+        min-height: auto;
+    }
 
-.uploadTitle {
-  font-size: 18px;
-  font-weight: 700;
-  color: $gray-800;
-  letter-spacing: -0.2px;
-}
+    .uploadIcon {
+        color: $light-text-color;
+        margin-bottom: 10px;
+        stroke: $light-text-color; // Áp dụng cho SVG
+    }
 
-.uploadSubtitle {
-  font-size: 14px;
-  color: $gray-500;
-  line-height: 1.4;
+    .uploadTitle {
+        font-weight: 600;
+        color: $text-color;
+    }
+
+    .uploadSubtitle {
+        font-size: 0.85rem;
+        color: $light-text-color;
+    }
 }
 
 .fileInput {
-  display: none;
+    display: none;
 }
 
 .filePreview {
-  margin-top: 24px;
-  animation: slideDown 0.3s ease;
-}
-
-.fileCount {
-  font-size: 14px;
-  font-weight: 600;
-  color: $gray-600;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  &::before {
-    content: '📁';
-    font-size: 16px;
-  }
+    flex-grow: 1;
+    min-width: 300px; 
+    
+    .fileCount {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $primary-color;
+        margin-bottom: 10px;
+    }
 }
 
 .previewGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .previewItem {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: $radius-base / 2;
+        overflow: hidden;
+        box-shadow: $shadow-light;
+    }
+
+    .previewImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .removeImageBtn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        @include flex-center;
+        width: 20px;
+        height: 20px;
+        background-color: rgba($danger-color, 0.8);
+        color: white;
+        border-radius: 50%;
+        border: 2px solid white;
+        padding: 0;
+        line-height: 1;
+
+        svg {
+            stroke: white;
+            width: 12px;
+            height: 12px;
+        }
+
+        &:hover {
+            background-color: $danger-color;
+        }
+    }
 }
 
-.previewItem {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  background: white;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
+.roomPreviewGrid {
+    .previewItem {
+        width: 60px;
+        height: 60px;
+    }
+    .removeImageBtn {
+        svg {
+            width: 10px;
+            height: 10px;
+        }
+    }
 }
 
-.previewImage {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  display: block;
-}
 
-.removeImageBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  background: rgba(239, 68, 68, 0.95);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  
-  &:hover {
-    background: #dc2626;
-    transform: scale(1.1);
-  }
-  
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-}
+// --- ACTION BUTTONS ---
 
 .buttonGroup {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
-  padding: 32px 40px;
-  background: white;
-  border-top: 1px solid $gray-100;
-  flex-shrink: 0;
-  
-  @media (max-width: 768px) {
-    padding: 24px;
-    flex-direction: column-reverse;
-  }
-}
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid $border-color;
+    margin-top: 10px;
 
-.submitBtn, .cancelBtn {
-  padding: 16px 32px;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  min-width: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  letter-spacing: -0.1px;
-  
-  @media (max-width: 768px) {
-    width: 100%;
-    min-width: auto;
-  }
-}
+    .cancelBtn {
+        @include button-base($border-color, $text-color);
 
-.submitBtn {
-  background: $success-gradient;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s ease;
-  }
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 12px 30px -5px rgba(79, 172, 254, 0.4),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
-    
-    &::before {
-      left: 100%;
+        &:hover {
+            background-color: darken($border-color, 5%);
+        }
     }
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-  
-  &.loading {
-    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
-  }
-  
-  .submitIcon {
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover:not(:disabled) .submitIcon {
-    transform: scale(1.1);
-  }
+
+    .submitBtn {
+        @include button-base($secondary-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+            background-color: darken($secondary-color, 10%);
+        }
+
+        .submitIcon {
+            color: white;
+            stroke: white;
+        }
+
+        &.loading {
+            background-color: lighten($secondary-color, 10%);
+            cursor: progress;
+
+            // Đảm bảo nút loading có chiều rộng cố định để không bị giật
+            min-width: 180px; 
+            @include flex-center; 
+        }
+    }
 }
 
-.cancelBtn {
-  background: white;
-  color: $gray-600;
-  border: 2px solid $gray-200;
-  
-  &:hover:not(:disabled) {
-    background: $gray-50;
-    border-color: $gray-300;
-    color: $gray-700;
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+// Loading Text (Hiệu ứng dấu ba chấm)
+.loadingText {
+    overflow: hidden; 
+    white-space: nowrap; 
+    
+    &::after {
+        content: '.'; 
+        animation: dots 1s steps(3, start) infinite;
+    }
+}
+
+@keyframes dots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
 }
 
 .errorBanner {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  border: 1px solid #fca5a5;
-  color: #dc2626;
-  padding: 16px 20px;
-  border-radius: 14px;
-  margin: 0 40px 24px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: shake 0.5s ease;
-  
-  &::before {
-    content: '⚠️';
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  
-  @media (max-width: 768px) {
-    margin: 0 24px 20px;
-  }
+    background-color: lighten($danger-color, 40%);
+    color: $danger-color;
+    border: 1px solid $danger-color;
+    padding: 15px;
+    border-radius: $radius-base;
+    margin-bottom: 20px;
+    font-weight: 500;
 }
+// ==========================================================
+// SCSS cho CreateWorkspaceForm (KHÔNG DÙNG BIẾN SCSS)
+// ==========================================================
 
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+// Định nghĩa các giá trị cố định (Fixed Values)
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$background-light: #f8f9fa;
+$background-white: #ffffff;
+$border-color: #dee2e6;
+$text-dark: #343a40;
+$shadow-light: rgba(0, 0, 0, 0.05);
 
-// Animations
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-}
-
-// Responsive design
-@media (max-width: 768px) {
-  .formOverlay {
-    padding: 16px;
-  }
-  
-  .formContainer {
-    max-height: 90vh;
-  }
-  
-  .formHeader {
-    padding: 24px 24px 20px;
-  }
-  
-  .headerIcon {
-    font-size: 32px;
-  }
-  
-  .formTitle {
-    font-size: 26px;
-  }
-  
-  .formSubtitle {
-    font-size: 14px;
-  }
-  
-  .closeButton {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .formSection {
-    padding: 24px;
-  }
-  
-  .sectionHeader {
-    margin-bottom: 24px;
-  }
-  
-  .sectionNumber {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
-  
-  .sectionTitle {
-    font-size: 18px;
-  }
-  
-  .formGrid {
-    gap: 20px;
-  }
-  
-  .uploadArea {
-    padding: 32px 24px;
-    
-    &.hasFiles {
-      padding: 24px;
-    }
-  }
-  
-  .previewGrid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .formHeader {
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .closeButton {
-    align-self: flex-end;
-    margin-left: 0;
-  }
-  
-  .headerContent {
+.formOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-  }
-  
-  .uploadArea {
-    padding: 24px 20px;
-  }
-  
-  .uploadTitle {
-    font-size: 16px;
-  }
-  
-  .uploadSubtitle {
-    font-size: 13px;
-  }
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.formContainer {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1000px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+// --- Header ---
+.formHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.headerIcon {
+    color: #007bff;
+    width: 28px;
+    height: 28px;
+}
+
+.formTitle {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #343a40;
+    font-weight: 700;
+}
+
+.formSubtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 5px;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #343a40;
+    }
+}
+
+// --- Form Content & Structure ---
+.formContent {
+    padding: 30px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.errorBanner {
+    // Thay thế lighten($danger-color, 45%)
+    background-color: #fcd5d5; 
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    // Thay thế lighten($border-color, 3%)
+    border: 1px solid #e2e6ea; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.formSection {
+    
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #dee2e6;
+}
+
+.sectionNumber {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #343a40;
+    font-weight: 600;
+}
+
+// --- Grid Layout for Inputs ---
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+
+    &.threeColumns {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+
+    &.span-2 {
+        grid-column: span 2;
+    }
+}
+
+.inputLabel {
+    font-size: 0.9rem;
+    color: #343a40;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.required {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.inputField, .textareaField {
+    padding: 10px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+
+    &:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        outline: none;
+    }
+}
+
+.textareaField {
+    resize: vertical;
+}
+
+// --- File Upload Section ---
+.fileUploadSection {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f8f9fa;
+
+    &.compact {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        flex-direction: row; 
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+
+.fileInputLabel {
+    display: block;
+    cursor: pointer;
+    .fileInput {
+        display: none;
+    }
+}
+
+.uploadArea {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: background-color 0.2s, border-color 0.2s;
+
+    &:hover {
+        // Thay thế lighten($primary-color, 45%)
+        background-color: #e0f0ff;
+        border-color: #007bff;
+    }
+    
+    &.small {
+        padding: 10px 15px;
+        flex-direction: row;
+        gap: 8px;
+        .uploadIcon {
+            color: #007bff;
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+.uploadIcon {
+    color: #6c757d;
+    flex-shrink: 0;
+}
+
+.uploadText {
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadTitle {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.uploadSubtitle {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.filePreview {
+    .fileCount {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #343a40;
+    }
+
+    &.compact {
+        flex-grow: 1;
+        .fileCount {
+            display: none;
+        }
+    }
+}
+
+.previewGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    &.roomPreviewGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        max-width: 300px;
+    }
+}
+
+.previewItem {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+
+    .previewImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.removeImageBtn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #dc3545;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s, transform 0.2s;
+    
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    span {
+        font-size: 14px;
+        line-height: 1;
+        padding-bottom: 1px;
+    }
+}
+
+// --- CSS cho Rooms và Amenity Grid ---
+
+.roomCard {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    // Thay thế lighten($background-light, 2%)
+    background-color: #f4f6f9; 
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.roomHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+    
+    h4 {
+        font-size: 1.1rem;
+        color: #007bff;
+        margin: 0;
+        font-weight: 600;
+    }
+}
+
+.deleteRoomBtn {
+    background: #dc3545;
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+        // Thay thế darken($danger-color, 10%)
+        background-color: #c82333;
+    }
+}
+
+// --- CSS cho Amenity Grid ---
+
+.amenityGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.amenityItem {
+    display: flex;
+    align-items: center;
+    position: relative;
+    user-select: none;
+    min-height: 35px;
+}
+
+.amenityCheckbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+
+    &:checked + .amenityLabel {
+        // Thay thế lighten($primary-color, 40%)
+        background-color: #e6f2ff;
+        border-color: #007bff;
+        // Thay thế darken($primary-color, 10%)
+        color: #0056b3; 
+        font-weight: 600;
+        
+        &::after {
+            content: "✓"; 
+            color: #007bff;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+        }
+    }
+}
+
+.amenityLabel {
+    flex-grow: 1;
+    padding: 8px 10px;
+    padding-right: 35px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #343a40;
+    transition: background-color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    &:hover {
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+    }
+}
+
+// --- Nút thêm/hủy (Cập nhật style) ---
+.roomSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.addRoomBtn {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+        // Thay thế darken($success-color, 10%)
+        background-color: #1e7e34;
+    }
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.noRoomsText {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+    border: 1px dashed #dee2e6;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+// --- Responsive Adjustments ---
+@media (max-width: 768px) {
+    .formHeader {
+        padding: 15px 20px;
+    }
+    .formContent {
+        padding: 20px;
+    }
+    .formGrid {
+        grid-template-columns: 1fr;
+        &.threeColumns {
+            grid-template-columns: 1fr;
+        }
+    }
+    .inputGroup.span-2 {
+        grid-column: span 1;
+    }
+    .amenityGrid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
 }

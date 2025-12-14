@@ -19,7 +19,7 @@ interface SaveHostProfileParams {
     profileData: ServiceHostProfileData; 
     logoFile?: File;             
     avatarFile?: File;           
-    coverPhotoFile?: File;       
+    coverPhotoFile?: File;
 }
 
 export const saveHostProfile = async (

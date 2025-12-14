@@ -5,6 +5,20 @@ import { API_BASE_URL } from "~/utils/API"
 import { handleError } from "~/utils/handleError"
 import { uploadToCloudinary } from "./CloudinaryService";
 
+
+interface RoomPayload {
+    title: string;
+    description: string;
+    workSpaceRoomTypeId: number;
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number;
+    area: number;
+    imageUrls: string[]; 
+    amenityIds: number[];
+}
+
 interface FinalWorkspacePayload {
     title: string;
     description: string;
@@ -15,7 +29,21 @@ interface FinalWorkspacePayload {
     latitude: number;
     longitude: number;
     workSpaceTypeId: number;
-    imageUrls: string[]; // Mảng các URL đã upload lên Cloudinary
+    imageUrls: string[]; 
+    rooms: RoomPayload[]; 
+}
+
+export interface RawRoomData {
+    title: string;
+    description: string;
+    workSpaceRoomTypeId: number;
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number;
+    area: number;
+    imageFiles: File[]; // Ảnh phòng (File objects)
+    amenityIds: number[];
 }
 
 export interface RawWorkspaceData {
@@ -28,29 +56,71 @@ export interface RawWorkspaceData {
     latitude: number;
     longitude: number;
     workSpaceTypeId: number;
-    imageFiles: File[]; 
+    imageFiles: File[]; // Ảnh Workspace (File objects)
+    rooms: RawRoomData[]; // Dữ liệu phòng thô
 }
 
+// --- HÀM TẠO WORKSPACE ĐÃ CẬP NHẬT ---
 
 const API_WORKSPACE_URL = `${API_BASE_URL}v1/owner/workspaces`;
+
 export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: string): Promise<any> => {
     
-    console.log("Bắt đầu tải ảnh lên Cloudinary...");
+    // 1. Tải ảnh Workspace chính lên Cloudinary
+    console.log("Bắt đầu tải ảnh Workspace chính lên Cloudinary...");
 
-    const uploadPromises = rawData.imageFiles.map(file => 
+    const workspaceImageUploadPromises = rawData.imageFiles.map(file => 
         uploadToCloudinary(file, WORKSPACE_PHOTOS_PRESET)
     );
     
-    let imageUrls: string[] = []; // Chứa Public IDs
+    let workspaceImageUrls: string[] = [];
     try {
-        imageUrls = await Promise.all(uploadPromises);
-        console.log("Tải ảnh hoàn tất. Public IDs đã được gán.");
+        workspaceImageUrls = await Promise.all(workspaceImageUploadPromises);
+        console.log("Tải ảnh Workspace hoàn tất.");
         
     } catch (error) {
-        console.error("LỖI: Một hoặc nhiều ảnh không thể tải lên Cloudinary.", error);
-        throw new Error("Không thể tạo Workspace: Lỗi tải ảnh lên dịch vụ lưu trữ.");
+        console.error("LỖI: Một hoặc nhiều ảnh Workspace không thể tải lên Cloudinary.", error);
+        throw new Error("Không thể tạo Workspace: Lỗi tải ảnh chính lên dịch vụ lưu trữ.");
     }
 
+    // 2. Tải ảnh của từng Room lên Cloudinary và xây dựng Room Payload
+    const finalRoomsPayload: RoomPayload[] = [];
+
+    for (const rawRoom of rawData.rooms) {
+        console.log(`Bắt đầu tải ảnh cho phòng: ${rawRoom.title}`);
+        
+        const roomImageUploadPromises = rawRoom.imageFiles.map(file => 
+            uploadToCloudinary(file, WORKSPACE_PHOTOS_PRESET)
+        );
+        
+        let roomImageUrls: string[] = [];
+        try {
+            roomImageUrls = await Promise.all(roomImageUploadPromises);
+            console.log(`Tải ảnh phòng ${rawRoom.title} hoàn tất.`);
+
+            // Xây dựng RoomPayload
+            const roomPayload: RoomPayload = {
+                title: rawRoom.title,
+                description: rawRoom.description,
+                workSpaceRoomTypeId: rawRoom.workSpaceRoomTypeId,
+                pricePerHour: rawRoom.pricePerHour,
+                pricePerDay: rawRoom.pricePerDay,
+                pricePerMonth: rawRoom.pricePerMonth,
+                capacity: rawRoom.capacity,
+                area: rawRoom.area,
+                imageUrls: roomImageUrls, // Public IDs đã tải lên
+                amenityIds: rawRoom.amenityIds,
+            };
+
+            finalRoomsPayload.push(roomPayload);
+
+        } catch (error) {
+            console.error(`LỖI: Một hoặc nhiều ảnh của phòng ${rawRoom.title} không thể tải lên Cloudinary.`, error);
+            throw new Error(`Không thể tạo Workspace: Lỗi tải ảnh phòng ${rawRoom.title} lên dịch vụ lưu trữ.`);
+        }
+    }
+
+    // 3. Xây dựng Final Workspace Payload
     const finalPayload: FinalWorkspacePayload = {
         title: rawData.title,
         description: rawData.description,
@@ -61,16 +131,18 @@ export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: st
         latitude: rawData.latitude,
         longitude: rawData.longitude,
         workSpaceTypeId: rawData.workSpaceTypeId,
-        imageUrls: imageUrls 
+        imageUrls: workspaceImageUrls, 
+        rooms: finalRoomsPayload, 
     };
 
     console.log("Gửi Payload JSON tới Backend:", finalPayload);
 
+    // 4. Gửi Payload tới Backend
     try {
         const response = await axios.post(API_WORKSPACE_URL, finalPayload, {
              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${token}` 
              }
         }); 
         
@@ -87,17 +159,20 @@ export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: st
     }
 };
 
+// --- CÁC HÀM KHÁC (GIỮ NGUYÊN) ---
+
 export const getAllWorkspacesOwnerView = async () => {
     try {
         const response = await axios.get(`${API_BASE_URL}v1/owner/workspaces`);
         return response.data;
     } catch (error) {
         handleError(error); 
-        throw error;        
+        throw error;       
     }
 }
 
-export const createWorkspaceOwner = async (workspaceData: any) => {
+// Cân nhắc sử dụng handleCreateWorkspace thay thế cho createWorkspaceOwner nếu nó xử lý việc upload ảnh
+export const createWorkspaceOwner = async (workspaceData: any) => { 
     try {
         const response = await axios.post(
             `${API_BASE_URL}v1/owner/workspaces`,
@@ -139,14 +214,13 @@ export const updateWorkspaceOwner = async (
 };
 
 
-
 export const getAllBookingsOwnerView = async () => {
     try {
         const response = await axios.get(`${API_BASE_URL}v1/owner/bookings`);
         return response.data;
     } catch (error) {
         handleError(error); 
-        throw error;        
+        throw error;       
     }
 }
 
@@ -156,7 +230,7 @@ export const getPendingBookingsOwnerView = async () => {
         return response.data;
     } catch (error) {
         handleError(error); 
-        throw error;        
+        throw error;       
     }
 }
 

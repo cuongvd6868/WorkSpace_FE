@@ -4,7 +4,7 @@ import styles from './Postfeatured.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import PostItem from "../PostItem/PostItem";
-import { Post } from "~/types/Posts";
+import { FeaturePost } from "~/types/Posts";
 import { getAllFeaturedPost } from "~/services/PostService";
 
 const cx = classNames.bind(styles);
@@ -12,7 +12,7 @@ const cx = classNames.bind(styles);
 
 const Postfeatured: React.FC = () => {
 
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<FeaturePost[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 

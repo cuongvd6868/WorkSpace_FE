@@ -451,7 +451,7 @@ const HostRegistrationPage: React.FC = () => {
                     isLoading={isLoading}
                     dataState="open" 
                     // --- PROP MỚI TRUYỀN VÀO MODAL (Đã sửa lỗi) ---
-                    onSetDocumentUrls={handleSetContractDocuments} // <-- Prop này phải có trong HostContractModalProps
+                    onSetDocumentUrls={handleSetContractDocuments} 
                     existingDocumentUrls={profileData.documentUrls} 
                     // ------------------------------------
                 />

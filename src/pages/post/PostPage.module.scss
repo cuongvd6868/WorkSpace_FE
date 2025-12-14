@@ -1,0 +1,119 @@
+// src/pages/PostPage/PostPage.module.scss
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    background-color: #fafafa; /* Nền nhẹ nhàng */
+    min-height: 100vh;
+}
+
+.post-container {
+    background-color: white;
+    max-width: 800px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.loading, .error, .not-found {
+    font-size: 1.2rem;
+    color: #757575;
+    text-align: center;
+    padding-top: 50px;
+}
+
+.error {
+    color: #e53935; /* Đỏ lỗi */
+}
+
+/* --- Tiêu đề và Meta --- */
+.post-title {
+    font-size: 2.5rem;
+    color: #1a237e;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.post-meta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid #00bcd4;
+}
+
+.meta-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: #757575;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 3px;
+}
+
+/* --- Ảnh Đại diện --- */
+.post-image-wrapper {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 400px; /* Giới hạn chiều cao cho ảnh đại diện */
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+/* --- Nội dung Bài viết (Rendered HTML) --- */
+.post-content {
+    line-height: 1.8;
+    color: #333;
+    font-size: 1.1rem;
+
+    /* Styling cho nội dung HTML được render từ Markdown */
+    :global(h2) {
+        font-size: 1.8rem;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        color: #3f51b5;
+    }
+    :global(p) {
+        margin-bottom: 20px;
+    }
+    :global(ul), :global(ol) {
+        margin-left: 20px;
+        margin-bottom: 20px;
+    }
+    :global(pre) {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-family: monospace;
+    }
+}
+
+.post-footer {
+    margin-top: 50px;
+    text-align: center;
+    font-style: italic;
+    color: #9e9e9e;
+}

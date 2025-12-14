@@ -1,4 +1,6 @@
-
+// ==========================================================
+// Định nghĩa biến SCSS (Giữ nguyên)
+// ==========================================================
 $primary: #2563eb;
 $primary-light: #3b82f6;
 $primary-dark: #1d4ed8;
@@ -27,722 +29,730 @@ $radius-lg: 1rem;
 $transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 
+// ==========================================================
+// Modal Structure
+// ==========================================================
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-//   padding: 1rem;
-  animation: fadeIn $transition;
-  
-  &:global(.is-open) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+    z-index: 1000;
     animation: fadeIn $transition;
-  }
+    
+    &:global(.is-open) {
+        animation: fadeIn $transition;
+    }
 }
 
 .modalContent {
-  background: $white;
-  border-radius: $radius-lg;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: $shadow-lg;
-  animation: slideUp $transition;
-  transform-origin: center;
-  
-  &:global(.is-open) {
+    background: $white;
+    border-radius: $radius-lg;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; 
+    box-shadow: $shadow-lg;
     animation: slideUp $transition;
-  }
+    transform-origin: center;
+    
+    &:global(.is-open) {
+        animation: slideUp $transition;
+    }
 }
 
 .searchForm {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    
+    // [CẬP NHẬT QUAN TRỌNG] Đảm bảo chiếm trọn không gian, bắt buộc chiều cao.
+    flex: 1; 
+    height: 100%; 
 }
 
-// Header
+// ==========================================================
+// Header (Cố định)
+// ==========================================================
 .modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.3rem 2.4rem;
-  background-image: linear-gradient( 109.6deg,  rgb(54, 145, 159) 11.2%, rgba(79,57,246,1) 100.2% );
-  color: $white;
-  position: relative;
-  overflow: hidden;
-  width: 120%;
-  
-//   &::before {
-//     content: '';
-//     position: absolute;
-//     top: -50%;
-//     right: -50%;
-//     width: 200px;
-//     height: 200px;
-//     background: rgba(255, 255, 255, 0.1);
-//     border-radius: 50%;
-//   }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.3rem 2.4rem;
+    background-image: linear-gradient( 109.6deg, rgb(54, 145, 159) 11.2%, rgba(79,57,246,1) 100.2% );
+    color: $white;
+    position: relative;
+    overflow: hidden;
+    width: 120%;
+    flex-shrink: 0; 
 }
 
 .modalTitle {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0;
-  position: relative;
-  z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .titleIcon {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .modalCloseButton {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: $radius-sm;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: $white;
-  transition: all $transition-fast;
-  position: relative;
-  z-index: 1;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
-  }
-  
-  &:active {
-    transform: scale(0.95) rotate(90deg);
-  }
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: $radius-sm;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $white;
+    transition: all $transition-fast;
+    position: relative;
+    z-index: 1;
+    
+    &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+    
+    &:active {
+        transform: scale(0.95) rotate(90deg);
+    }
 }
 
-// Body
+// ==========================================================
+// Body (Phần cuộn)
+// ==========================================================
 .modalBody {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-//   background: $gray-50;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+    flex: 1; 
+    padding: 2rem;
+    
+    // [CẬP NHẬT QUAN TRỌNG] Đảm bảo cuộn hoạt động trong Flex container
+    min-height: 0; 
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 // Info Grid
 .info-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-  background: $white;
-  padding: 1.5rem;
-  border-radius: $radius-md;
-  box-shadow: $shadow;
-  border: 1px solid $gray-200;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    background: $white;
+    padding: 1.5rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow;
+    border: 1px solid $gray-200;
 }
 
 .selection-display {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .selected-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $gray-600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .value {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: $gray-900;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  &.placeholder {
-    color: $gray-400;
-    font-weight: 400;
-    font-style: italic;
-  }
-  
-  &:not(.placeholder) {
-    &::before {
-      content: '';
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: $primary;
-      border-radius: 50%;
-      margin-right: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $gray-900;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &.placeholder {
+        color: $gray-400;
+        font-weight: 400;
+        font-style: italic;
     }
-  }
+    
+    &:not(.placeholder) {
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: $primary;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+    }
 }
 
 // Form Groups
 .formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .capacityGroup {
-  justify-content: center;
+    justify-content: center;
 }
 
 .inputLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $gray-700;
-  
-  svg {
-    color: $gray-500;
-  }
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-700;
+    
+    svg {
+        color: $gray-500;
+    }
 }
 
 .inputField {
-  padding: 0.75rem 1rem;
-  border: 2px solid $gray-300;
-  border-radius: $radius;
-  font-size: 1rem;
-  transition: all $transition-fast;
-  background: $white;
-  
-  &:focus {
-    outline: none;
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.1);
-  }
-  
-  &:hover:not(:focus) {
-    border-color: $gray-400;
-  }
-  
-  &.capacityInput {
-    width: 100%;
-    max-width: 120px;
-  }
+    padding: 0.75rem 1rem;
+    border: 2px solid $gray-300;
+    border-radius: $radius;
+    font-size: 1rem;
+    transition: all $transition-fast;
+    background: $white;
+    
+    &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
+    
+    &:hover:not(:focus) {
+        border-color: $gray-400;
+    }
+    
+    &.capacityInput {
+        width: 100%;
+        max-width: 120px;
+    }
 }
 
 // Quick Selection
 .quick-selection {
-  background: $white;
-  padding: 1.5rem;
-  border-radius: $radius-md;
-  box-shadow: $shadow;
-  border: 1px solid $gray-200;
+    background: $white;
+    padding: 1.5rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow;
+    border: 1px solid $gray-200;
 }
 
 .section-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: $gray-800;
-  margin: 0 0 1rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  &::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 16px;
-    background: $primary;
-    border-radius: 2px;
-  }
+    font-size: 1rem;
+    font-weight: 600;
+    color: $gray-800;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &::before {
+        content: '';
+        display: block;
+        width: 4px;
+        height: 16px;
+        background: $primary;
+        border-radius: 2px;
+    }
 }
 
 .quick-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
 }
 
 .quick-option {
-  padding: 0.875rem 1rem;
-  background: $gray-100;
-  border: 2px solid transparent;
-  border-radius: $radius;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $gray-700;
-  cursor: pointer;
-  transition: all $transition-fast;
-  text-align: center;
-  
-  &:hover:not(:disabled) {
-    background: $gray-200;
-    transform: translateY(-1px);
-  }
-  
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  &:not(:disabled):hover {
-    border-color: $gray-300;
-  }
-  
-  &:focus {
-    outline: none;
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.1);
-  }
+    padding: 0.875rem 1rem;
+    background: $gray-100;
+    border: 2px solid transparent;
+    border-radius: $radius;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-700;
+    cursor: pointer;
+    transition: all $transition-fast;
+    text-align: center;
+    
+    &:hover:not(:disabled) {
+        background: $gray-200;
+        transform: translateY(-1px);
+    }
+    
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+    
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    &:not(:disabled):hover {
+        border-color: $gray-300;
+    }
+    
+    &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
 }
 
 // Time Picker
 .time-picker-section {
-  background: $white;
-  padding: 1.5rem;
-  border-radius: $radius-md;
-  box-shadow: $shadow;
-  border: 1px solid $gray-200;
+    background: $white;
+    padding: 1.5rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow;
+    border: 1px solid $gray-200;
 }
 
 .time-picker {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: end;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
 }
 
 .time-picker > :first-child {
-  grid-column: 1;
+    grid-column: 1;
 }
 
 .time-picker > :last-child {
-  grid-column: 3;
+    grid-column: 3;
 }
 
 
 .time-input-group {
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
 .time-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $gray-700;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  &::before {
-    content: '';
-    display: block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: $primary-light;
-  }
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &::before {
+        content: '';
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: $primary-light;
+    }
 }
 
 .time-selectors {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .time-select {
-  padding: 0.75rem;
-  border: 2px solid $gray-300;
-  border-radius: $radius;
-  font-size: 1rem;
-  font-weight: 500;
-  color: $gray-800;
-  background: $white;
-  cursor: pointer;
-  transition: all $transition-fast;
-  min-width: 80px;
-  
-  &:focus {
-    outline: none;
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.1);
-  }
-  
-  &:hover:not(:disabled) {
-    border-color: $gray-400;
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+    padding: 0.75rem;
+    border: 2px solid $gray-300;
+    border-radius: $radius;
+    font-size: 1rem;
+    font-weight: 500;
+    color: $gray-800;
+    background: $white;
+    cursor: pointer;
+    transition: all $transition-fast;
+    min-width: 80px;
+    
+    &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
+    
+    &:hover:not(:disabled) {
+        border-color: $gray-400;
+    }
+    
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 .time-separator {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: $gray-500;
-  margin: 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: $gray-500;
+    margin: 0 0.25rem;
 }
 
 // Calendar Section
 .calendar-section {
-  background: $white;
-  padding: 1.5rem;
-  border-radius: $radius-md;
-  box-shadow: $shadow;
-  border: 1px solid $gray-200;
+    background: $white;
+    padding: 1.5rem;
+    border-radius: $radius-md;
+    box-shadow: $shadow;
+    border: 1px solid $gray-200;
 }
 
 .calendar-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .nav-button {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 2px solid $gray-300;
-  border-radius: $radius;
-  background: $white;
-  color: $gray-700;
-  font-size: 1.25rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all $transition-fast;
-  
-  &:hover:not(:disabled) {
-    border-color: $primary;
-    color: $primary;
-    transform: scale(1.05);
-  }
-  
-  &:active:not(:disabled) {
-    transform: scale(0.95);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid $gray-300;
+    border-radius: $radius;
+    background: $white;
+    color: $gray-700;
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-fast;
+    
+    &:hover:not(:disabled) {
+        border-color: $primary;
+        color: $primary;
+        transform: scale(1.05);
+    }
+    
+    &:active:not(:disabled) {
+        transform: scale(0.95);
+    }
+    
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
 
 .month-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  
-  span {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: $gray-800;
-  }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    
+    span {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: $gray-800;
+    }
 }
 
 .calendars-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 1rem;
 }
 
 .calendar-view {
-  background: $white;
-  border-radius: $radius;
-  overflow: hidden;
-  border: 1px solid $gray-200;
+    background: $white;
+    border-radius: $radius;
+    overflow: hidden;
+    border: 1px solid $gray-200;
 }
 
 .week-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: $gray-100;
-  border-bottom: 1px solid $gray-200;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: $gray-100;
+    border-bottom: 1px solid $gray-200;
 }
 
 .week-day-cell {
-  padding: 0.75rem 0.5rem;
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: $gray-600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $gray-600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background: $gray-200;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: $gray-200;
 }
 
 .day-cell {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: $white;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: $gray-700;
-  cursor: pointer;
-  transition: all $transition-fast;
-  position: relative;
-  
-  &.other-month {
-    color: $gray-400;
-    background: $gray-50;
-  }
-  
-  &.today {
-    color: $primary;
-    font-weight: 600;
-  }
-  
-  &.selected {
-    background: $primary;
-    color: $white;
-    font-weight: 600;
-    transform: scale(1.05);
-    z-index: 1;
-    box-shadow: $shadow;
-  }
-  
-  &.selectable:hover:not(.selected) {
-    background: $gray-100;
-    transform: scale(1.02);
-    z-index: 1;
-  }
-  
-  &.disabled {
-    color: $gray-300;
-    background: $gray-50;
-    cursor: not-allowed;
-  }
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: $gray-700;
+    cursor: pointer;
+    transition: all $transition-fast;
+    position: relative;
+    
+    &.other-month {
+        color: $gray-400;
+        background: $gray-50;
+    }
+    
+    &.today {
+        color: $primary;
+        font-weight: 600;
+    }
+    
+    &.selected {
+        background: $primary;
+        color: $white;
+        font-weight: 600;
+        transform: scale(1.05);
+        z-index: 1;
+        box-shadow: $shadow;
+    }
+    
+    &.selectable:hover:not(.selected) {
+        background: $gray-100;
+        transform: scale(1.02);
+        z-index: 1;
+    }
+    
+    &.disabled {
+        color: $gray-300;
+        background: $gray-50;
+        cursor: not-allowed;
+    }
 }
 
 .today-indicator {
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: $primary;
-  
-  .selected & {
-    background: $white;
-  }
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $primary;
+    
+    .selected & {
+        background: $white;
+    }
 }
 
-// Footer
+// ==========================================================
+// Footer (Cố định)
+// ==========================================================
 .modalFooter {
-  padding: 1.5rem 2rem;
-  background: $white;
-  border-top: 1px solid $gray-200;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 2rem;
+    background: $white;
+    border-top: 1px solid $gray-200;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; 
 }
 
 .action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
 }
 
 .actionButton {
-  padding: 0.875rem 1.75rem;
-  border-radius: $radius;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all $transition-fast;
-  border: none;
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba($primary, 0.2);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  &.clearButton {
-    background: $gray-100;
-    color: $gray-700;
-    border: 2px solid $gray-300;
+    padding: 0.875rem 1.75rem;
+    border-radius: $radius;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all $transition-fast;
+    border: none;
     
-    &:hover:not(:disabled) {
-      background: $gray-200;
-      border-color: $gray-400;
-      transform: translateY(-1px);
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($primary, 0.2);
     }
     
-    &:active:not(:disabled) {
-      transform: translateY(0);
-    }
-  }
-  
-  &.searchButton {
-    background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
-    color: $white;
-    border: 2px solid transparent;
-    
-    &:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: $shadow-md;
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
     
-    &:active:not(:disabled) {
-      transform: translateY(0);
+    &.clearButton {
+        background: $gray-100;
+        color: $gray-700;
+        border: 2px solid $gray-300;
+        
+        &:hover:not(:disabled) {
+            background: $gray-200;
+            border-color: $gray-400;
+            transform: translateY(-1px);
+        }
+        
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
     }
-  }
+    
+    &.searchButton {
+        background: linear-gradient(135deg, $primary 0%, $primary-light 100%);
+        color: $white;
+        border: 2px solid transparent;
+        
+        &:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: $shadow-md;
+        }
+        
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
 }
 
 .buttonLoader {
-  animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
 }
 
-// Animations
+// ==========================================================
+// Animations & Responsive Design
+// ==========================================================
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 // Responsive Design
 @media (max-width: 768px) {
-  .modalContent {
-    max-width: 95%;
-    max-height: 95vh;
-  }
-  
-  .modalHeader {
-    padding: 1.25rem 1.5rem;
-  }
-  
-  .modalTitle {
-    font-size: 1.25rem;
-  }
-  
-  .modalBody {
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
-  
-  .info-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .calendars-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .time-picker {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .quick-options {
-    grid-template-columns: 1fr;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .actionButton {
-    justify-content: center;
-  }
+    .modalContent {
+        max-width: 95%;
+        max-height: 95vh;
+    }
+    
+    .modalHeader {
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .modalTitle {
+        font-size: 1.25rem;
+    }
+    
+    .modalBody {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .calendars-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .time-picker {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .quick-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .actionButton {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
-  .modalHeader {
-    padding: 1rem 1.25rem;
-  }
-  
-  .modalBody {
-    padding: 1.25rem;
-  }
-  
-  .info-grid,
-  .quick-selection,
-  .time-picker-section,
-  .calendar-section {
-    padding: 1rem;
-  }
-  
-  .value {
-    font-size: 1rem;
-  }
-  
-  .time-select {
-    min-width: 70px;
-    padding: 0.5rem;
-  }
+    .modalHeader {
+        padding: 1rem 1.25rem;
+    }
+    
+    .modalBody {
+        padding: 1.25rem;
+    }
+    
+    .info-grid,
+    .quick-selection,
+    .time-picker-section,
+    .calendar-section {
+        padding: 1rem;
+    }
+    
+    .value {
+        font-size: 1rem;
+    }
+    
+    .time-select {
+        min-width: 70px;
+        padding: 0.5rem;
+    }
 }

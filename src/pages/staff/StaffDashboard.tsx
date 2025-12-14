@@ -5,7 +5,8 @@ import {
     faComments, faCheckSquare, faEye, faUserCog, 
     faEnvelopeOpenText, faGlobe, faBuilding, faStar, 
     IconDefinition, 
-    faRightFromBracket
+    faRightFromBracket,
+    faNewspaper
 } from '@fortawesome/free-solid-svg-icons';
 import styles from './StaffDashboard.module.scss';
 import TaskCard from '~/components/TaskCard/TaskCard'; 
@@ -19,6 +20,7 @@ import SupportTicketList from "~/components/StaffComponents/SupportTicketList/Su
 import BookingTodayListTable from "~/components/StaffComponents/BookingTodayListTable/BookingTodayListTable";
 import ReviewsPendingList from "~/components/StaffComponents/ReviewsPendingList/ReviewsPendingList";
 import WorkspacesPendingList from "~/components/StaffComponents/WorkspacesPendingList/WorkspacesPendingList";
+import PostManagementSection from "~/components/StaffComponents/PostManagementSection/PostManagementSection";
 
 const cx = classNames.bind(styles);
 
@@ -26,7 +28,7 @@ enum StaffPage {
     Support = 'support',
     ContentReview = 'contentReview',
     Monitoring = 'monitoring',
-    Settings = 'settings',
+    Posts = 'posts',
 }
 
 enum ReviewType {
@@ -196,13 +198,11 @@ const StaffDashboard: React.FC = () => {
                         </div>
                     </div>
                 );
-            case StaffPage.Settings:
+            case StaffPage.Posts:
                 return (
                     <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>⚙️ THIẾT LẬP CÁ NHÂN</h2>
-                        <p className={cx('placeholder-long')}>
-                            [Thông tin cá nhân, Đổi mật khẩu, Thiết lập quyền hạn (Chỉ Admin mới có thể thay đổi)]
-                        </p>
+                        <h2 className={cx('section-title')}>Bài Viết</h2>
+                        <PostManagementSection />
                     </div>
                 );
             default:
@@ -225,8 +225,8 @@ const StaffDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === StaffPage.Monitoring })} onClick={() => setActivePage(StaffPage.Monitoring)}>
                         <FontAwesomeIcon icon={faEye} /> <span>Giám Sát</span>
                     </li>
-                    <li className={cx('nav-item', { active: activePage === StaffPage.Settings })} onClick={() => setActivePage(StaffPage.Settings)}>
-                        <FontAwesomeIcon icon={faUserCog} /> <span>Thiết Lập</span>
+                    <li className={cx('nav-item', { active: activePage === StaffPage.Posts })} onClick={() => setActivePage(StaffPage.Posts)}>
+                        <FontAwesomeIcon icon={faNewspaper} /> <span>Bài viết</span>
                     </li>
                 </ul>
                 <div className={cx('task-summary')}>

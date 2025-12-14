@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ChatbotResponse } from '../types/Chat';
 import { API_BASE_URL } from '~/utils/API';
 
-const API_URL = `${API_BASE_URL}v1/ai-chatbot/chat`; 
+const API_URL = `${API_BASE_URL}v1/guest-ai-chatbot/chat`; 
 
 export const getChatResponse = async (message: string): Promise<ChatbotResponse> => {
   const payload = { message };
