@@ -13,8 +13,8 @@ import { toast } from 'react-toastify';
 import { 
     createBookingCustomer, 
     createBookingGuest, 
-    createVnpayPaymentUrl, // Giữ lại
-    createPayOsPaymentUrl, // Thêm mới
+    createVnpayPaymentUrl, 
+    createPayOsPaymentUrl, 
 } from '~/services/BookingService'; 
 import { CreateBookingRequestForGuest, BookingDetails, GuestDetails, CreateBookingResponse, CustomerDetails, CreateBookingRequestForCustomer } from '~/types/Booking'; 
 import { getEmailByToken, isToken, isTokenExpired } from '~/services/JwtService';

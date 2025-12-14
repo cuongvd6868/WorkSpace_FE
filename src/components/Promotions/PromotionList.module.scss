@@ -143,3 +143,58 @@
         border-radius: 8px; /* Nếu ảnh có border-radius */
     }
 }
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -1000px 0; 
+  }
+  100% {
+    background-position: 1000px 0; 
+  }
+}
+/* 1. Đảm bảo container cha có màu nền tĩnh */
+.slider-container_loading {
+    background-color: #ffffff; /* Hoặc màu nền trang */
+}
+
+/* 2. Áp dụng Shimmer lên container của từng slide */
+.promotion-slide-skeleton.shimmer-enabled {
+    /* Đặt màu nền tĩnh để khớp với baseColor của SkeletonTheme */
+    background-color: #EBEBEB; 
+    overflow: hidden; /* Đảm bảo hiệu ứng không tràn ra ngoài */
+    
+    /* Thiết lập nền gradient và kích thước */
+    background-image: linear-gradient(
+        to right, 
+        #EBEBEB 0%,      
+        #F5F5F5 20%,     
+        #EBEBEB 40%,     
+        #EBEBEB 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 1000px 100%;
+
+    /* Áp dụng animation quét */
+    animation: shimmer-sweep 1.5s linear infinite; 
+}
+
+/* 3. Đảm bảo các phần tử <Skeleton> bên trong không che mất hiệu ứng */
+/* Chúng ta cần target các element mà react-loading-skeleton tạo ra */
+.promotion-slide-skeleton.shimmer-enabled [class*="react-loading-skeleton"] {
+    /* Tắt background-image và animation mặc định của thư viện */
+    background-image: none !important; 
+    animation: none !important;
+    
+    /* Thiết lập màu nền tĩnh là highlightColor để tạo hình dạng */
+    background-color: #F5F5F5 !important;
+}
+
+/* 4. Xử lý khoảng padding bên trong PromotionSkeleton */
+/* Để các khoảng padding 10px 0 có màu baseColor (tức là màu nền của .promotion-slide-skeleton) */
+/* Cần đảm bảo rằng các div con có màu nền trong suốt để màu quét được nhìn thấy, 
+   hoặc div con phải là chính <Skeleton> element */
+
+/* Nếu khoảng padding là do div bao bọc <Skeleton> gây ra: */
+.promotion-slide-skeleton > div {
+    /* Đảm bảo các div bao bọc này không có màu nền chặn hiệu ứng */
+    background-color: transparent !important;
+}

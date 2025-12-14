@@ -222,8 +222,8 @@ const RoomTable: React.FC<RoomTableProps> = ({
                                     </td>
                                     <td>
                                         <div className={cx('price-option')}><Clock size={14} />/Giờ: **{room.pricePerHour.toLocaleString()} VNĐ**</div>
-                                        <div className={cx('price-option')}><Sun size={14} />/Ngày: {room.pricePerDay.toLocaleString()} VNĐ</div>
-                                        <div className={cx('price-option')}><Calendar size={14} />/Tháng: {room.pricePerMonth.toLocaleString()} VNĐ</div>
+                                        {/* <div className={cx('price-option')}><Sun size={14} />/Ngày: {room.pricePerDay.toLocaleString()} VNĐ</div>
+                                        <div className={cx('price-option')}><Calendar size={14} />/Tháng: {room.pricePerMonth.toLocaleString()} VNĐ</div> */}
                                     </td>
                                     <td>
                                         <button 
@@ -350,8 +350,9 @@ const WorkspaceDetail: React.FC = () => {
     if (error || !workspace) {
         return <div className={cx('error-message')}>❌ {error || "Không tìm thấy dữ liệu Workspace."}</div>;
     }
-
-    // Xác định danh sách phòng cần hiển thị
+    if(workspace.isActive == false) {
+        return <div className={cx('error-message')}>❌ {error || "Không tìm thấy dữ liệu Workspace."}</div>;
+    }
     const displayedRooms = hasSearched ? searchedRooms : (workspace.rooms || []);
 
     return (

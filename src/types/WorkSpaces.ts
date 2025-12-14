@@ -33,5 +33,6 @@ export type WorkSpaceDetail = {
     latitude: number,
     longitude: number,
     workSpaceType: string,
-    rooms: WorkSpaceRoom[]
+    rooms: WorkSpaceRoom[],
+    isActive: boolean
 }

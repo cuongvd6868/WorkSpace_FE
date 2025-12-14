@@ -400,6 +400,8 @@ $danger-color: #dc3545;
 }
 
 .error-message {
+    width: 68%;
+    margin: 50px auto;
     background-color: rgba($danger-color, 0.1);
     color: $danger-color;
     &.search-error {

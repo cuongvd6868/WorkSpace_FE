@@ -51,6 +51,19 @@
     flex-shrink: 0; 
 }
 
+.filter-sidebar_loading {
+    width: 230px;
+    background-color: #fff;
+    padding: 0 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; 
+}
+
+.results-area_loading {
+    width: 100%;
+}
+
 .results-area {
     flex-grow: 1;
 }
@@ -379,4 +392,52 @@
         cursor: not-allowed;
         color: #666;
     }
+}
+
+.skeleton-image_result {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+    padding: 18px;
+}
+
+
+
+
+
+@keyframes intense-shimmer {
+  0% {
+    background-position: -600% 0;
+  }
+  100% {
+    background-position: 600% 0;
+  }
+}
+
+@keyframes strong-pulse {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+.loading-animated {
+    position: relative;
+    animation: strong-pulse 1s infinite ease-in-out; 
+}
+
+.react-loading-skeleton {
+    background: linear-gradient(
+        to right, 
+        #CCCCCC 0%,      
+        #FFFFFF 15%,     
+        #CCCCCC 30%      
+    );
+    
+    background-size: 600% 100%; 
+    animation: intense-shimmer 0.7s infinite linear; 
 }

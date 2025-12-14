@@ -1,159 +1,116 @@
-$primary-color: #0077b6; 
-$primary-dark: #005f73; 
-$accent-color: #ef476f;  
-$background-light: #ffffff;
-$text-dark: #212529;
-$text-light: #f8f9fa;
-$text-muted: #6c757d;
-$border-light: #e0e0e0;
-
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    border-radius: 12px; 
-    overflow: hidden;
-    background: $background-light;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); 
-    transition: all 0.3s ease-in-out;
-    width: 100%;
-    max-width: 320px; 
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
 
-    &:hover {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        transform: translateY(-3px); 
+.card-container {
+    display: flex;
+    gap: 5px;
+
+    .thumbnail {
+        
+        img {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+        }
     }
 }
 
-.image-wrapper {
-    position: relative;
-    height: 160px; 
-    overflow: hidden;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    background: #f0f4f8; 
-}
+.desc {
+    .map-container {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
 
-.image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease-out;
+        .map-icon {
+            color: #0677F8;
+            font-size: 1rem;
 
-    .wrapper:hover & {
-        transform: scale(1.05); // Zoom nhẹ
-    }
-}
+        }
 
-.image-placeholder {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e9ecef;
-    color: $text-muted;
-    font-size: 0.9rem;
-    padding: 15px;
-    text-align: center;
-}
+        .map-title {
+            color: #0677F8;
+            text-decoration: underline;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
 
-// --- Phần Nội dung ---
-.content {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.title {
-    font-size: 1.2rem;
-    margin: 0 0 5px 0;
-    line-height: 1.3;
-    font-weight: 700;
-    color: $text-dark;
-    
-    // Giữ tiêu đề tối đa 2 dòng
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.price-info {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: 7px;
-}
-
-.price {
-    font-weight: 800;
-    color: $accent-color;
-    font-size: 1.6rem; 
-    letter-spacing: -0.7px;
-    line-height: 1;
-}
-
-.price-label {
-    font-size: 0.85rem;
-    color: $text-muted;
-    font-weight: 500;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.details {
-    padding-top: 5px;
-    border-top: 1px dashed $border-light; // Phân cách bằng đường đứt nét
-    margin-bottom: 15px;
-}
-
-.detail-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 2px;
-    font-size: 0.95rem;
-
-    .icon {
-        margin-right: 10px;
-        font-size: 1.0rem;
-        color: $primary-color;
     }
 
-    .text {
+    .title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-top: 3px;
+        line-height: 1.2;
+        margin-bottom: 3px;
+    }
+
+    .sub-title {
+        color: #727475;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 140px;
+        font-size: 1rem;
+    }
+    .price-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 3px 0;
+        
+    }
+
+    .price-label {
+        font-size: 1rem;
+        color: #555;
         font-weight: 500;
-        color: $text-dark;
+    }
+
+    .price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #e63946; // đỏ nhấn mạnh giá
+    }
+
+
+    .card-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
+
+        .host-name_container {
+            display: flex;
+            align-items: center;
+            margin-left: -2px;
+
+            .host-icon {
+                color: #474849;
+                font-size: 1.1rem;
+                padding-bottom: 1px;
+            }
+
+            .host-name {
+                color: #434444;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+        }
+
+        .see-more {
+            border: none;
+            text-decoration: underline;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #e63946;
+            background-color: transparent;
+            cursor: pointer;
+
+        }
     }
 }
 
-// --- Nút hành động ---
-.action-button {
-    background: $primary-color;
-    color: $text-light;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-top: auto;
-    transition: all 0.3s ease;
-    width: 100%;
-    box-shadow: 0 4px 15px rgba($primary-color, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 1rem;
-
-    &:hover {
-        background: $primary-dark;
-        box-shadow: 0 6px 20px rgba($primary-dark, 0.4);
-        transform: translateY(-1px);
-    }
-}
-
-.arrow-icon {
-    font-size: 1.2em;
-    transition: transform 0.2s ease-out;
-    .action-button:hover & {
-        transform: translateX(5px);
-    }
-}

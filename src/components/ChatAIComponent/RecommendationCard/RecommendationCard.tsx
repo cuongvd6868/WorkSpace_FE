@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import styles from './RecommendationCard.module.scss';
 import { Recommendation } from '~/types/Chat';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarker, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faMap, faMapMarker, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 
 interface RecommendationCardProps {
@@ -17,68 +17,53 @@ const cx = classNames.bind(styles);
 
 const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation }) => {
   const {
+    workSpaceId,
     title,
     street,
-    averagePricePerHour,
+    description,
     minPricePerHour,
     minCapacity,
     maxCapacity,
     imageUrls,
-    thumbnailUrl
+    thumbnailUrl,
+    hostName
   } = recommendation;
 
   return (
     <div className={cx('wrapper')}>
-      
-      {/* 1. Phần Ảnh (Trên cùng) */}
-      <div className={cx('image-wrapper')}>
-        {imageUrls && imageUrls.length > 0 ? (
-          <img 
-            src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${thumbnailUrl}`} 
-            alt={title} 
-            className={cx('image')} 
-          />
-        ) : (
-          <div className={cx('image-placeholder')}>
-            
-
-[Image of Placeholder]
-
-          </div>
-        )}
-      </div>
-
-      {/* 2. Phần Nội dung (Dưới cùng) */}
-      <div className={cx('content')}>
-        
-        {/* Tiêu đề */}
-        <h3 className={cx('title')}>{title}</h3>
-        
-        {/* Giá */}
-        <div className={cx('price-info')}>
-            <span className={cx('price-label')}>Chỉ từ</span>
-            <span className={cx('price')}>{formatPrice(minPricePerHour)}</span>
-            <span className={cx('price-label')}>/ giờ</span>
+      <div className={cx('card-container')}>
+        <div className={cx('thumbnail')}>
+          {imageUrls && imageUrls.length > 0 ? (
+            <img 
+              src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${thumbnailUrl}`} 
+              alt={title} 
+              className={cx('image')} 
+            />
+          ) : (
+            <img src="" alt="" className={cx('image-placeholder')}/>
+          )}
         </div>
-        
-        {/* Chi tiết (Địa điểm & Sức chứa) */}
-        <div className={cx('details')}>
-          <div className={cx('detail-item')}>
-            <span className={cx('icon')}><FontAwesomeIcon icon={faMapMarker}/></span> 
-            <span className={cx('text')}>{street}</span>
+        <div className={cx("desc")}>
+          <div className={cx('map-container')}>
+            <FontAwesomeIcon icon={faMap}  className={cx('map-icon')}/>
+            <p className={cx('map-title')}>Xem trên bản đồ</p>
           </div>
-          <div className={cx('detail-item')}>
-            <span className={cx('icon')}><FontAwesomeIcon icon={faUsers}/></span> 
-            <span className={cx('text')}>{minCapacity} - {maxCapacity} người</span>
+          <p className={cx('title')}>{title}</p>
+          <p className={cx('sub-title')}>{description}</p>
+          <div className={cx('price-container')}>
+            <p className={cx('price-label')}>Giá chỉ từ :</p>
+            <p className={cx('price')}>{formatPrice(minPricePerHour)}/giờ</p>
+          </div>
+          <div className={cx('card-bottom')}>
+            <div className={cx('host-name_container')}>
+              <FontAwesomeIcon icon={faUser}  className={cx('host-icon')}/>
+              <p className={cx('host-name')}>{hostName}</p>
+            </div>
+            <button className={cx('see-more')}>Xem chi tiết</button>
           </div>
         </div>
-        
-        {/* Nút hành động */}
-        <button className={cx('action-button')}>
-          Xem chi tiết 
-          <span className={cx('arrow-icon')}>→</span>
-        </button>
       </div>
+
     </div>
   );
 };

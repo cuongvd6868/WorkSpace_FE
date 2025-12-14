@@ -5,7 +5,7 @@ import { ChatbotResponse, ChatMessage } from '~/types/Chat';
 import { getChatResponse } from '~/services/ChatAIService'; 
 import RecommendationCard from './RecommendationCard/RecommendationCard'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBrain, faRobot, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBrain, faPaperPlane, faRobot, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -139,19 +139,24 @@ const ChatAIComponent: React.FC = () => {
       </div>
 
       {/* Khung đầu vào */}
-      <form className={cx('chat-footer')} onSubmit={handleSendMessage}>
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Nhập yêu cầu tìm kiếm..."
-          disabled={isLoading}
-          className={cx('input')}
-        />
-        <button type="submit" disabled={isLoading} className={cx('send-button')}>
-          <span className={cx('send-icon')}>↑</span>
-        </button>
-      </form>
+<div className={cx('chat-input-area')}>
+  <form className={cx('chatForm')} onSubmit={handleSendMessage}>
+    <input
+      type="text"
+      value={inputMessage}
+      onChange={(e) => setInputMessage(e.target.value)}
+      placeholder="Nhập yêu cầu tìm kiếm không gian làm việc..."
+      disabled={isLoading}
+      className={cx('chatInput')}
+    />
+
+    <button type="submit" disabled={isLoading || !inputMessage.trim()} className={cx('sendBtn')}>
+      <FontAwesomeIcon icon={faPaperPlane} />
+    </button>
+  </form>
+</div>
+
+
     </div>
   );
 };
