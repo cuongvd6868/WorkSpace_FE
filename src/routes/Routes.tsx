@@ -13,6 +13,7 @@ import OwnerDashboard from "~/pages/owner/OwnerDashboard";
 import StaffDashboard from "~/pages/staff/StaffDashboard";
 import HostRegistrationPage from "~/pages/host/HostRegistrationPage/HostRegistrationPage";
 import SupportPage from "~/pages/support/SupportPage";
+import PostPage from "~/pages/post/PostPage";
 
 export const router = createBrowserRouter([{
     path: "/",
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([{
         {path: "/search-results", element: <SearchResults/>},
         {path: "/map-view", element: <MapPageView/>},
         {path: "/workspace/:id", element: <WorkspaceDetail/>},
+        {path: "/posts/:id", element: <PostPage/>},
         {path: "/booking/checkout", element: <BookingCheckout/>},
         {path: "/payment-result/success", element: <PaymentSuccess/>},
         {path: "/booking-list", element: <BookingList/>},

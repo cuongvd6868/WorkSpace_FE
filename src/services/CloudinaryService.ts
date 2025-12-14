@@ -10,15 +10,12 @@ export const uploadToCloudinary = async (file: File, presetName: string): Promis
     const uploadUrl = buildCloudinaryUploadUrl(CLOUD_NAME);
 
     try {
-        // *** GIẢI PHÁP LỖI CORS: GHI ĐÈ HEADER AUTHORIZATION ***
         const { data } = await axios.post<CloudinaryUploadResult>(uploadUrl, formData, {
             headers: {
-                // Buộc Authorization thành undefined để ngăn chặn Token bị gửi nhầm
                 'Authorization': undefined, 
             },
         });
         
-        // <<< LỖI ĐƯỢC KHẮC PHỤC Ở ĐÂY: THÊM LỆNH RETURN BỊ THIẾU >>>
         return data.public_id; 
         
     } catch (error) {

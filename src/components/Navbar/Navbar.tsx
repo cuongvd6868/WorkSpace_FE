@@ -107,6 +107,10 @@ const Navbar: React.FC = () => {
     return `${searchState.participants} người`;
   };
 
+  const handleSingleSearchBarClick = () => {
+    console.log('abc')
+  }
+
   // === HÀM XỬ LÝ TÌM KIẾM CHÍNH (GỌI API HOẶC ĐIỀU HƯỚNG) ===
   const handleSearchClick = () => {
       const { location, selectedTime, participants } = searchState;
@@ -198,7 +202,21 @@ const Navbar: React.FC = () => {
                   Khám phá nhiều phòng họp, bàn làm việc linh hoạt, văn phòng riêng cho mọi nhu cầu, 
                   phù hợp với mọi quy mô đội nhóm của bạn...
                 </p>
-                <button className={cx('cover_button')} onClick={handleBookingNow}>Đặt chỗ ngay</button>
+<div className={cx('search-wrapper')}>
+            <div className={cx('search-box')}>
+
+                <input
+                    type="text"
+                    placeholder="Tìm nhanh Workspace của bạn..."
+                />
+
+                <button className={cx('search-btn')}>
+                    <FontAwesomeIcon icon={faLocationDot} />
+                </button>
+            </div>
+        </div>
+
+
               </div>
             </div>
           ) : (

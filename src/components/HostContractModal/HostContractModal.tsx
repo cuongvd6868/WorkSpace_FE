@@ -284,12 +284,12 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
 
     const ContractBody = useMemo(() => (
         <>
-            <div className={cx('title-container')}>
+            {/* <div className={cx('title-container')}>
                 <div className={'title-header'}>
                     <p className={'top'}>Cộng hòa xã hội chủ nghĩa Việt Nam</p> 
                     <p className={'bottom'}>Độc lập - Tự do - Hạnh phúc</p>
                 </div>
-            </div>
+            </div> */}
             {(() => {
                 const today = new Date();
                 const day = today.getDate();

@@ -891,3 +891,82 @@ $search-button-hover: #3182CE;
 .right-section_vector {
   color: #fff;
 }
+
+.search-box_top {
+  height: 50px;
+  display: flex;
+  background-color: #d7dfe0;
+}
+
+.search-wrapper {
+  display: flex;
+  justify-content: center;
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    width: 260px;
+    height: 36px;
+    background: #fff; // nền tím rất đậm
+    border-radius: 999px;
+    padding: 2px 6px;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: rgba(192, 132, 252, 0.45);
+    }
+
+    &:focus-within {
+      border-color: #c084fc;
+      box-shadow: 0 0 0 2px rgba(192, 132, 252, 0.25);
+    }
+
+    input {
+      flex: 1;
+      height: 100%;
+      border: none;
+      outline: none;
+      padding: 0 8px;
+      font-size: 13px;
+      color: #6b5eac;
+      background: transparent;
+      font-weight: 500;
+
+      &::placeholder {
+        font-size: 12px;
+        color: #8b71f4;
+        opacity: 0.8;
+      font-weight: 500;
+
+      }
+    }
+
+    .search-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background-image: radial-gradient( circle farthest-corner at -5.6% -6.8%,  rgba(103,49,145,1) 37.3%, rgba(50,0,129,1) 73.5% );
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      svg {
+        font-size: 13px;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #6d28d9, #9333ea);
+        box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+      }
+
+      &:active {
+        transform: scale(0.92);
+      }
+    }
+  }
+}

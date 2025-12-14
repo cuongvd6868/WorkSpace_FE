@@ -545,13 +545,18 @@ $error-color: #f44336;
     }
 }
 
-.title-header {
+.top {
     font-family: "Times New Roman", Times, serif;
     font-size: 1.8rem;
     font-weight: 600;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+
+    p {
+    font-size: 1.8rem;
+
+    }
 
 }
 
