@@ -5,7 +5,8 @@ import styles from './PostPage.module.scss';
 import classNames from "classnames/bind";
 import { toast } from 'react-toastify';
 import { Post } from "~/types/Posts"; 
-import { getPostById } from "~/services/PostService"; // API getPostById
+import { getPostById } from "~/services/PostService"; 
+import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 
 const cx = classNames.bind(styles);
 
@@ -56,11 +57,8 @@ const PostPage: React.FC = () => {
         return <div className={cx('wrapper', 'not-found')}>Không tìm thấy bài viết.</div>;
     }
 
-    // Giả định API trả về cả userName và avatar cho bài viết (hoặc dùng data mock)
-    // Nếu Post type không có userName/avatar, bạn có thể chỉnh lại type Post 
-    // hoặc giả định giá trị mặc định cho demo.
-    const authorName = (post as any).userName || 'Admin'; 
-    const authorAvatar = (post as any).avatar || '/default-avatar.png'; // Thay bằng đường dẫn mặc định
+    const authorName = (post as any).userName || 'Staff'; 
+    const authorAvatar = (post as any).avatar || 'https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/444489138_1019981339484259_4504008877707254740_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=qdhpBvRWiD0Q7kNvwHBLYPr&_nc_oc=AdnGazLAYVz3uiFHmJEt5WfZEaOzjZL0dGsOB5_5PIezLkGex1Nq4fZggmVuFAMQvk4&_nc_zt=23&_nc_ht=scontent.fdad3-1.fna&_nc_gid=vA4jpweRBNs443SYLGWAjw&oh=00_AfnYvavzOJ2xIvrbqdaTzuhghFnm8piDuIJjig2hDQJ-8Q&oe=69452FA0'; // Thay bằng đường dẫn mặc định
 
     return (
         <div className={cx('wrapper')}>
@@ -84,7 +82,7 @@ const PostPage: React.FC = () => {
                     <div className={cx('post-image-wrapper')}>
 
                         <img 
-                            src={`https://res.cloudinary.com/name/image/upload/${post.imageData}`} 
+                            src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${post.imageData}`} 
                             alt={post.title} 
                             className={cx('post-image')}
                         />
