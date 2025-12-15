@@ -5,6 +5,8 @@ import { FeaturePost } from "~/types/Posts";
 import checkImg from '~/assets/img/check/checkv1.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDotCircle } from "@fortawesome/free-solid-svg-icons";
+import { CLOUD_NAME } from "~/config/cloudinaryConfig";
+import { Link } from "react-router-dom";
 
 
 const cx = classNames.bind(styles);
@@ -15,9 +17,10 @@ interface postProp {
 
 const PostItem: React.FC<postProp> = ({post}) => {
     return (
+        <Link to={`/posts/${post.id}`}>
         <div className={cx('wrapper')}>
             <div className={cx('thumb')}>
-                <img src={post.imageData} alt="" className={cx('thumb-img')}/>
+                <img src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${post.imageData}`} alt="" className={cx('thumb-img')}/>
             </div>
             <div className={cx('sub-container')}>
                 <h3 className={cx('title')}>{post.title}</h3>
@@ -28,6 +31,7 @@ const PostItem: React.FC<postProp> = ({post}) => {
                 </div>
             </div>
         </div>
+        </Link>
     )
 }
 
