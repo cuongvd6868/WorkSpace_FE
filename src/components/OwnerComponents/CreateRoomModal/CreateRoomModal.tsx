@@ -67,8 +67,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ workspaceId, onClose,
         description: '',
         workSpaceRoomTypeId: MOCK_ROOM_TYPES[0]?.id || 1, 
         pricePerHour: 0,
-        pricePerDay: 0,
-        pricePerMonth: 0,
+        pricePerDay: 1,
+        pricePerMonth: 1,
         capacity: 1,
         area: 1,
         amenityIds: [],
@@ -242,11 +242,11 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ workspaceId, onClose,
                                     <label>Giá/Giờ:</label>
                                     <input type="number" name="pricePerHour" value={formData.pricePerHour} onChange={handleChange} min="0" placeholder="0" />
                                     
-                                    <label>Giá/Ngày:</label>
+                                    {/* <label>Giá/Ngày:</label>
                                     <input type="number" name="pricePerDay" value={formData.pricePerDay} onChange={handleChange} min="0" placeholder="0" />
                                     
                                     <label>Giá/Tháng:</label>
-                                    <input type="number" name="pricePerMonth" value={formData.pricePerMonth} onChange={handleChange} min="0" placeholder="0" />
+                                    <input type="number" name="pricePerMonth" value={formData.pricePerMonth} onChange={handleChange} min="0" placeholder="0" /> */}
                                 </div>
 
                                 {/* Tiện ích */}
