@@ -1,0 +1,272 @@
+/* DrinkServiceManagementSection.module.scss - ULTRA-MODERN LIGHT & MINIMALIST LUXURY UI */
+
+// --- GLOBAL THEME ---
+$bg-primary: #f8f9fb;          // Nền chính (Off-White/Light Gray)
+$bg-card: #ffffff;             // Nền thẻ (Pure White)
+$color-text-dark: #105498;     // Text chính (Rất đậm)
+$color-text-light: #6c757d;    // Text phụ/mô tả
+$color-accent: #008080;        // Màu nhấn: Teal (Xanh mòng két - sang trọng)
+$color-danger: #e74c3c;        // Màu nguy hiểm
+$shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08); // Bóng đổ mềm, tạo cảm giác nổi
+$color-border-subtle: #e9ecef; // Viền tinh tế
+
+.drink-service-management {
+    padding: 40px;
+    background-color: $bg-primary;
+    border-radius: 20px; 
+    color: $color-text-dark;
+    font-family: 'Poppins', 'Segoe UI', sans-serif; // Font chuyên nghiệp
+    transition: background-color 0.4s;
+    min-height: 80vh;
+    box-shadow: $shadow-soft;
+
+    // --- Header Actions ---
+    .header-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-bottom: 35px;
+
+        .add-btn, .refresh-btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); // Bóng đổ nhẹ
+        }
+
+        .add-btn {
+            background-color: $color-accent;
+            color: white; 
+
+            &:hover {
+                background-color: darken($color-accent, 8%);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        .refresh-btn {
+            background-color: $bg-card;
+            color: $color-text-dark;
+            border: 1px solid $color-border-subtle;
+            box-shadow: none;
+
+            &:hover {
+                background-color: #f0f0f0;
+                color: $color-accent;
+            }
+            
+            svg {
+                margin-right: 8px;
+                &.spin {
+                    animation: spin 1s linear infinite;
+                }
+            }
+        }
+    }
+
+    // --- Status Messages ---
+    .loading, .error, .no-data {
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-weight: 500;
+        border-left: 4px solid;
+    }
+    
+    .loading { background-color: #e6f7ff; color: #1890ff; border-left-color: #1890ff; }
+    .error { background-color: #fff0f6; color: #eb2f96; border-left-color: #eb2f96; }
+    .no-data { background-color: $color-border-subtle; color: $color-text-light; border-left-color: #ced4da; }
+
+    // --- Service List ---
+    .service-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .workspace-group {
+        background-color: $bg-card;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05); 
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .group-header {
+            padding: 20px 25px;
+            background-color: #fcfcfc; 
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid $color-border-subtle;
+            
+            h3 {
+                margin: 0;
+                font-size: 1.1em; 
+                color: $color-text-dark;
+                font-weight: 700; 
+
+                .service-count {
+                    font-weight: 500;
+                    font-size: 0.85em;
+                    margin-left: 10px;
+                    color: $color-text-light;
+                }
+            }
+            svg {
+                font-size: 1em;
+                color: $color-accent;
+                transition: transform 0.3s;
+            }
+        }
+
+        .service-items {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            
+            .empty-list {
+                padding: 20px 25px;
+                color: $color-text-light;
+                font-style: italic;
+            }
+
+            .service-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 25px;
+                border-bottom: 1px solid #f0f0f0; 
+                transition: background-color 0.2s;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                &:hover {
+                    background-color: #fcfcfc;
+                }
+
+                .service-info {
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+
+                    .service-image {
+                        width: 80px; 
+                        height: 80px;
+                        object-fit: cover;
+                        border-radius: 8px; 
+                        margin-right: 25px;
+                        flex-shrink: 0;
+                        border: 2px solid $color-border-subtle; 
+                    }
+
+                    .details {
+                        h4 {
+                            margin: 0 0 6px 0;
+                            font-size: 1em;
+                            color: $color-text-dark;
+                            display: flex;
+                            align-items: center;
+                            gap: 15px;
+                        }
+                        
+                        .status {
+                            font-size: 0.7em;
+                            padding: 5px 12px;
+                            border-radius: 20px; 
+                            font-weight: 700;
+                            letter-spacing: 0.5px;
+                            text-transform: uppercase;
+                            
+                            &.active {
+                                background-color: #d4edda;
+                                color: #155724;
+                            }
+                            &.inactive {
+                                background-color: #f8d7da;
+                                color: #721c24;
+                            }
+                        }
+
+                        .description {
+                            margin: 0 0 8px 0;
+                            font-size: 0.8em;
+                            color: $color-text-light;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            max-width: 500px;
+                        }
+
+                        .price {
+                            margin: 0;
+                            font-weight: 700;
+                            color: $color-accent; 
+                            font-size: 1em;
+                        }
+                    }
+                }
+
+                // --- Actions ---
+                .actions {
+                    display: flex;
+                    gap: 15px;
+                    flex-shrink: 0;
+
+                    button {
+                        background: $bg-card;
+                        border: 1px solid $color-border-subtle;
+                        padding: 10px;
+                        width: 45px;
+                        height: 45px;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                        
+                        &:hover {
+                            transform: translateY(-1px);
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        }
+
+                        &.edit-btn {
+                            color: $color-accent;
+                            &:hover {
+                                background-color: rgba($color-accent, 0.1);
+                                border-color: $color-accent;
+                            }
+                        }
+                        &.delete-btn {
+                            color: $color-danger;
+                            &:hover {
+                                background-color: rgba($color-danger, 0.1);
+                                border-color: $color-danger;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
