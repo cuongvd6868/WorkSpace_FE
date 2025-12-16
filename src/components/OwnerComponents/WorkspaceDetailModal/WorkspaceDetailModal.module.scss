@@ -1,0 +1,432 @@
+/* WorkspaceDetailModal.module.scss */
+
+// Định nghĩa biến màu
+$primary-color: #17a2b8; // Xanh Cyan/Info
+$secondary-color: #6c757d; // Xám
+$success-color: #28a745; // Xanh lá cây
+$danger-color: #dc3545; // Đỏ
+$warning-color: #ffc107; // Vàng
+$background-light: #f8f9fa; // Nền sáng
+$border-color: #e9ecef;
+$card-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+
+// --- Cấu trúc Modal chung ---
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); // Lớp phủ mờ hơn
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; // Đảm bảo modal nằm trên tất cả
+}
+
+.modal-container {
+    background-color: #fff;
+    border-radius: 16px; // Bo tròn góc lớn hơn
+    box-shadow: $card-shadow;
+    width: 95%;
+    max-width: 1100px; // Mở rộng chiều rộng tối đa
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid $border-color;
+    background-color: #fff;
+
+    h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: #333;
+        
+        svg {
+            margin-right: 10px;
+            color: $primary-color;
+        }
+    }
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: $secondary-color;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: $danger-color;
+        transform: rotate(90deg);
+    }
+}
+
+.modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    flex-grow: 1;
+    background-color: $background-light;
+}
+
+.modal-footer {
+    padding: 15px 30px;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #fff;
+}
+
+// --- Chi tiết Workspace (Layout 2 cột) ---
+.workspace-details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; // Cột thông tin (2), Cột ảnh (1)
+    gap: 30px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr; // Stack trên mobile
+    }
+}
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-row {
+    margin: 8px 0;
+    font-size: 1.05rem;
+    color: #444;
+
+    svg {
+        margin-right: 8px;
+        color: $primary-color;
+    }
+
+    strong {
+        font-weight: 700;
+        color: #111;
+    }
+}
+
+.image-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.workspace-image {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-left: 10px;
+
+    &.status-active {
+        background-color: $success-color;
+    }
+
+    &.status-inactive {
+        background-color: $secondary-color;
+    }
+}
+
+// --- Khu vực Rooms ---
+.rooms-section {
+    
+    h3 {
+        font-size: 1.4rem;
+        color: $secondary-color;
+        margin-bottom: 10px;
+
+        svg {
+            margin-right: 8px;
+            color: $secondary-color;
+        }
+    }
+}
+
+.room-summary {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    font-size: 0.95rem;
+}
+
+.rooms-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); // Card rộng hơn
+    gap: 30px;
+}
+
+.no-rooms {
+    grid-column: 1 / -1; // Chiếm hết chiều rộng
+    text-align: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    color: $secondary-color;
+    font-style: italic;
+}
+
+// --- Thẻ Room (Room Card) ---
+.room-card {
+    background-color: #fff;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+}
+
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid $border-color;
+}
+
+.room-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.room-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.room-type {
+    font-size: 0.85rem;
+    color: $primary-color;
+    font-weight: 600;
+    background-color: lighten($primary-color, 35%);
+    padding: 3px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.room-status {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 500;
+    color: #fff;
+    align-self: flex-start;
+    white-space: nowrap; // Đảm bảo không bị ngắt dòng
+}
+
+.room-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    font-size: 0.95rem;
+    color: #555;
+
+    svg {
+        margin-right: 6px;
+        color: $secondary-color;
+    }
+
+    strong {
+        font-weight: 700;
+        color: $primary-color;
+    }
+}
+
+// --- Tiện ích (Amenities) ---
+.amenities-title {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px;
+    border-top: 1px dashed $border-color;
+    padding-top: 15px;
+}
+
+.amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.amenity-tag {
+    background-color: $background-light;
+    color: $secondary-color;
+    border: 1px solid $border-color;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+
+    i {
+        margin-right: 5px;
+        color: $primary-color;
+    }
+}
+
+// --- Khung giờ bị chặn (Blocked Times) ---
+.blocked-times {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid $danger-color;
+    background-color: lighten($danger-color, 45%);
+    border-radius: 8px;
+    
+    h5 {
+        font-size: 1rem;
+        color: $danger-color;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    li {
+        font-size: 0.9rem;
+        color: #444;
+        margin-bottom: 5px;
+    }
+}
+
+// --- Hành động (Actions) ---
+.room-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed $border-color;
+    text-align: right;
+}
+
+.action-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+
+    &.btn-edit {
+        background-color: $primary-color;
+        color: #fff;
+
+        &:hover {
+            background-color: darken($primary-color, 10%);
+        }
+    }
+
+    svg {
+        margin-right: 5px;
+    }
+}
+
+// --- Nút chung (Footer) ---
+.btn-primary {
+    background-color: $success-color;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: darken($success-color, 10%);
+    }
+}
+
+// --- Tối ưu hóa Mobile ---
+@media (max-width: 576px) {
+    .modal-header {
+        padding: 15px 20px;
+        h2 {
+            font-size: 1.4rem;
+        }
+    }
+    .modal-body {
+        padding: 20px;
+    }
+    .rooms-list {
+        grid-template-columns: 1fr; 
+    }
+    .room-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.room-card {
+    /* Giữ nguyên các style cũ */
+    overflow: hidden; /* Quan trọng để ảnh không tràn ra ngoài */
+}
+
+.room-image-wrapper {
+    margin: -20px -20px 15px -20px; /* Kéo ảnh ra sát viền trên của card */
+    height: 150px; /* Chiều cao cố định cho ảnh */
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.room-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh cover hết wrapper mà không bị méo */
+    transition: transform 0.3s ease;
+}
+
+.room-card:hover .room-image {
+    transform: scale(1.05); /* Hiệu ứng zoom nhẹ khi hover */
+}

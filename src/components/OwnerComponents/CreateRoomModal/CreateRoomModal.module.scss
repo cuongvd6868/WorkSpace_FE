@@ -1,0 +1,401 @@
+/* CreateRoomModal.module.scss */
+
+// Định nghĩa biến màu
+$primary-color: #007bff; // Xanh dương
+$secondary-color: #6c757d; // Xám
+$success-color: #28a745; // Xanh lá
+$danger-color: #dc3545; // Đỏ
+$background-light: #f8f9fa; // Nền sáng
+$border-color: #e9ecef;
+$input-border: #ced4da;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+$modal-max-width: 900px; 
+$modal-max-height: 95vh; // Giới hạn chiều cao tổng thể của Modal
+
+// --- Cấu trúc Modal chung ---
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000; 
+
+    label {
+    display: block;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #343a40;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid $input-border;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.25);
+        outline: none;
+    }
+    
+    &[type="number"] {
+        // Loại bỏ các nút xoay của input number trên Chrome/Edge/Safari
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        // Loại bỏ nút xoay trên Firefox
+        appearance: textfield; 
+    }
+}
+}
+
+.modal-container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: $card-shadow;
+    width: 90%;
+    max-width: $modal-max-width; 
+    max-height: $modal-max-height; // Đảm bảo Modal không tràn màn hình
+    display: flex;
+    flex-direction: column; // Rất quan trọng
+    overflow: hidden; // Quan trọng để Modal-body cuộn bên trong
+    animation: fadeInScale 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid $border-color;
+    background-color: #fff;
+    flex-shrink: 0; // Không co lại
+    
+    h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #343a40;
+        
+        svg {
+            margin-right: 10px;
+            color: $primary-color;
+        }
+    }
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: $secondary-color;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: $danger-color;
+    }
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+// **Class mới cho Form để giải quyết vấn đề cuộn và lấp nút**
+.room-form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; // Cho phép form chiếm hết phần còn lại của container
+    min-height: 0; // Tránh lỗi tràn nội dung (flex-basis: auto)
+    overflow: hidden; 
+}
+
+.modal-body {
+    padding: 30px;
+    overflow-y: auto; // Cho phép nội dung cuộn khi tràn
+    flex-grow: 1; // Cho phép body chiếm hết không gian còn lại
+    flex-shrink: 1; // Cho phép co lại
+    background-color: $background-light;
+}
+
+.modal-footer {
+    padding: 15px 30px;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    background-color: #fff;
+    flex-shrink: 0; // Không co lại (Giữ cố định)
+}
+
+// --- Grid Form Layout ---
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    
+    align-items: start; 
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr; 
+    }
+}
+
+.grid-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    > .form-section {
+        flex: 1; 
+    }
+}
+
+.form-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+    &.image-upload-section {
+        grid-column: 1 / -1; 
+    }
+}
+
+.section-title {
+    font-size: 1.2rem;
+    color: #495057;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed $border-color;
+
+    svg {
+        margin-right: 8px;
+        color: $primary-color;
+    }
+}
+
+// --- Input Styling ---
+
+
+textarea {
+    resize: vertical;
+}
+
+.input-group-grid {
+    &.grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: $secondary-color;
+    margin-top: -10px;
+    margin-bottom: 15px;
+
+    &.warning {
+        color: $danger-color;
+        font-weight: 600;
+    }
+}
+
+// --- Amenities Checkboxes ---
+.amenities-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-height: 250px; 
+    overflow-y: auto;
+    padding-right: 5px; 
+}
+
+.amenity-label {
+    background-color: $background-light;
+    border: 1px solid $border-color;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #555;
+    transition: background-color 0.2s, border-color 0.2s;
+
+    input[type="checkbox"] {
+        margin-right: 8px;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 1px solid $secondary-color;
+        border-radius: 3px;
+        position: relative;
+        cursor: pointer;
+        
+        &:checked {
+            background-color: $success-color;
+            border-color: $success-color;
+            
+            &::after {
+                content: '\u2713'; 
+                color: #fff;
+                font-size: 12px;
+                position: absolute;
+                top: -1px;
+                left: 2px;
+            }
+        }
+    }
+
+    svg {
+        margin-right: 5px;
+        color: $primary-color;
+    }
+}
+
+// --- Image Upload ---
+.upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed $primary-color;
+    background-color: lighten($primary-color, 45%);
+    border-radius: 8px;
+    padding: 30px;
+    cursor: pointer;
+    text-align: center;
+    color: $primary-color;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: lighten($primary-color, 40%);
+    }
+}
+
+.upload-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.hidden-input {
+    display: none;
+}
+
+// --- Image Preview ---
+.image-preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.image-preview-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba($danger-color, 0.85);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+    z-index: 10;
+
+    &:hover {
+        background-color: $danger-color;
+    }
+}
+
+.file-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 3px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// --- Buttons ---
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-primary {
+    background-color: $success-color;
+    color: #fff;
+    
+    &:hover {
+        background-color: darken($success-color, 8%);
+    }
+    &:disabled {
+        background-color: lighten($success-color, 15%);
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}
+
+.btn-secondary {
+    background-color: $secondary-color;
+    color: #fff;
+    
+    &:hover {
+        background-color: darken($secondary-color, 8%);
+    }
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}
