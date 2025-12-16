@@ -1,6 +1,6 @@
 import axios from "axios"
-import { CLOUDINARY_UPLOAD_URL, WORKSPACE_PHOTOS_PRESET } from "~/config/cloudinaryConfig";
-import { NotificationCreateRequest, NotificationItem, NotificationUpdateRequest, OwnerStats, PromotionOwnerView } from "~/types/Owner";
+import { DRINK_PRESET, WORKSPACE_PHOTOS_PRESET} from "~/config/cloudinaryConfig";
+import { DrinkServiceCreateRequest, DrinkServiceItem, DrinkServiceUpdateRequest, NotificationCreateRequest, NotificationItem, NotificationUpdateRequest, OwnerStats, PromotionOwnerView, WorkspaceDrinkServices } from "~/types/Owner";
 import { API_BASE_URL } from "~/utils/API"
 import { handleError } from "~/utils/handleError"
 import { uploadToCloudinary } from "./CloudinaryService";
@@ -63,6 +63,7 @@ export interface RawWorkspaceData {
 
 const API_WORKSPACE_URL = `${API_BASE_URL}v1/owner/workspaces`;
 const API_NOTIFICATION_URL = `${API_BASE_URL}v1/notification`; 
+const API_DRINK_SERVICE_URL = `${API_BASE_URL}v1/owner/drink-services`;
 
 export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: string): Promise<any> => {
     
@@ -447,6 +448,189 @@ export const updateNotification = async (
         } else {
             throw new Error(response.data.message || "Cập nhật thất bại.");
         }
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const createDrinkServices = async (
+    workspaceId: number,
+    rawItems: Array<DrinkServiceCreateRequest & { imageFile: File }>,
+    token: string
+): Promise<void> => {
+    
+    // 1. Tải ảnh của từng dịch vụ lên Cloudinary và xây dựng Payload
+    const finalPayload: DrinkServiceCreateRequest[] = [];
+
+    for (const rawItem of rawItems) {
+        if (!rawItem.imageFile) {
+            throw new Error(`Dịch vụ "${rawItem.name}" thiếu file ảnh.`);
+        }
+        
+        console.log(`Bắt đầu tải ảnh cho dịch vụ: ${rawItem.name}`);
+        
+        try {
+            // Tải ảnh sử dụng DRINK_PRESET
+            const imageUrl = await uploadToCloudinary(rawItem.imageFile, DRINK_PRESET); 
+            console.log(`Tải ảnh dịch vụ ${rawItem.name} hoàn tất. URL: ${imageUrl}`);
+
+            // Xây dựng Payload cuối cùng
+            const itemPayload: DrinkServiceCreateRequest = {
+                name: rawItem.name,
+                description: rawItem.description,
+                price: rawItem.price,
+                imageUrl: imageUrl, 
+            };
+            finalPayload.push(itemPayload);
+
+        } catch (error) {
+            console.error(`LỖI: Ảnh của dịch vụ ${rawItem.name} không thể tải lên Cloudinary.`, error);
+            throw new Error(`Không thể tạo dịch vụ: Lỗi tải ảnh ${rawItem.name} lên dịch vụ lưu trữ.`);
+        }
+    }
+
+    // 2. Gửi Final Payload JSON tới Backend
+    try {
+        const response = await axios.post(
+            `${API_WORKSPACE_URL}/${workspaceId}/drink-services`, 
+            finalPayload, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+            }
+        );
+        
+        // API này có thể trả về status 200/201 mà không có body cụ thể (dựa trên image_66aa12.png)
+        // Nếu API trả về 200/201, chúng ta kết luận thành công
+        if (response.status === 200 || response.status === 201) {
+            console.log("Tạo dịch vụ đồ uống thành công.");
+        }
+        
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+/**
+ * 2. GET /workspaces/{workspaceId}/drink-services: Lấy danh sách dịch vụ đồ uống theo Workspace.
+ * @param workspaceId ID của Workspace
+ * @returns Promise<DrinkServiceItem[]>
+ */
+export const getDrinkServicesByWorkspace = async (
+    workspaceId: number
+): Promise<DrinkServiceItem[]> => {
+    try {
+        const response = await axios.get<DrinkServiceItem[]>(
+            `${API_WORKSPACE_URL}/${workspaceId}/drink-services`
+        );
+        // Dựa trên image_66aa6f.png
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+/**
+ * 3. GET /owner/drink-services: Lấy tất cả dịch vụ đồ uống, nhóm theo Workspace.
+ * @returns Promise<WorkspaceDrinkServices[]>
+ */
+export const getAllDrinkServicesGrouped = async (): Promise<WorkspaceDrinkServices[]> => {
+    try {
+        const response = await axios.get<WorkspaceDrinkServices[]>(
+            API_DRINK_SERVICE_URL
+        );
+        // Dựa trên image_66aacb.png
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+/**
+ * 4. PUT /owner/drink-services/{id}: Cập nhật dịch vụ đồ uống.
+ * @param updateData Dữ liệu cập nhật (bao gồm ID, có thể bao gồm file ảnh mới)
+ * @param token Authorization token
+ * @returns Promise<void>
+ */
+export const updateDrinkService = async (
+    updateData: DrinkServiceUpdateRequest & { newImageFile?: File },
+    token: string
+): Promise<void> => {
+    let finalImageUrl = updateData.imageUrl;
+    const serviceId = updateData.id;
+
+    // 1. Xử lý tải ảnh mới (nếu có)
+    if (updateData.newImageFile) {
+        console.log(`Bắt đầu tải ảnh mới cho dịch vụ ID: ${serviceId}`);
+        try {
+            // Tải ảnh mới lên Cloudinary
+            finalImageUrl = await uploadToCloudinary(updateData.newImageFile, DRINK_PRESET);
+            console.log("Tải ảnh mới hoàn tất.");
+        } catch (error) {
+            console.error(`LỖI: Ảnh mới của dịch vụ ID ${serviceId} không thể tải lên Cloudinary.`, error);
+            throw new Error(`Không thể cập nhật dịch vụ: Lỗi tải ảnh lên dịch vụ lưu trữ.`);
+        }
+    }
+
+    // 2. Xây dựng Payload JSON cuối cùng
+    const payload: DrinkServiceUpdateRequest = {
+        id: serviceId,
+        name: updateData.name,
+        description: updateData.description,
+        price: updateData.price,
+        imageUrl: finalImageUrl, // URL cũ hoặc URL mới
+        isActive: updateData.isActive
+    };
+
+    // 3. Gửi Payload tới Backend
+    try {
+        await axios.put(
+            `${API_DRINK_SERVICE_URL}/${serviceId}`, 
+            payload,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+            }
+        );
+        // Dựa trên image_66aa30.png, API trả về body '2', nên ta không cần xử lý data cụ thể.
+        console.log(`Cập nhật dịch vụ ID ${serviceId} thành công.`);
+
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+/**
+ * 5. DELETE /owner/drink-services/{id}: Xóa dịch vụ đồ uống.
+ * @param serviceId ID của dịch vụ cần xóa
+ * @param token Authorization token
+ * @returns Promise<void>
+ */
+export const deleteDrinkService = async (
+    serviceId: number,
+    token: string
+): Promise<void> => {
+    try {
+        await axios.delete(
+            `${API_DRINK_SERVICE_URL}/${serviceId}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}` 
+                },
+            }
+        );
+        // Dựa trên image_66a9bd.png, API trả về body '2', nên ta không cần xử lý data cụ thể.
+        console.log(`Xóa dịch vụ ID ${serviceId} thành công.`);
+        
     } catch (error) {
         handleError(error);
         throw error;
