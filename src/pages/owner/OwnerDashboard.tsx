@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faWallet, faBuilding, faCalendarCheck, faUserCog, IconDefinition, faDollarSign, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faWallet, faBuilding, faCalendarCheck, faUserCog, IconDefinition, faDollarSign, faRightFromBracket, faTags, faMugHot, faMessage, faRing, faBell } from '@fortawesome/free-solid-svg-icons';
 import styles from './OwnerDashboard.module.scss'; 
 import KPICard from '~/components/KPICard/KPICard'; 
 import { useAuth } from "~/context/useAuth";
@@ -14,6 +14,7 @@ import FinanceSection from "~/components/OwnerComponents/FinanceSection/FinanceS
 import OwnerBookingsSection from "~/components/OwnerComponents/OwnerBookingsSection/OwnerBookingsSection";
 import { CreateWorkspaceForm } from "~/components/OwnerComponents/CreateWorkspaceForm/CreateWorkspaceForm";
 import OwnerWorkspacesTable from "~/components/OwnerComponents/OwnerWorkspacesTable/OwnerWorkspacesTable";
+import OwnerPromotionsSection from "~/components/OwnerComponents/OwnerPromotionsSection/OwnerPromotionsSection";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -21,6 +22,10 @@ enum OwnerPage {
     Finance = 'finance',
     Listings = 'listings', 
     Bookings = 'bookings',
+    Promotions = 'promotions',
+    Drink = 'drink',
+    Notification = 'Notification',
+    Chat = 'chat',
     Settings = 'settings',
 }
 
@@ -160,10 +165,10 @@ const OwnerDashboard: React.FC = () => {
                 );
             case OwnerPage.Finance:
                 return (
-<div className={cx('content-section')}>
-            <h2 className={cx('section-title')}>💰 TÀI CHÍNH & THANH TOÁN</h2>
-            <FinanceSection stats={stats} isLoading={isLoading} />
-        </div>
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>💰 TÀI CHÍNH & THANH TOÁN</h2>
+                        <FinanceSection stats={stats} isLoading={isLoading} />
+                    </div>
                 );
             case OwnerPage.Listings:
                 return (
@@ -176,8 +181,35 @@ const OwnerDashboard: React.FC = () => {
                 return (
                 <div className={cx('content-section')}>
                     <h2 className={cx('section-title')}>📅 QUẢN LÝ LƯỢT BOOKING</h2>
-                    {/* Thay thế placeholder bằng component mới */}
                     <OwnerBookingsSection />
+                </div>
+                );
+            case OwnerPage.Promotions:
+                return (
+                <div className={cx('content-section')}>
+                    {/* <h2 className={cx('section-title')}>QUẢN LÝ PROMOTIONS</h2> */}
+                    <OwnerPromotionsSection/>
+                </div>
+                );
+            case OwnerPage.Drink:
+                return (
+                <div className={cx('content-section')}>
+                    <h2 className={cx('section-title')}> QUẢN LÝ dịch vụ nước uống</h2>
+                    {/* Thay thế placeholder bằng component mới */}
+                </div>
+                );
+            case OwnerPage.Notification:
+                return (
+                <div className={cx('content-section')}>
+                    <h2 className={cx('section-title')}> QUẢN LÝ THÔNG BÁO</h2>
+                    {/* Thay thế placeholder bằng component mới */}
+                </div>
+                );
+            case OwnerPage.Chat:
+                return (
+                <div className={cx('content-section')}>
+                    <h2 className={cx('section-title')}>QUẢN LÝ  chat</h2>
+                    {/* Thay thế placeholder bằng component mới */}
                 </div>
                 );
             case OwnerPage.Settings:
@@ -212,26 +244,46 @@ const OwnerDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Bookings })} onClick={() => setActivePage(OwnerPage.Bookings)}>
                         <FontAwesomeIcon icon={faCalendarCheck} /> <span>Quản Lý Booking</span>
                     </li>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Promotions })} onClick={() => setActivePage(OwnerPage.Promotions)}>
+                        <FontAwesomeIcon icon={faTags} /> <span>Quản Lý Promotion</span>
+                    </li>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Drink })} onClick={() => setActivePage(OwnerPage.Drink)}>
+                        <FontAwesomeIcon icon={faMugHot} /> <span>Quản Lý Drink Service</span>
+                    </li>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Notification })} onClick={() => setActivePage(OwnerPage.Notification)}>
+                        <FontAwesomeIcon icon={faBell} /> <span>Quản Lý Thông Báo</span>
+                    </li>
+                    {/* <li className={cx('nav-item', { active: activePage === OwnerPage.Chat })} onClick={() => setActivePage(OwnerPage.Chat)}>
+                        <FontAwesomeIcon icon={faMessage} /> <span>Quản Lý chat</span>
+                    </li> */}
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
                         <FontAwesomeIcon icon={faUserCog} /> <span>Thiết Lập</span>
                     </li>
                 </ul>
+                
+                {isLoggedIn() ? (
+                    <div className={cx('sidebar-footer')}>
+                        <div className={cx('nav-item', 'logout-btn')} onClick={handleLogout}>
+                            <FontAwesomeIcon icon={faRightFromBracket} /> <span>Đăng Xuất</span>
+                        </div>
+                    </div>
+                ) : (
+                    <div className={cx('sidebar-footer')}></div>
+                )}
             </nav>
 
             {/* Main Content */}
             <div className={cx('main-content')}>
                 <header className={cx('header')}>
                     <h1 className={cx('page-header')}>{activePage.toUpperCase()}</h1>
-                        {isLoggedIn() ? (
-                            <div className={cx('user-profile')}>
-                                <span>Xin chào, {user?.userName}</span>
-                                <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
-                            </div>
-                        ) : (
-                            <span>Bạn chưa đăng nhập</span>
-                        )}
-                        {/* 
-*/}
+                    {/* Khôi phục phần hiển thị tên người dùng ở Header */}
+                    {isLoggedIn() ? (
+                        <div className={cx('user-profile')}>
+                            <span>Xin chào, {user?.userName}</span>
+                        </div>
+                    ) : (
+                        <span>Bạn chưa đăng nhập</span>
+                    )}
                 </header>
                 
                 <main className={cx('content-area')}>

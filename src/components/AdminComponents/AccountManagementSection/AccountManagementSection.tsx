@@ -160,10 +160,6 @@ const AccountManagementSection: React.FC = () => {
 
             {/* Bảng dữ liệu */}
             <UserTable />
-            
-            <button className={cx('add-user-btn')}>
-                <FontAwesomeIcon icon={faPlus} /> Thêm Tài Khoản Mới
-            </button>
         </div>
     );
 };

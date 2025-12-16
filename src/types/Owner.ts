@@ -55,3 +55,29 @@ export interface OwnerStats {
   pendingWorkspaces: number;
   weeklyRevenueTrend: WeeklyRevenueData[];
 }
+
+export interface PromotionOwnerView {
+  id: number;
+  code: string;
+  description: string;
+  discountValue: number;
+  discountType: string;
+  startDate: string; 
+  endDate: string;   
+  usageLimit: number;
+  usedCount: number;
+  remainingUsage: number;
+  isActive: boolean;
+}
+
+export interface PromotionsRequest {
+  description: string;
+  discountValue: number;
+  discountType: string;
+  startDate: string; 
+  endDate: string;   
+  usageLimit: number;
+  usedCount: number;
+  remainingUsage: number;
+  isActive: boolean;
+}

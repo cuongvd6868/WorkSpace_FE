@@ -46,4 +46,3 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
-// User Chat

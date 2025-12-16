@@ -3,13 +3,20 @@ import { WorkSpaceSearch } from '~/types/WorkSpaces';
 import { toast } from "react-toastify"; 
 import { getAuthHeaders } from './AuthService';
 import { API_BASE_URL } from '~/utils/API';
+import { handleError } from '~/utils/handleError';
 
 const WORKSPACE_FAVORITE_ENDPOINT = `${API_BASE_URL}v1/workspacefavorite`;
 
-/**
- * 1. Thêm một WorkSpace vào danh sách yêu thích của người dùng.
- * Endpoint: POST api/v1/workspacefavorite
- */
+export const GetFavoriteListByUser = async () => {
+    try {
+        const response = await axios.get(`${WORKSPACE_FAVORITE_ENDPOINT}/userfavorites`);
+        return response.data;
+    } catch (error) {
+        handleError(error); 
+        throw error; 
+    }
+}
+
 export const addToFavorites = async (workSpaceId: number): Promise<string> => {
     const config = getAuthHeaders();
     if (!config.headers?.Authorization) {
@@ -39,10 +46,7 @@ export const addToFavorites = async (workSpaceId: number): Promise<string> => {
     }
 };
 
-/**
- * 2. Xóa một WorkSpace khỏi danh sách yêu thích của người dùng.
- * Endpoint: DELETE api/v1/workspacefavorite/{workSpaceId}
- */
+
 export const removeFromFavorites = async (workSpaceId: number): Promise<string> => {
     const config = getAuthHeaders();
     if (!config.headers?.Authorization) {
@@ -70,42 +74,7 @@ export const removeFromFavorites = async (workSpaceId: number): Promise<string> 
     }
 };
 
-/**
- * 3. Kiểm tra xem một WorkSpace có phải là yêu thích của người dùng hiện tại không.
- * Endpoint: GET api/v1/workspacefavorite/isfavorite/{workSpaceId}
- */
-// export const isFavorite = async (workSpaceId: number): Promise<boolean> => {
-//     const config = getAuthHeaders();
-//     if (!config.headers?.Authorization) {
-//         // Nếu không có token, không thể là yêu thích, có thể throw hoặc trả về false.
-//         // Giả sử: throw để component gọi biết cần đăng nhập.
-//         throw new Error("User not authenticated. Cannot check favorite status."); 
-//     }
 
-//     const url = `${WORKSPACE_FAVORITE_ENDPOINT}/isfavorite/${workSpaceId}`;
-    
-//     try {
-//         const response: AxiosResponse<{ isFavorite: boolean }> = await axios.get(
-//             url, 
-//             config
-//         );
-//         return response.data.isFavorite;
-//     } catch (error) {
-//         if (axios.isAxiosError(error)) {
-//             if (error.response?.status === 401) {
-//                 throw new Error("User not authenticated. Please log in."); 
-//             }
-//         }
-//         console.error(`Error checking if workspace ${workSpaceId} is favorite:`, error);
-//         // Có thể trả về false nếu lỗi không phải 401 và không phải lỗi nghiêm trọng khác.
-//         throw new Error("Failed to check favorite status.");
-//     }
-// };
-
-/**
- * 4. Lấy danh sách đầy đủ các WorkSpace yêu thích của người dùng hiện tại.
- * Endpoint: GET api/v1/workspacefavorite/userfavorites
- */
 export const getFavoriteWorkSpaces = async (): Promise<WorkSpaceSearch[]> => {
     const config = getAuthHeaders();
     if (!config.headers?.Authorization) {
@@ -131,10 +100,7 @@ export const getFavoriteWorkSpaces = async (): Promise<WorkSpaceSearch[]> => {
     }
 };
 
-/**
- * 5. Lấy danh sách ID các WorkSpace yêu thích của người dùng hiện tại.
- * Endpoint: GET api/v1/workspacefavorite/userfavoriteids
- */
+
 export const getFavoriteWorkSpaceIds = async (): Promise<number[]> => {
     const config = getAuthHeaders();
     if (!config.headers?.Authorization) {

@@ -26,7 +26,7 @@ $shadow-base: rgba(0, 0, 0, 0.15);
     z-index: 10;
     
     .logo {
-        font-size: 1.7rem;
+        font-size: 2rem;
         font-weight: 800;
         text-align: center;
         margin-bottom: 40px;
@@ -54,6 +54,10 @@ $shadow-base: rgba(0, 0, 0, 0.15);
             svg { 
                 margin-right: 15px;
                 font-size: 1.2rem;
+            }
+
+            span {
+                font-size: 1.1rem;
             }
 
             &:hover {
@@ -205,3 +209,49 @@ $shadow-base: rgba(0, 0, 0, 0.15);
     cursor: pointer;
     color: #2980B9;
   }
+
+  .logout_container {
+    padding: 10px;
+    background-color: #2C3E50;
+  }
+
+  // Ví dụ trong OwnerDashboard.module.scss
+
+.sidebar {
+    // Rất quan trọng: Thiết lập Flexbox cho sidebar
+    display: flex;
+    flex-direction: column; 
+    height: 100vh; // Đảm bảo sidebar chiếm toàn bộ chiều cao màn hình
+
+    // .nav-list {
+    //     flex-grow: 1; // Cho phép danh sách menu chiếm hết không gian có thể
+    //     padding: 0;
+    //     margin: 0;
+    // }
+
+    .sidebar-footer {
+        // Đảm bảo footer luôn nằm dưới cùng
+        margin-top: auto; 
+        padding: 10px 20px;
+        border-top: 1px solid #eee; 
+
+        .user-info {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+            padding-left: 10px; // Căn chỉnh với nav-item
+        }
+
+        .logout-btn {
+            // Sử dụng lại kiểu dáng của nav-item
+            // Thêm màu hoặc hiệu ứng khác để nổi bật hơn
+            cursor: pointer;
+            transition: background-color 0.2s;
+            // ... các thuộc tính khác của nav-item
+            
+            &.nav-item {
+                // Đảm bảo sử dụng padding và style giống nav-item
+            }
+        }
+    }
+}

@@ -14,7 +14,7 @@ import StaffDashboard from "~/pages/staff/StaffDashboard";
 import HostRegistrationPage from "~/pages/host/HostRegistrationPage/HostRegistrationPage";
 import SupportPage from "~/pages/support/SupportPage";
 import PostPage from "~/pages/post/PostPage";
-
+import FavoriteList from "~/pages/favorites/FavoriteList";
 export const router = createBrowserRouter([{
     path: "/",
     element: <App/>,
@@ -33,5 +33,6 @@ export const router = createBrowserRouter([{
         {path: "/owner", element: <OwnerDashboard/>},
         {path: "/staff", element: <StaffDashboard/>},
         {path: "/support", element: <SupportPage/>},
+        {path: "/favorites", element: <FavoriteList/>},
     ]
 }]);
