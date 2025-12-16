@@ -1,0 +1,242 @@
+/* --- Biến (Variables) --- */
+$dark-bg: #1e1e2d; // Nền tối chủ đạo của Dashboard
+$card-bg: #27293d; // Nền tối cho các khu vực nội dung (section)
+$primary-color: #007bff; // Màu xanh dương chủ đạo (giữ nguyên độ sáng)
+$danger-color: #dc3545; // Màu đỏ cho hành động xóa/nguy hiểm
+$success-color: #28a745; // Màu xanh lá cho thành công
+$text-light: #f8f9fa; // Màu chữ sáng (trắng nhạt)
+$text-secondary: #adb5bd; // Màu chữ phụ/nhạt hơn
+$border-dark: #343a40; // Viền tối
+$table-header-bg: #343a40; // Nền đầu bảng
+$shadow-dark: 0 0.5rem 1rem rgba(0, 0, 0, 0.4); // Bóng tối hơn
+
+.notification-section {
+    padding: 20px;
+    background-color: $card-bg; // Nền tối cho khu vực nội dung
+    color: $text-light; // Màu chữ mặc định là sáng
+    border-radius: 8px;
+    box-shadow: $shadow-dark;
+    min-height: 700px;
+}
+
+/* --- Phần Header & Nút Tạo Mới --- */
+.header-control {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.create-btn {
+    background-color: $success-color;
+    color: $text-light;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: lighten($success-color, 5%);
+    }
+
+    .fa-plus {
+        margin-right: 8px;
+    }
+}
+
+
+/* --- Bảng Danh sách Thông báo --- */
+.table-container {
+    overflow-x: auto;
+}
+
+.notification-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.95em;
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid $border-dark; // Viền tối
+    }
+
+    th {
+        background-color: $table-header-bg; // Nền đầu bảng tối
+        font-weight: bold;
+        color: $text-light;
+    }
+
+    tbody tr:hover {
+        background-color: lighten($card-bg, 3%); // Hơi sáng hơn nền card khi hover
+    }
+    
+    // Đảm bảo chữ trong bảng vẫn sáng
+    td {
+        color: $text-light;
+    }
+}
+
+.action-btns {
+    width: 120px; 
+    
+    button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+        margin-right: 5px;
+        border-radius: 4px;
+        font-size: 1em;
+        transition: all 0.2s;
+        
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// Giữ màu biểu tượng hành động nổi bật trên nền tối
+.edit-btn {
+    color: $primary-color;
+    &:hover {
+        background-color: $border-dark; 
+    }
+}
+
+.delete-btn {
+    color: $danger-color;
+    &:hover {
+        background-color: $border-dark;
+    }
+}
+
+/* --- Trạng thái --- */
+.loading-message, .empty-message {
+    text-align: center;
+    padding: 30px;
+    color: $text-secondary;
+    font-style: italic;
+}
+
+
+/* --- Form Overlay (Tạo/Cập nhật) --- */
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); // Overlay tối hơn
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s;
+
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.notification-form {
+    background: $dark-bg; // Nền Form tối
+    color: $text-light;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: $shadow-dark;
+    width: 90%;
+    max-width: 500px;
+    transform: translateY(-20px);
+    transition: transform 0.3s;
+    border: 1px solid $border-dark; // Viền nhẹ
+    
+    .form-overlay.visible & {
+        transform: translateY(0);
+    }
+}
+
+.form-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: $text-light;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: $text-secondary;
+    }
+    
+    input[type="text"], textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid $border-dark; // Viền input tối
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+        background-color: $table-header-bg; // Nền input tối
+        color: $text-light;
+    }
+    
+    .input-disabled {
+        background-color: #3f4254; // Màu tối hơn một chút cho input disable
+        color: $text-secondary;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    
+    button {
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    button[type="submit"] {
+        background-color: $primary-color;
+        color: $text-light;
+        border: 1px solid $primary-color;
+        
+        &:hover:not(:disabled) {
+            background-color: lighten($primary-color, 5%);
+        }
+    }
+    
+    .cancel-btn {
+        background-color: #6c757d;
+        color: $text-light;
+        border: 1px solid #6c757d;
+        
+        &:hover:not(:disabled) {
+            background-color: darken(#6c757d, 5%);
+        }
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}

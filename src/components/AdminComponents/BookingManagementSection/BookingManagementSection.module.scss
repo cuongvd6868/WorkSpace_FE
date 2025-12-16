@@ -1,0 +1,176 @@
+/* --- Biến (Variables) --- */
+$dark-bg: #1e1e2d; 
+$card-bg: #27293d; 
+$primary-color: #007bff; 
+$danger-color: #dc3545; 
+$success-color: #28a745; 
+$warning-color: #ffc107;
+$info-color: #17a2b8; // Màu xanh nhạt cho thông tin phụ
+$text-light: #f8f9fa; 
+$text-secondary: #adb5bd; 
+$border-dark: #343a40; 
+$table-header-bg: #343a40; 
+$shadow-dark: 0 0.5rem 1rem rgba(0, 0, 0, 0.4); 
+
+.booking-section {
+    padding: 20px;
+    background-color: $card-bg; 
+    color: $text-light; 
+    border-radius: 8px;
+    box-shadow: $shadow-dark;
+    min-height: 700px;
+}
+
+/* --- Header & Control --- */
+.header-control {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.refresh-btn {
+    background-color: $info-color;
+    color: $text-light;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    
+    &:hover:not(:disabled) {
+        background-color: darken($info-color, 10%);
+    }
+    
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+
+/* --- Bảng Booking --- */
+.table-container {
+    overflow-x: auto;
+}
+
+.booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9em;
+
+    th, td {
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 1px solid $border-dark; 
+        vertical-align: top;
+    }
+
+    th {
+        background-color: $table-header-bg; 
+        font-weight: bold;
+        color: $text-light;
+    }
+
+    tbody .table-row:hover {
+        background-color: lighten($card-bg, 3%); 
+    }
+    
+    td {
+        color: $text-light;
+    }
+}
+
+.booking-code {
+    font-weight: bold;
+    color: $primary-color;
+}
+
+.is-guest {
+    font-style: italic;
+    color: $text-secondary;
+}
+
+.date-range {
+    font-size: 0.95em;
+    .separator {
+        color: $text-secondary;
+    }
+}
+
+.final-amount {
+    font-weight: 700;
+    color: $success-color;
+    white-space: nowrap; // Không bị ngắt dòng
+}
+
+/* --- Trạng thái --- */
+.status-cell {
+    font-weight: 600;
+    text-align: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    white-space: nowrap;
+    
+    // Ví dụ về tô màu trạng thái dựa trên tên status
+    &.status-Completed {
+        color: $success-color;
+        background-color: rgba($success-color, 0.1);
+    }
+    &.status-Pending {
+        color: $warning-color;
+        background-color: rgba($warning-color, 0.1);
+    }
+    &.status-CheckedIn {
+        color: $primary-color;
+        background-color: rgba($primary-color, 0.1);
+    }
+    // ... Thêm các trạng thái khác nếu cần
+}
+
+/* --- Nút Hành động --- */
+.action-btns {
+    width: 80px; 
+    
+    button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+        margin-right: 5px;
+        border-radius: 4px;
+        font-size: 1.1em;
+        transition: all 0.2s;
+        
+        &:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    }
+    
+    .view-btn {
+        color: $info-color;
+        &:hover:not(:disabled) {
+            background-color: $border-dark;
+        }
+    }
+}
+
+/* --- Trạng thái tải/lỗi/rỗng --- */
+.loading-message, .empty-message, .error-message {
+    text-align: center;
+    padding: 30px;
+    font-style: italic;
+}
+
+.loading-message, .empty-message {
+    color: $text-secondary;
+}
+
+.error-message {
+    color: $danger-color;
+    font-weight: bold;
+    background-color: rgba($danger-color, 0.1);
+    border-radius: 4px;
+}
