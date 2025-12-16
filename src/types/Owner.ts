@@ -81,3 +81,25 @@ export interface PromotionsRequest {
   remainingUsage: number;
   isActive: boolean;
 }
+
+export interface NotificationItem {
+    id: number;
+    title: string;
+    content: string;
+    senderId: number;
+    senderRole: string; 
+    createUtc: string; 
+}
+
+
+export interface NotificationCreateRequest {
+    title: string;
+    content: string;
+}
+
+export interface NotificationUpdateRequest {
+    id: number;
+    title: string;
+    content: string;
+}
+

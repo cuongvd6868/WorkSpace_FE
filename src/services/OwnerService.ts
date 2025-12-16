@@ -1,6 +1,6 @@
 import axios from "axios"
 import { CLOUDINARY_UPLOAD_URL, WORKSPACE_PHOTOS_PRESET } from "~/config/cloudinaryConfig";
-import { OwnerStats, PromotionOwnerView } from "~/types/Owner";
+import { NotificationCreateRequest, NotificationItem, NotificationUpdateRequest, OwnerStats, PromotionOwnerView } from "~/types/Owner";
 import { API_BASE_URL } from "~/utils/API"
 import { handleError } from "~/utils/handleError"
 import { uploadToCloudinary } from "./CloudinaryService";
@@ -60,9 +60,9 @@ export interface RawWorkspaceData {
     rooms: RawRoomData[]; // Dữ liệu phòng thô
 }
 
-// --- HÀM TẠO WORKSPACE ĐÃ CẬP NHẬT ---
 
 const API_WORKSPACE_URL = `${API_BASE_URL}v1/owner/workspaces`;
+const API_NOTIFICATION_URL = `${API_BASE_URL}v1/notification`; 
 
 export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: string): Promise<any> => {
     
@@ -354,6 +354,99 @@ export const handleActivePromotion = async (promotionId: number) => {
             `${API_BASE_URL}v1/promotions/owner/activate/${promotionId}`
         );
         return response.data; 
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const getPersonalNotifications = async (): Promise<NotificationItem[]> => {
+    try {
+        const response = await axios.get<NotificationItem[]>(`${API_NOTIFICATION_URL}/personal`);
+        return response.data;
+    } catch (error) {
+        handleError(error); 
+        throw error;
+    }
+};
+
+/**
+ * 2. POST /notification/owner: Tạo thông báo mới cho Owner.
+ * (ĐÃ KHÔI PHỤC token)
+ * @param data Dữ liệu title và content
+ * @param token Authorization token
+ * @returns Promise<number> ID của thông báo vừa tạo
+ */
+export const createOwnerNotification = async (
+    data: NotificationCreateRequest,
+    token: string // KHÔI PHỤC TOKEN
+): Promise<number> => {
+    // Định nghĩa cấu trúc Response POST nội bộ
+    type CreateResponseInternal = {
+        id: { succeeded: boolean; message: string; data: number; errors: any; };
+        message: string;
+    };
+    
+    try {
+        const response = await axios.post<CreateResponseInternal>(
+            `${API_NOTIFICATION_URL}/owner`, 
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // THÊM HEADER TOKEN
+                },
+            }
+        );
+        
+        // Dựa trên image_7364f9.png
+        if (response.data.id.succeeded) {
+            return response.data.id.data;
+        } else {
+            throw new Error(response.data.id.message || "Tạo thông báo thất bại.");
+        }
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+/**
+ * 3. PUT /notification/update/{id}: Cập nhật thông báo hiện có.
+ * (ĐÃ KHÔI PHỤC token)
+ * @param data Dữ liệu cập nhật, bao gồm id, title và content
+ * @param token Authorization token
+ * @returns Promise<string> Thông báo thành công từ API
+ */
+export const updateNotification = async (
+    data: NotificationUpdateRequest,
+    token: string // KHÔI PHỤC TOKEN
+): Promise<string> => {
+    // Định nghĩa cấu trúc Response PUT nội bộ (Dựa trên image_7364f1.png)
+    type UpdateResponseInternal = {
+        success: boolean;
+        message: string;
+    };
+    
+    try {
+        const notificationId = data.id; 
+        
+        const response = await axios.put<UpdateResponseInternal>(
+            `${API_NOTIFICATION_URL}/update/${notificationId}`, 
+            data, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // THÊM HEADER TOKEN
+                },
+            }
+        );
+
+        if (response.data.success) {
+            return response.data.message; // "Cập nhật thành công"
+        } else {
+            throw new Error(response.data.message || "Cập nhật thất bại.");
+        }
     } catch (error) {
         handleError(error);
         throw error;
