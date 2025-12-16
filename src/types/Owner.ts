@@ -182,3 +182,140 @@ export interface WorkspaceDrinkServices {
     workSpaceTitle: string;
     services: DrinkServiceItem[];
 }
+
+
+
+
+
+
+
+// Interface cho các Tiện ích (Amenities)
+export interface Amenity {
+    id: number;
+    name: string; // Tên tiện ích, ví dụ: "Wi-Fi tốc độ cao"
+    iconClass: string; // Class icon, ví dụ: "fa-solid fa-wifi"
+}
+
+// Interface cho các Khung giờ bị chặn (Blocked Times) của phòng
+export interface BlockedTime {
+    id: number;
+    startTime: string; // Định dạng ISO 8601, ví dụ: "2025-12-02T00:00:00"
+    endTime: string;   // Định dạng ISO 8601, ví dụ: "2025-12-02T01:30:00"
+    reason: string; // Lý do bị chặn, ví dụ: "Blocked for booking ID: 57"
+}
+
+// Interface cho mỗi Phòng (Room)
+export interface Room {
+    id: number;
+    title: string;
+    description: string;
+    roomType: string; // Ví dụ: "Meeting Room"
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number; // Sức chứa, ví dụ: 12
+    area: number; // Diện tích, ví dụ: 40
+    isActive: boolean;
+    isVerified: boolean;
+    images: any[]; // Mảng này trống trong JSON, giữ là 'any[]' hoặc 'string[]' nếu biết rõ
+    amenities: Amenity[];
+    averageRating: number;
+    reviewCount: number;
+    isAvailable: boolean;
+    blockedTimes: BlockedTime[];
+}
+
+// Interface chính cho chi tiết Coworking Space/Workspace
+export interface WorkspaceDetail {
+    id: number;
+    title: string; // Ví dụ: "Coworking Space Phan Chu Trinh"
+    description: string;
+    imageUrls: string[];
+    hostId: number;
+    hostName: string;
+    hostCompanyName: string;
+    hostContactPhone: string;
+    isHostVerified: boolean;
+    addressLine: string;
+    ward: string; // Phường/Xã
+    state: string; // Tỉnh/Thành phố
+    country: string;
+    latitude: number;
+    longitude: number;
+    workSpaceType: string; // Ví dụ: "Coworking Space"
+    isActive: boolean;
+    isVerified: boolean;
+    rooms: Room[];
+    totalRooms: number;
+    availableRooms: number;
+    minPricePerDay: number;
+    maxPricePerDay: number;
+}
+
+export interface CreateRoomPayload {
+    title: string;
+    description: string;
+    workSpaceRoomTypeId: number;
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number;
+    area: number;
+    imageUrls: string[]; // Các Public IDs/URL đã tải lên từ Cloudinary
+    amenityIds: number[];
+}
+
+// Interface cho dữ liệu thô từ Form (trước khi upload ảnh)
+export interface RawCreateRoomData {
+    title: string;
+    description: string;
+    workSpaceRoomTypeId: number;
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number;
+    area: number;
+    imageFiles: File[]; // Các File object (cần được upload trước)
+    amenityIds: number[];
+}
+
+export interface RoomUpdatePayload {
+    title: string;
+    description: string;
+    workSpaceRoomTypeId: number;
+    pricePerHour: number;
+    pricePerDay: number;
+    pricePerMonth: number;
+    capacity: number;
+    area: number;
+    isActive: boolean; // Trường mới trong payload cập nhật
+    imageUrls?: string[]; // Thêm trường này nếu có thể cập nhật ảnh (dựa trên ảnh POST room)
+    amenityIds?: number[]; // Thêm trường này nếu có thể cập nhật tiện ích
+}
+
+// Interface cho dữ liệu thô từ Form (bao gồm ảnh mới nếu có)
+export interface RawRoomUpdateData extends RoomUpdatePayload {
+    roomId: number;
+    newImageFiles?: File[]; // File ảnh mới (để upload)
+}
+
+// Interface cho Payload cập nhật Workspace (PUT /api/v1/owner/workspaces/{id})
+export interface WorkspaceUpdatePayload {
+    title: string;
+    description: string;
+    street: string;
+    ward: string;
+    state: string;
+    postalCode: string;
+    latitude: number;
+    longitude: number;
+    workSpaceTypeId: number;
+    isActive: boolean; // Trường mới trong payload cập nhật
+    imageUrls: string[]; // Danh sách URL ảnh (sau khi đã upload)
+}
+
+// Interface cho dữ liệu thô từ Form (bao gồm ảnh mới nếu có)
+export interface RawWorkspaceUpdateData extends WorkspaceUpdatePayload {
+    workspaceId: number; // ID được truyền qua Path Parameter
+    newImageFiles?: File[]; // File ảnh mới (để upload)
+}

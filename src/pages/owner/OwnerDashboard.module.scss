@@ -144,9 +144,9 @@ $shadow-base: rgba(0, 0, 0, 0.15);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Shadow sâu và rõ hơn */
     transition: transform 0.3s ease;
     
-    &:hover {
-        transform: translateY(-3px); /* Hiệu ứng nổi */
-    }
+    // &:hover {
+    //     transform: translateY(-3px); /* Hiệu ứng nổi */
+    // }
     
     h3 {
         color: $text-primary;

@@ -44,14 +44,15 @@ const ListingsManagementSection: React.FC = () => {
         setReloadKey(prev => prev + 1); 
     };
 
-    const handleAddRoom = (id: number) => {
-        // Logic chuyển hướng/mở modal thêm phòng
-        toast.info(`Chuyển đến trang thêm phòng cho Workspace ID: ${id}`);
-    };
+    // KHÔNG CẦN DÙNG CÁC HÀM NÀY NỮA, VÌ CHÚNG ĐƯỢC XỬ LÝ TRONG OwnerWorkspacesTable
+    // const handleAddRoom = (id: number) => {
+    //     // Logic chuyển hướng/mở modal thêm phòng
+    //     toast.info(`Chuyển đến trang thêm phòng cho Workspace ID: ${id}`);
+    // };
 
-    const handleViewDetails = (id: number) => {
-        toast.info(`Chuyển đến trang chi tiết cho Workspace ID: ${id}`);
-    };
+    // const handleViewDetails = (id: number) => {
+    //     toast.info(`Chuyển đến trang chi tiết cho Workspace ID: ${id}`);
+    // };
 
 
     if (isCreating) {
@@ -79,8 +80,9 @@ const ListingsManagementSection: React.FC = () => {
 
             <OwnerWorkspacesTable 
                 key={reloadKey} 
-                onAddRoom={handleAddRoom}
-                onViewDetails={handleViewDetails}
+                // ĐÃ LOẠI BỎ props onAddRoom và onViewDetails để sửa lỗi TS2322
+                // onAddRoom={handleAddRoom}
+                // onViewDetails={handleViewDetails}
             />
         </div>
     );
@@ -211,7 +213,7 @@ const OwnerDashboard: React.FC = () => {
             case OwnerPage.Chat:
                 return (
                 <div className={cx('content-section')}>
-                    <h2 className={cx('section-title')}>QUẢN LÝ  chat</h2>
+                    <h2 className={cx('section-title')}>QUẢN LÝ  chat</h2>
                     {/* Thay thế placeholder bằng component mới */}
                 </div>
                 );

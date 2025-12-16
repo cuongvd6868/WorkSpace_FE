@@ -1,6 +1,6 @@
 import axios from "axios"
 import { DRINK_PRESET, WORKSPACE_PHOTOS_PRESET} from "~/config/cloudinaryConfig";
-import { DrinkServiceCreateRequest, DrinkServiceItem, DrinkServiceUpdateRequest, NotificationCreateRequest, NotificationItem, NotificationUpdateRequest, OwnerStats, PromotionOwnerView, WorkspaceDrinkServices } from "~/types/Owner";
+import { CreateRoomPayload, DrinkServiceCreateRequest, DrinkServiceItem, DrinkServiceUpdateRequest, NotificationCreateRequest, NotificationItem, NotificationUpdateRequest, OwnerStats, PromotionOwnerView, RawCreateRoomData, RawRoomUpdateData, RawWorkspaceUpdateData, RoomUpdatePayload, WorkspaceDrinkServices, WorkspaceUpdatePayload } from "~/types/Owner";
 import { API_BASE_URL } from "~/utils/API"
 import { handleError } from "~/utils/handleError"
 import { uploadToCloudinary } from "./CloudinaryService";
@@ -64,6 +64,8 @@ export interface RawWorkspaceData {
 const API_WORKSPACE_URL = `${API_BASE_URL}v1/owner/workspaces`;
 const API_NOTIFICATION_URL = `${API_BASE_URL}v1/notification`; 
 const API_DRINK_SERVICE_URL = `${API_BASE_URL}v1/owner/drink-services`;
+const API_WORKSPACE_ROOM_URL = `${API_BASE_URL}v1/owner/workspaces`;
+const API_OWNER_ROOMS_URL = `${API_BASE_URL}v1/owner/rooms`;
 
 export const handleCreateWorkspace = async (rawData: RawWorkspaceData, token: string): Promise<any> => {
     
@@ -634,5 +636,216 @@ export const deleteDrinkService = async (
     } catch (error) {
         handleError(error);
         throw error;
+    }
+};
+
+export const getWorkspaceDetailOwnerView = async (workspaceId: number): Promise<any> => {
+    try {
+        const response = await axios.get(`${API_WORKSPACE_URL}/${workspaceId}/detail`); // Giả định endpoint chi tiết
+        
+        const workspaceDetail = response.data; 
+        console.log(`Lấy chi tiết Workspace ID ${workspaceId} thành công.`);
+        return workspaceDetail;
+
+    } catch (error) {
+        handleError(error); 
+        if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
+            throw new Error(`Workspace với ID ${workspaceId} không được tìm thấy.`);
+        }
+        throw error;
+    }
+}
+
+export const handleCreateNewRoom = async (
+    workspaceId: number,
+    rawRoomData: RawCreateRoomData,
+    token: string
+): Promise<any> => {
+    
+    console.log(`Bắt đầu tải ảnh cho phòng mới trong Workspace ID: ${workspaceId}`);
+    
+    // 1. Tải ảnh của Room lên Cloudinary
+    const roomImageUploadPromises = rawRoomData.imageFiles.map(file => 
+        uploadToCloudinary(file, WORKSPACE_PHOTOS_PRESET)
+    );
+    
+    let roomImageUrls: string[] = [];
+    try {
+        roomImageUrls = await Promise.all(roomImageUploadPromises);
+        console.log("Tải ảnh phòng hoàn tất.");
+
+    } catch (error) {
+        console.error("LỖI: Một hoặc nhiều ảnh phòng không thể tải lên Cloudinary.", error);
+        throw new Error("Không thể tạo phòng: Lỗi tải ảnh lên dịch vụ lưu trữ.");
+    }
+
+    // 2. Xây dựng Payload cuối cùng
+    const finalPayload: CreateRoomPayload = {
+        title: rawRoomData.title,
+        description: rawRoomData.description,
+        workSpaceRoomTypeId: rawRoomData.workSpaceRoomTypeId,
+        pricePerHour: rawRoomData.pricePerHour,
+        pricePerDay: rawRoomData.pricePerDay,
+        pricePerMonth: rawRoomData.pricePerMonth,
+        capacity: rawRoomData.capacity,
+        area: rawRoomData.area,
+        imageUrls: roomImageUrls, // Public IDs đã tải lên
+        amenityIds: rawRoomData.amenityIds,
+    };
+
+    console.log("Gửi Payload JSON tạo Room tới Backend:", finalPayload);
+
+    // 3. Gửi Payload tới Backend
+    try {
+        const response = await axios.post(
+            `${API_WORKSPACE_ROOM_URL}/${workspaceId}/rooms`, // POST /v1/owner/workspaces/{workspaceId}/rooms
+            finalPayload, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            }
+        ); 
+        
+        const result = response.data;
+        console.log("Phòng đã được tạo thành công:", result);
+        return result; 
+        
+    } catch (e) {
+        handleError(e); 
+        if (axios.isAxiosError(e) && e.response) {
+            throw new Error(`Tạo Room thất bại. Lỗi Server: ${e.response.status} - ${e.response.data.message || 'Lỗi không xác định.'}`);
+        } else {
+            throw new Error("Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.");
+        }
+    }
+};
+
+export const handleUpdateRoom = async (
+    rawUpdateData: RawRoomUpdateData,
+    token: string
+): Promise<any> => {
+    
+    const { roomId, newImageFiles, ...dataToUpdate } = rawUpdateData;
+    let finalImageUrls = dataToUpdate.imageUrls || []; // Bắt đầu bằng URL hiện tại
+
+    // 1. Tải ảnh mới (nếu có)
+    if (newImageFiles && newImageFiles.length > 0) {
+        console.log(`Bắt đầu tải ${newImageFiles.length} ảnh mới cho Room ID: ${roomId}`);
+        
+        const uploadPromises = newImageFiles.map(file => 
+            uploadToCloudinary(file, WORKSPACE_PHOTOS_PRESET)
+        );
+        
+        try {
+            const newUrls = await Promise.all(uploadPromises);
+            // Quyết định logic: Thay thế hoàn toàn hay thêm vào URL cũ?
+            // Giả định: Thay thế hoàn toàn danh sách ảnh bằng các ảnh mới + ảnh cũ không bị xóa
+            finalImageUrls = [...finalImageUrls, ...newUrls]; 
+            console.log("Tải ảnh mới Room hoàn tất.");
+
+        } catch (error) {
+            console.error(`LỖI: Ảnh mới của Room ID ${roomId} không thể tải lên Cloudinary.`, error);
+            throw new Error("Không thể cập nhật Room: Lỗi tải ảnh lên dịch vụ lưu trữ.");
+        }
+    }
+    
+    // 2. Xây dựng Payload cuối cùng
+    const finalPayload: RoomUpdatePayload = {
+        ...dataToUpdate,
+        imageUrls: finalImageUrls, // Danh sách URL ảnh đã cập nhật
+        // amenityIds: dataToUpdate.amenityIds, // Giữ nguyên các trường khác
+    };
+
+    console.log(`Gửi Payload cập nhật Room ID ${roomId} tới Backend:`, finalPayload);
+
+    // 3. Gửi Payload tới Backend
+    try {
+        const response = await axios.put(
+            `${API_OWNER_ROOMS_URL}/${roomId}`, // PUT /v1/owner/rooms/{roomId}
+            finalPayload, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            }
+        ); 
+        
+        const result = response.data;
+        console.log(`Room ID ${roomId} đã được cập nhật thành công:`, result);
+        return result; 
+        
+    } catch (e) {
+        handleError(e); 
+        if (axios.isAxiosError(e) && e.response) {
+            throw new Error(`Cập nhật Room thất bại. Lỗi Server: ${e.response.status} - ${e.response.data.message || 'Lỗi không xác định.'}`);
+        } else {
+            throw new Error("Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.");
+        }
+    }
+};
+
+export const handleUpdateWorkspace = async (
+    rawUpdateData: RawWorkspaceUpdateData,
+    token: string
+): Promise<any> => {
+    
+    const { workspaceId, newImageFiles, ...dataToUpdate } = rawUpdateData;
+    let finalImageUrls = dataToUpdate.imageUrls || []; // Bắt đầu bằng URL hiện tại
+
+    // 1. Tải ảnh mới (nếu có)
+    if (newImageFiles && newImageFiles.length > 0) {
+        console.log(`Bắt đầu tải ${newImageFiles.length} ảnh mới cho Workspace ID: ${workspaceId}`);
+        
+        const uploadPromises = newImageFiles.map(file => 
+            uploadToCloudinary(file, WORKSPACE_PHOTOS_PRESET)
+        );
+        
+        try {
+            const newUrls = await Promise.all(uploadPromises);
+            // Giả định: Thay thế hoàn toàn danh sách ảnh bằng các ảnh mới + ảnh cũ không bị xóa
+            finalImageUrls = [...finalImageUrls, ...newUrls]; 
+            console.log("Tải ảnh mới Workspace hoàn tất.");
+
+        } catch (error) {
+            console.error(`LỖI: Ảnh mới của Workspace ID ${workspaceId} không thể tải lên Cloudinary.`, error);
+            throw new Error("Không thể cập nhật Workspace: Lỗi tải ảnh lên dịch vụ lưu trữ.");
+        }
+    }
+    
+    // 2. Xây dựng Payload cuối cùng
+    const finalPayload: WorkspaceUpdatePayload = {
+        ...dataToUpdate,
+        imageUrls: finalImageUrls, // Danh sách URL ảnh đã cập nhật
+    };
+
+    console.log(`Gửi Payload cập nhật Workspace ID ${workspaceId} tới Backend:`, finalPayload);
+
+    // 3. Gửi Payload tới Backend
+    try {
+        const response = await axios.put(
+            `${API_WORKSPACE_URL}/${workspaceId}`, // PUT /v1/owner/workspaces/{id}
+            finalPayload, 
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                }
+            }
+        ); 
+        
+        const result = response.data;
+        console.log(`Workspace ID ${workspaceId} đã được cập nhật thành công:`, result);
+        return result; 
+        
+    } catch (e) {
+        handleError(e); 
+        if (axios.isAxiosError(e) && e.response) {
+            throw new Error(`Cập nhật Workspace thất bại. Lỗi Server: ${e.response.status} - ${e.response.data.message || 'Lỗi không xác định.'}`);
+        } else {
+            throw new Error("Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.");
+        }
     }
 };
