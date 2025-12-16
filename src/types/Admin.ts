@@ -43,3 +43,23 @@ export interface PromotionAdminView {
   remainingUsage: number;
   isActive: boolean;
 }
+
+export interface Notification {
+  id: number;
+  title: string;
+  content: string;
+  senderId: number;
+  senderRole: string; 
+  createUtc: string; 
+}
+
+export interface CreateNotificationRequest {
+  title: string;
+  content: string;
+}
+
+export interface UpdateNotificationRequest {
+  id: number;
+  title: string;
+  content: string;
+}

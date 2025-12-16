@@ -26,6 +26,10 @@ $shadow-base: rgba(0, 0, 0, 0.5);
     height: 100%;
     z-index: 10;
 
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0; // Loại bỏ padding dưới cùng để footer chạm đáy
+
     .logo {
         font-size: 1.6rem;
         font-weight: 600;
@@ -34,6 +38,12 @@ $shadow-base: rgba(0, 0, 0, 0.5);
         color: $color-accent; 
         text-transform: uppercase;
         letter-spacing: 1px;
+    }
+
+    .nav-menu-container {
+        flex-grow: 1; // Chiếm hết không gian còn lại
+        overflow-y: auto; // Cho phép cuộn nếu danh sách quá dài
+        padding: 0 0 10px 0; // Padding dưới để cách footer một chút
     }
 
     .nav-list {
@@ -49,6 +59,7 @@ $shadow-base: rgba(0, 0, 0, 0.5);
             transition: all 0.2s ease;
             font-size: 1rem;
             color: $text-secondary;
+            font-size: 1.3rem;
             
 
             svg { 
@@ -192,4 +203,46 @@ $shadow-base: rgba(0, 0, 0, 0.5);
 .logo-icon {
     color: #3498DB;
     font-size: 2rem;
+}
+
+
+.sidebar-footer {
+    border-top: 1px solid $color-border;
+    flex-shrink: 0; // Đảm bảo Footer không co lại
+    padding: 10px 0;
+    
+    // Styling cho nút Đăng Xuất (sử dụng lại .nav-item và thêm .logout-item)
+    .logout-item {
+        color: #E74C3C; // Màu đỏ đậm hơn cho hành động logout
+        font-weight: 600;
+        // Kế thừa style nav-item
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1.3rem; 
+
+        svg { 
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        &:hover {
+            background-color: $bg-sidebar-hover; 
+            color: #FFC3C0; // Màu đỏ sáng khi hover
+        }
+
+        .icon {
+            font-size: 1.6rem;
+        }
+
+        span {
+            font-size: 1.6rem;
+        }
+    }
+}
+
+.user-greeting {
+    color: #fff;
 }
