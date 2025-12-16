@@ -105,6 +105,7 @@ const LoginPage: React.FC = () => {
                                 />
                             </div>
                             <input type="submit" value="Đăng nhập" className={cx('btn', 'solid')} />
+                            
                             <p className={cx('social-text')}>Hoặc đăng nhập với</p>
                             <div className={cx('social-media')}>
                                 <button 
@@ -120,6 +121,7 @@ const LoginPage: React.FC = () => {
                                     Đăng nhập với Google
                                 </button>
                             </div>
+                            <p className={cx('forget-password')}>Quên mật khẩu</p>
 
                         </form>
 

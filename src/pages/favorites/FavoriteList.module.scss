@@ -1,0 +1,259 @@
+/* FavoriteList.module.scss */
+
+// Biến màu cơ bản
+$primary-color: #007bff; 
+$secondary-color: #f8f9fa; 
+$text-color: #343a40; 
+$light-text-color: #6c757d; 
+$border-color: #dee2e6;
+$shadow-list: 0 2px 8px rgba(0, 0, 0, 0.05);
+$shadow-hover: 0 4px 15px rgba(0, 0, 0, 0.1);
+$transition-speed: 0.3s;
+
+// --- 1. General Wrapper and Header ---
+.wrapper {
+    max-width: 68%;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid $primary-color;
+    
+    .header-icon {
+        color: $primary-color;
+        margin-right: 10px;
+        font-size: 1.5em;
+    }
+
+    .header-title {
+        font-size: 2.2rem;
+        color: $text-color;
+        font-weight: 700;
+        display: inline-block;
+        margin: 0;
+    }
+
+    .header-subtitle {
+        color: $light-text-color;
+        margin-top: 5px;
+        font-size: 1rem;
+    }
+}
+
+// --- 2. List Container and Row Layout (Item trên 1 hàng) ---
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.favorite-row {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid $border-color;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: $shadow-list;
+    transition: all $transition-speed;
+
+    &:hover {
+        box-shadow: $shadow-hover;
+        background-color: $secondary-color;
+    }
+
+    // --- Image Section (20%) ---
+    .row-image-link {
+        flex-shrink: 0; 
+        width: 150px;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-right: 20px;
+
+        .row-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .favorite-row:hover & .row-image {
+            transform: scale(1.05);
+        }
+    }
+
+
+    // --- Content Section (55%) ---
+    .row-content {
+        flex-grow: 1;
+        min-width: 0; 
+
+        .row-title {
+            font-size: 1.25rem;
+            margin: 0 0 8px 0;
+            
+            a {
+                color: $primary-color;
+                text-decoration: none;
+                transition: color $transition-speed;
+                font-weight: 600;
+
+                &:hover {
+                    color: darken($primary-color, 10%);
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        .row-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            
+            .meta-item {
+                color: $light-text-color;
+                display: flex;
+                align-items: center;
+
+                .meta-icon {
+                    color: $primary-color;
+                    margin-right: 6px;
+                }
+
+                &.price {
+                    color: #28a745; 
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .row-description {
+            color: $light-text-color;
+            font-size: 0.9rem;
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical;
+        }
+    }
+
+
+    // --- Actions Section (25%) ---
+    .row-actions {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 150px;
+
+        .detail-btn, .remove-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color $transition-speed;
+            width: 100%;
+            text-decoration: none;
+
+            svg {
+                margin-right: 5px;
+            }
+        }
+
+        .detail-btn {
+            background-color: $primary-color;
+            color: white;
+            border: 1px solid $primary-color;
+
+            &:hover {
+                background-color: darken($primary-color, 5%);
+            }
+        }
+
+        .remove-btn {
+            background-color: #dc3545; 
+            color: white;
+            border: 1px solid #dc3545;
+
+            &:hover {
+                background-color: #c82333;
+            }
+        }
+    }
+}
+
+
+// --- 3. State Messages (Loading/Error/Empty) ---
+.loading-wrapper, .error-message, .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: $secondary-color;
+    margin-top: 40px;
+}
+
+// ... (Các styles cho spinner, error, empty state) ...
+
+// --- 4. Responsive Adjustments ---
+@media (max-width: 992px) {
+    .favorite-row {
+        flex-wrap: wrap; 
+        
+        .row-image-link {
+            width: 100px;
+            height: 70px;
+            margin-right: 15px;
+        }
+
+        .row-actions {
+            flex-direction: row; 
+            margin-top: 15px;
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .favorite-row {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+
+        .row-image-link {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+
+        .row-content {
+            margin-bottom: 15px;
+        }
+
+        .row-meta {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .row-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}

@@ -5,6 +5,7 @@ import { Recommendation } from '~/types/Chat';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap, faMapMarker, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { CLOUD_NAME } from "~/config/cloudinaryConfig";
+import { Link } from "react-router-dom";
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -59,7 +60,9 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
               <FontAwesomeIcon icon={faUser}  className={cx('host-icon')}/>
               <p className={cx('host-name')}>{hostName}</p>
             </div>
-            <button className={cx('see-more')}>Xem chi tiết</button>
+            <Link to={`/workspace/${workSpaceId}`}>
+              <button className={cx('see-more')}>Xem chi tiết</button>
+            </Link>
           </div>
         </div>
       </div>

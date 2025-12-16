@@ -29,3 +29,17 @@ export interface OwnerRegistrationsView {
     userEmail: string;
     avatar: string;
 }
+
+export interface PromotionAdminView {
+  id: number;
+  code: string;
+  description: string;
+  discountValue: number;
+  discountType: string;
+  startDate: string; 
+  endDate: string;   
+  usageLimit: number;
+  usedCount: number;
+  remainingUsage: number;
+  isActive: boolean;
+}

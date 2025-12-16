@@ -1,6 +1,6 @@
 import axios from "axios"
 import { CLOUDINARY_UPLOAD_URL, WORKSPACE_PHOTOS_PRESET } from "~/config/cloudinaryConfig";
-import { OwnerStats } from "~/types/Owner";
+import { OwnerStats, PromotionOwnerView } from "~/types/Owner";
 import { API_BASE_URL } from "~/utils/API"
 import { handleError } from "~/utils/handleError"
 import { uploadToCloudinary } from "./CloudinaryService";
@@ -312,4 +312,50 @@ export const getOwnerStats = async (): Promise<OwnerStats> => {
     console.error('Error fetching owner stats:', error);
     throw new Error('Failed to fetch owner statistics.'); 
   }
+};
+
+export const getAllOwnerPromotions = async (): Promise<PromotionOwnerView> => {
+  try {
+    const url = `${API_BASE_URL}v1/promotions/owner/all`;
+    const response = await axios.get<PromotionOwnerView>(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching owner promotions:', error);
+    throw new Error('Failed to fetch owner promotions.'); 
+  }
+}
+
+export const createPromotionsOwner = async (promotionData: any) => { 
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}v1/promotions/owner/generate`,
+            promotionData, 
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const handleActivePromotion = async (promotionId: number) => {
+    try {
+        const response = await axios.put(
+            `${API_BASE_URL}v1/promotions/owner/activate/${promotionId}`
+        );
+        return response.data; 
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
 };

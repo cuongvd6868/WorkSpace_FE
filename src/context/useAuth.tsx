@@ -21,7 +21,6 @@ const UserContext = createContext<UserContextType>({} as UserContextType);
 type Props = {
     children: React.ReactNode;
 };
-
 export const UserProvider: React.FC<Props> = ({ children }) => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>(null);
