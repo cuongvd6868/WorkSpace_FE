@@ -15,6 +15,7 @@ import OwnerBookingsSection from "~/components/OwnerComponents/OwnerBookingsSect
 import { CreateWorkspaceForm } from "~/components/OwnerComponents/CreateWorkspaceForm/CreateWorkspaceForm";
 import OwnerWorkspacesTable from "~/components/OwnerComponents/OwnerWorkspacesTable/OwnerWorkspacesTable";
 import OwnerPromotionsSection from "~/components/OwnerComponents/OwnerPromotionsSection/OwnerPromotionsSection";
+import NotificationManagementSection from "~/components/OwnerComponents/NotificationManagementSection/NotificationManagementSection";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -202,7 +203,7 @@ const OwnerDashboard: React.FC = () => {
                 return (
                 <div className={cx('content-section')}>
                     <h2 className={cx('section-title')}> QUẢN LÝ THÔNG BÁO</h2>
-                    {/* Thay thế placeholder bằng component mới */}
+                    <NotificationManagementSection/>
                 </div>
                 );
             case OwnerPage.Chat:
