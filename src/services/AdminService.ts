@@ -4,8 +4,13 @@ import { handleError } from "~/utils/handleError";
 import { 
     Notification, 
     CreateNotificationRequest, 
-    UpdateNotificationRequest 
+    UpdateNotificationRequest, 
+    Promotion,
+    CreatePromotionRequest,
+    ActivatePromotionRequest,
+    Booking
 } from "~/types/Admin";
+import { getAuthHeaders } from "./AuthService";
 
 export const getAdminDashboard = async () => {
     try {
@@ -129,6 +134,66 @@ export const deleteNotification = async (id: number): Promise<any> => {
     try {
         const response = await axios.delete(
             `${API_BASE_URL}v1/notification/delete/${id}`
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const getAllPromotions = async (): Promise<Promotion[]> => {
+    try {
+        const response = await axios.get<Promotion[]>(
+            `${API_BASE_URL}v1/promotions/admin/all`,
+            getAuthHeaders() 
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const createPromotion = async (data: CreatePromotionRequest): Promise<any> => {
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}v1/promotions/admin/generate`,
+            data,
+            getAuthHeaders() 
+        );
+        return response.data; 
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+export const handleActivatePromotion = async (
+    id: number, 
+    requestBody?: ActivatePromotionRequest
+): Promise<any> => {
+    try {
+        const config = getAuthHeaders();
+        const dataToSend = {}; 
+        
+        const response = await axios.put(
+            `${API_BASE_URL}v1/promotions/admin/activate/${id}`,
+            dataToSend, 
+            config 
+        );
+        
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const getAllBookings = async (): Promise<Booking[]> => {
+    try {
+        const response = await axios.get<Booking[]>(
+            `${API_BASE_URL}v1/admin/admin/All-bookings`,
+            getAuthHeaders() // Thêm headers xác thực
         );
         return response.data;
     } catch (error) {

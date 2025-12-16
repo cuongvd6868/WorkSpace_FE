@@ -15,6 +15,8 @@ import RevenueManagementSection from "~/components/AdminComponents/RevenueManage
 import AccountManagementSection from "~/components/AdminComponents/AccountManagementSection/AccountManagementSection";
 import OwnerRegistrationCensorSection from "~/components/AdminComponents/OwnerRegistrationCensorSection/OwnerRegistrationCensorSection";
 import NotificationManagementSection from "~/components/AdminComponents/NotificationManagementSection/NotificationManagementSection";
+import PromotionManagementSection from "~/components/AdminComponents/PromotionManagementSection/PromotionManagementSection";
+import BookingManagementSection from "~/components/AdminComponents/BookingManagementSection/BookingManagementSection";
 
 const cx = classNames.bind(styles);
 
@@ -134,9 +136,17 @@ const AdminDasdboard: React.FC = () => {
                     </div>
                 );
             case AdminPage.Promotions:
-                return <h2 className={cx('section-title')}>🏷️ QUẢN LÝ PROMOTIONS</h2>;
+                return(
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>🏷️ QUẢN LÝ PROMOTIONS</h2>
+                        <PromotionManagementSection />
+                    </div>)
             case AdminPage.Bookings:
-                return <h2 className={cx('section-title')}>🗓️ XEM BOOKING</h2>;
+                return(
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>🗓️ XEM BOOKING</h2>
+                        <BookingManagementSection />
+                    </div>)
             default:
                 return <div>Chào mừng đến với Admin Dashboard.</div>;
         }

@@ -1,0 +1,256 @@
+/* --- Biến (Variables) --- */
+$dark-bg: #1e1e2d; 
+$card-bg: #27293d; 
+$primary-color: #007bff; 
+$danger-color: #dc3545; 
+$success-color: #28a745; 
+$warning-color: #ffc107;
+$text-light: #f8f9fa; 
+$text-secondary: #adb5bd; 
+$border-dark: #343a40; 
+$table-header-bg: #343a40; 
+$shadow-dark: 0 0.5rem 1rem rgba(0, 0, 0, 0.4); 
+
+.promotion-section {
+    padding: 20px;
+    background-color: $card-bg; 
+    color: $text-light; 
+    border-radius: 8px;
+    box-shadow: $shadow-dark;
+    min-height: 700px;
+}
+
+/* --- Phần Header & Nút Tạo Mới --- */
+.header-control {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.create-btn {
+    background-color: $primary-color; // Dùng màu Primary cho nút Tạo mới
+    color: $text-light;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: lighten($primary-color, 5%);
+    }
+
+    .fa-plus {
+        margin-right: 8px;
+    }
+}
+
+
+/* --- Bảng Danh sách Promotion --- */
+.table-container {
+    overflow-x: auto;
+}
+
+.promotion-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.95em;
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid $border-dark; 
+    }
+
+    th {
+        background-color: $table-header-bg; 
+        font-weight: bold;
+        color: $text-light;
+    }
+
+    tbody tr:hover {
+        background-color: lighten($card-bg, 3%); 
+    }
+    
+    td {
+        color: $text-light;
+    }
+    
+    .promo-code {
+        font-weight: bold;
+        color: $warning-color; // Màu vàng để làm nổi bật mã
+    }
+}
+
+/* --- Trạng thái --- */
+.status {
+    font-weight: 600;
+    
+    &.active {
+        color: $success-color;
+    }
+    &.inactive {
+        color: $danger-color;
+    }
+}
+
+/* --- Nút Hành động --- */
+.action-btns {
+    width: 120px; 
+    
+    button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px 8px;
+        margin-right: 5px;
+        border-radius: 4px;
+        font-size: 1.2em; // Biểu tượng to hơn cho nút toggle
+        transition: all 0.2s;
+        
+        &:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    }
+    
+    .toggle-btn {
+        color: $text-secondary; // Màu mặc định
+        &.active {
+            color: $success-color;
+        }
+        &:hover:not(:disabled) {
+            background-color: $border-dark;
+        }
+    }
+
+    .delete-btn {
+        color: $danger-color;
+        &:hover:not(:disabled) {
+            background-color: $border-dark;
+        }
+    }
+}
+
+
+/* --- Form Overlay (Tạo Promotion) --- */
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s;
+
+    &.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.promotion-form {
+    background: $dark-bg; 
+    color: $text-light;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: $shadow-dark;
+    width: 90%;
+    max-width: 700px; // Form rộng hơn vì có nhiều trường
+    transform: translateY(-20px);
+    transition: transform 0.3s;
+    border: 1px solid $border-dark; 
+    
+    .form-overlay.visible & {
+        transform: translateY(0);
+    }
+}
+
+.form-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: $text-light;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 10px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.half-width {
+    flex: 1;
+}
+
+.form-group {
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: $text-secondary;
+    }
+    
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid $border-dark; 
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+        background-color: $table-header-bg; 
+        color: $text-light;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+    
+    select {
+        height: 40px;
+        // Fix background arrow cho select trong dark mode
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23{$text-light}%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.7em top 50%;
+        background-size: 0.65em auto;
+        padding-right: 1.5em;
+    }
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    
+    button {
+        // Styling tương tự như form Notification
+    }
+
+    button[type="submit"] {
+        background-color: $primary-color;
+        // ...
+    }
+    
+    .cancel-btn {
+        background-color: #6c757d;
+        // ...
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
