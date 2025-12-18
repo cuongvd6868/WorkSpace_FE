@@ -16,6 +16,9 @@ import { useSearch } from '~/context/SearchContext';
 import { toast } from "react-toastify";
 import { WorkSpaceQuickSearch } from "~/types/WorkSpaces";
 import { GetWorkSpaceQuickSearch } from "~/services/WorkSpaceService";
+import { chatService } from "~/services/ChatService";
+import { Loader } from "lucide-react";
+import ChatWidget from "../ChatComponent/ChatWidget";
 
 const cx = classNames.bind(styles);
 
@@ -38,6 +41,31 @@ const Navbar: React.FC = () => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isParticipantsPickerOpen, setIsParticipantsPickerOpen] = useState(false);
 
+  // --- State cho Chat History trên Navbar ---
+    const [chatSessions, setChatSessions] = useState<any[]>([]);
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [selectedSession, setSelectedSession] = useState<{sid: string, name: string} | null>(null);
+    const [loadingSessions, setLoadingSessions] = useState(false);
+
+    // Hàm lấy danh sách khi hover hoặc định kỳ
+    const fetchChatHistory = async () => {
+        if (!isLoggedIn()) return;
+        try {
+            setLoadingSessions(true);
+            const data = await chatService.getMySessions();
+            setChatSessions(data || []);
+        } catch (error) {
+            console.error("Lỗi tải lịch sử chat:", error);
+        } finally {
+            setLoadingSessions(false);
+        }
+    };
+
+    const handleOpenChatFromHistory = (sid: string, workspaceName: string) => {
+        setSelectedSession({ sid, name: workspaceName });
+        setIsChatOpen(true);
+    };
+
   const locationRouter = useLocation();
   const isHomePage = locationRouter.pathname === '/';
   const isDashboardPage = 
@@ -49,6 +77,14 @@ const Navbar: React.FC = () => {
   const handleHideResult = () => {
     setShowWardResult(false);
   }
+
+  useEffect(() => {
+    if (!user) {
+      setChatSessions([]); // Xóa sạch danh sách tin nhắn trong state khi không có user
+      setSelectedSession(null);
+      setIsChatOpen(false);
+    }
+  }, [user]);
 
   // search nhanh
   const [quickSearchValue, setQuickSearchValue] = useState('');
@@ -178,7 +214,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/'); 
+    window.location.href = '/';
     toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
   };
 
@@ -206,7 +242,49 @@ const Navbar: React.FC = () => {
                 <p className={cx('flag_payment')}>VND</p>
                 <img src={flagImg} alt="" className={cx('flag')}/>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/support', 'Vui lòng đăng nhập để yêu cầu hỗ trợ')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faQuestionCircle} className={cx('help-icon')} /></div>
-                <div onClick={(e) => handleProtectedLinkClick(e, '/messages', 'Vui lòng đăng nhập để truy cập tin nhắn')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} /></div>
+                <HeadlessTippy
+                key={user?.userName || 'guest'}
+                                interactive
+                                placement="bottom-end"
+                                offset={[0, 10]}
+                                delay={[200, 0]} // Hiện sau 200ms hover
+                                onTrigger={fetchChatHistory} // Tự động load khi hover vào
+                                render={attrs => (
+                                    <div className={cx('chat-history-popover')} tabIndex={-1} {...attrs}>
+                                        <Popper>
+                                            <div className={cx('history-header')}>Tin nhắn gần đây</div>
+                                            <div className={cx('history-list')}>
+                                                {loadingSessions ? (
+                                                    <div className={cx('history-loading')}><Loader size={16} className={cx('spin')} /> Đang tải...</div>
+                                                ) : chatSessions.length > 0 ? (
+                                                    chatSessions.map((session) => (
+                                                        <div 
+                                                            key={session.sessionId} 
+                                                            className={cx('history-item')}
+                                                            onClick={() => handleOpenChatFromHistory(session.sessionId, session.workspaceName)}
+                                                        >
+                                                            <div className={cx('item-avatar')}>
+                                                                <FontAwesomeIcon icon={faMessage} />
+                                                            </div>
+                                                            <div className={cx('item-info')}>
+                                                                <p className={cx('item-name')}>{session.workspaceName}</p>
+                                                                <p className={cx('item-owner')}>Hỗ trợ: {session.assignedOwnerName || 'Chưa có'}</p>
+                                                            </div>
+                                                            {session.isActive && <span className={cx('dot')}></span>}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className={cx('history-empty')}>Chưa có cuộc hội thoại nào</div>
+                                                )}
+                                            </div>
+                                        </Popper>
+                                    </div>
+                                )}
+                            >
+                                <div className={cx('top-nav-item_i')}>
+                                    <FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} />
+                                </div>
+                            </HeadlessTippy>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
                 <div onClick={(e) => handleProtectedLinkClick(e, '/booking-list', 'Vui lòng đăng nhập để truy cập danh sách đặt chỗ')} className={cx('top-nav-item')}>Danh sách đặt chỗ</div>  
                 <div className={cx('right-section_vector')}>|</div>
@@ -403,6 +481,16 @@ const Navbar: React.FC = () => {
         onSelect={handleParticipantsSelect}
         initialParticipants={searchState.participants}
       />
+<ChatWidget
+    isOpen={isChatOpen}
+    externalSessionId={selectedSession?.sid} 
+    hostName={selectedSession?.name || "Hỗ trợ"} 
+    workspaceId={0} 
+    onClose={() => {
+        setIsChatOpen(false);
+        setSelectedSession(null); 
+    }}
+/>
     </>
   );
 };

@@ -27,10 +27,8 @@
     font-family: 'Inter', 'Segoe UI', sans-serif;
     color: var(--text-color);
     min-height: 100vh;
-}
 
-/* Base style cho các Section */
-section {
+    section {
     background: white;
     padding: 30px;
     border-radius: var(--radius-soft);
@@ -42,6 +40,10 @@ section {
         box-shadow: var(--shadow-medium);
     }
 }
+}
+
+/* Base style cho các Section */
+
 
 .section-heading {
     display: flex;
