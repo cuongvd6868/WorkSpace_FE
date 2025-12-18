@@ -7,11 +7,14 @@ import NavbarLogin from '~/components/NavbarLogin/NavbarLogin';
 import logImg from '~/assets/img/login/log.svg';
 import resImg from '~/assets/img/login/register.svg';
 import { useGoogleLogin } from '@react-oauth/google';
+// 1. Import registerAPI để gọi trực tiếp thay vì qua useAuth
+import { registerAPI } from '~/services/AuthService'; 
 
 const cx = classNames.bind(styles);
 
 const LoginPage: React.FC = () => {
-    const { loginUser, registerUser, googleLogin } = useAuth();
+    // 2. Bỏ registerUser khỏi useAuth vì chúng ta sẽ tự xử lý
+    const { loginUser, googleLogin } = useAuth();
     const [isSignUpMode, setIsSignUpMode] = useState(false);
 
     // State for login form
@@ -28,11 +31,7 @@ const LoginPage: React.FC = () => {
     const googleAuth = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                // Sử dụng authorization code flow để lấy id_token
                 console.log('Token response:', tokenResponse);
-                
-                // Với authorization code flow, chúng ta cần gửi code đến backend
-                // Backend sẽ trao đổi code lấy id_token
                 if (tokenResponse.code) {
                     await googleLogin(tokenResponse.code);
                 } else {
@@ -47,7 +46,7 @@ const LoginPage: React.FC = () => {
             console.error('Google Login Failed:', errorResponse);
             toast.error("Đăng nhập Google thất bại.");
         },
-        flow: 'auth-code', // Sử dụng authorization code flow
+        flow: 'auth-code',
         scope: 'openid profile email',
     });
 
@@ -61,9 +60,11 @@ const LoginPage: React.FC = () => {
         await loginUser(loginEmail, loginPassword);
     };
 
-    // Handle register form submission
+    // 3. Sửa lại hàm xử lý Đăng Ký
     const handleRegisterSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Validate input
         if (!registerUsername || !registerEmail || !registerPassword || !registerPasswordConfirm) {
             toast.error("Vui lòng điền đầy đủ tất cả các trường.");
             return;
@@ -72,7 +73,31 @@ const LoginPage: React.FC = () => {
             toast.error("Mật khẩu xác nhận không khớp.");
             return;
         }
-        await registerUser(registerEmail, registerUsername, registerPassword, registerPasswordConfirm);
+
+        try {
+            // Gọi API đăng ký trực tiếp
+            const res = await registerAPI(registerEmail, registerUsername, registerPassword, registerPasswordConfirm);
+            
+            // Kiểm tra kết quả (thường backend trả về 200 OK)
+            if (res && res.status === 200) {
+                // Hiện thông báo thành công và nhắc check mail
+                toast.success("Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.", {
+                    autoClose: 5000 // Hiện lâu chút cho user đọc
+                });
+
+                // Chuyển giao diện về form Đăng Nhập
+                setIsSignUpMode(false);
+
+                // Reset form đăng ký
+                setRegisterUsername('');
+                setRegisterEmail('');
+                setRegisterPassword('');
+                setRegisterPasswordConfirm('');
+            }
+        } catch (error) {
+            // Lỗi đã được xử lý bên trong registerAPI (handleError) hoặc hiển thị log tại đây
+            console.error("Register failed:", error);
+        }
     };
 
     return (

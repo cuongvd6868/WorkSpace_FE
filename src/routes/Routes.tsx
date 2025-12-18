@@ -15,6 +15,8 @@ import HostRegistrationPage from "~/pages/host/HostRegistrationPage/HostRegistra
 import SupportPage from "~/pages/support/SupportPage";
 import PostPage from "~/pages/post/PostPage";
 import FavoriteList from "~/pages/favorites/FavoriteList";
+import VerifyAccountPage from "~/pages/login/VerifyAccountPage"; 
+
 export const router = createBrowserRouter([{
     path: "/",
     element: <App/>,
@@ -34,5 +36,8 @@ export const router = createBrowserRouter([{
         {path: "/staff", element: <StaffDashboard/>},
         {path: "/support", element: <SupportPage/>},
         {path: "/favorites", element: <FavoriteList/>},
+        
+        // Route mới để xử lý verify email
+        {path: "/confirm-email", element: <VerifyAccountPage/>},
     ]
 }]);

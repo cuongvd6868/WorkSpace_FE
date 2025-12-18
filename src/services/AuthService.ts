@@ -18,7 +18,20 @@ export const registerAPI = async (email:string, username: string, password: stri
     }
 };
 
-
+export const verifyEmailAPI = async (userId: string, code: string) => {
+    try {
+        const response = await axios.get(API_BASE_URL + "accounts/confirm-email", {
+            params: { 
+                userId: userId, 
+                code: code 
+            }
+        });
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error; 
+    }
+};
 export const loginAPI = async (email: string, password: string) => {
     try {
         const data = await axios.post<UserProfileToken>(API_BASE_URL + "accounts/login", { 
