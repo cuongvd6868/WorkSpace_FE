@@ -7,8 +7,10 @@ import NavbarLogin from '~/components/NavbarLogin/NavbarLogin';
 import logImg from '~/assets/img/login/log.svg';
 import resImg from '~/assets/img/login/register.svg';
 import { useGoogleLogin } from '@react-oauth/google';
-// 1. Import registerAPI để gọi trực tiếp thay vì qua useAuth
+
 import { registerAPI } from '~/services/AuthService'; 
+import { Link } from 'react-router-dom';
+
 
 const cx = classNames.bind(styles);
 
@@ -146,7 +148,13 @@ const LoginPage: React.FC = () => {
                                     Đăng nhập với Google
                                 </button>
                             </div>
-                            <p className={cx('forget-password')}>Quên mật khẩu</p>
+                            <div className={cx('password-service')}>
+                                <Link to={'/change-password'}>
+
+                                <p className={cx('change-password')}>Đổi mật khẩu</p>
+                                </Link>
+                                <p className={cx('forget-password')}>Quên mật khẩu</p>
+                            </div>
 
                         </form>
 

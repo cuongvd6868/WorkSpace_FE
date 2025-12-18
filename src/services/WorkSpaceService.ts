@@ -74,3 +74,13 @@ export const GetWorkSpaceById = async (id: number) => {
         throw error;     
     }
 }
+
+export const GetWorkSpaceQuickSearch = async (title: string) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/search/workspaces?keyword=${title}`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;     
+    }
+}

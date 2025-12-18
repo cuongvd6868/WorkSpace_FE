@@ -34,5 +34,12 @@ export type WorkSpaceDetail = {
     longitude: number,
     workSpaceType: string,
     rooms: WorkSpaceRoom[],
-    isActive: boolean
+    isActive: boolean,
+    hostAvatar: string;
+    imageUrls: string[];
+}
+
+export type WorkSpaceQuickSearch = {
+    id: number,
+    title: string
 }

@@ -160,11 +160,6 @@ const OwnerDashboard: React.FC = () => {
                             )}
                         </div>
 
-                        <div className={cx('recent-activity')}>
-                             <h3>📝 BOOKING SẮP TỚI</h3>
-                             <p className={cx('placeholder')}>[Danh sách 5 booking sắp diễn ra cần xác nhận]</p>
-                             ced
-                        </div>
                     </div>
                 );
             case OwnerPage.Finance:

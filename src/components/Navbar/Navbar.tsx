@@ -14,12 +14,12 @@ import coverImg from '~/assets/img/bg_img/cover.avif';
 import { useAuth } from "~/context/useAuth";
 import { useSearch } from '~/context/SearchContext'; 
 import { toast } from "react-toastify";
+import { WorkSpaceQuickSearch } from "~/types/WorkSpaces";
+import { GetWorkSpaceQuickSearch } from "~/services/WorkSpaceService";
 
 const cx = classNames.bind(styles);
 
 const Navbar: React.FC = () => {
-
-  
 
   const { 
     searchState, 
@@ -50,6 +50,23 @@ const Navbar: React.FC = () => {
     setShowWardResult(false);
   }
 
+  // search nhanh
+  const [quickSearchValue, setQuickSearchValue] = useState('');
+  const [quickSearchResult, setQuickSearchResult] = useState<WorkSpaceQuickSearch[]>([]);
+  const [showQuickSearchResult, setShowQuickSearchResult] = useState(false);
+  const [quickSearchLoading, setQuickSearchLoading] = useState(false);
+
+  const handleQuickSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuickSearchValue(value);
+    if (value.trim() !== '') {
+        setShowQuickSearchResult(true);
+    } else {
+        setShowQuickSearchResult(false);
+        setQuickSearchResult([]);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setLocation(value); // Cập nhật location vào Context
@@ -66,6 +83,26 @@ const Navbar: React.FC = () => {
     setLocation(selectedName) // Cập nhật location vào Context
     setShowWardResult(false)
   }
+
+  useEffect(() => {
+    const fetchQuickWorkspaces = async () => {
+        if (!quickSearchValue.trim()) return;
+
+        try {
+            setQuickSearchLoading(true);
+            const data = await GetWorkSpaceQuickSearch(quickSearchValue);
+            setQuickSearchResult(data || []);
+        } catch (error) {
+            console.error('Quick search error:', error);
+            setQuickSearchResult([]);
+        } finally {
+            setQuickSearchLoading(false);
+        }
+    };
+
+    const timeoutId = setTimeout(fetchQuickWorkspaces, 500); // Đợi 500ms sau khi dừng gõ
+    return () => clearTimeout(timeoutId);
+}, [quickSearchValue]);
 
   // Effect gọi API tìm kiếm địa điểm với debounce
   useEffect(() => {
@@ -203,18 +240,52 @@ const Navbar: React.FC = () => {
                   phù hợp với mọi quy mô đội nhóm của bạn...
                 </p>
 <div className={cx('search-wrapper')}>
-            <div className={cx('search-box')}>
-
-                <input
-                    type="text"
-                    placeholder="Tìm nhanh Workspace của bạn..."
-                />
-
-                <button className={cx('search-btn')}>
-                    <FontAwesomeIcon icon={faLocationDot} />
-                </button>
+    <HeadlessTippy
+        interactive
+        visible={showQuickSearchResult && (quickSearchResult.length > 0 || quickSearchLoading)}
+        placement="bottom-start"
+        offset={[0, 8]}
+        render={attrs => (
+            <div className={cx('search-result')} tabIndex={-1} {...attrs}>
+                <Popper>
+                    {quickSearchLoading ? (
+                        <div className={cx('loading')}>Đang tìm kiếm...</div>
+                    ) : quickSearchResult.length > 0 ? (
+                        quickSearchResult.map((item) => (
+                            <div 
+                                key={item.id} 
+                                className={cx('location-item')}
+                                onClick={() => {
+                                    navigate(`/workspace/${item.id}`);
+                                    setShowQuickSearchResult(false);
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faBriefcase} className={cx('location-icon')} />
+                                <span className={cx('location-text')}>{item.title}</span>
+                            </div>
+                        ))
+                    ) : (
+                        <div className={cx('no-results')}>Không tìm thấy không gian nào</div>
+                    )}
+                </Popper>
             </div>
+        )}
+        onClickOutside={() => setShowQuickSearchResult(false)}
+    >
+        <div className={cx('search-box')}>
+            <input
+                type="text"
+                value={quickSearchValue}
+                onChange={handleQuickSearchChange}
+                onFocus={() => quickSearchValue.trim() && setShowQuickSearchResult(true)}
+                placeholder="Tìm nhanh Workspace của bạn..."
+            />
+            <button className={cx('search-btn')}>
+                <FontAwesomeIcon icon={faLocationDot} />
+            </button>
         </div>
+    </HeadlessTippy>
+</div>
 
 
               </div>
