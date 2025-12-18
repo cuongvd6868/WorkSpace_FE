@@ -127,7 +127,9 @@ const BookingList: React.FC = () => {
 
                     // 💥 XÁC ĐỊNH NÚT HÀNH ĐỘNG
                     const isCompleted = booking.bookingStatusId === 9; // Trạng thái 'Đã hoàn thành'
+
                     const canReview = isCompleted && !booking.isReviewed; // Giả định có trường 'hasReviewed'
+                    const isPending = booking.bookingStatusId === 3;
 
                     return (
                         <div key={booking.bookingCode} className={cx('booking-card', statusInfo.className)}>
@@ -176,6 +178,14 @@ const BookingList: React.FC = () => {
                                     </div>
                                 )}
                                 {/* Thêm các nút khác (Ví dụ: Hủy, Xem chi tiết...) tại đây nếu cần */}
+                                {isPending && (
+                                    <button
+                                        className={cx('cancel-button')}
+                                        // onClick={() => handleCancelBooking(booking.bookingCode)}
+                                    >
+                                        ❌ Hủy đặt chỗ
+                                    </button>
+                                )}
                             </div>
                         </div>
                     );

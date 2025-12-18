@@ -193,7 +193,7 @@ export const getAllBookings = async (): Promise<Booking[]> => {
     try {
         const response = await axios.get<Booking[]>(
             `${API_BASE_URL}v1/admin/admin/All-bookings`,
-            getAuthHeaders() // Thêm headers xác thực
+            getAuthHeaders() 
         );
         return response.data;
     } catch (error) {
