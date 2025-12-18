@@ -17,6 +17,7 @@ import OwnerWorkspacesTable from "~/components/OwnerComponents/OwnerWorkspacesTa
 import OwnerPromotionsSection from "~/components/OwnerComponents/OwnerPromotionsSection/OwnerPromotionsSection";
 import NotificationManagementSection from "~/components/OwnerComponents/NotificationManagementSection/NotificationManagementSection";
 import DrinkServiceManagementSection from "~/components/OwnerComponents/DrinkServiceManagementSection/DrinkServiceManagementSection";
+import OwnerChatSection from "~/components/OwnerComponents/OwnerChatSection/OwnerChatSection";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -44,16 +45,6 @@ const ListingsManagementSection: React.FC = () => {
         setReloadKey(prev => prev + 1); 
     };
 
-    // KHÔNG CẦN DÙNG CÁC HÀM NÀY NỮA, VÌ CHÚNG ĐƯỢC XỬ LÝ TRONG OwnerWorkspacesTable
-    // const handleAddRoom = (id: number) => {
-    //     // Logic chuyển hướng/mở modal thêm phòng
-    //     toast.info(`Chuyển đến trang thêm phòng cho Workspace ID: ${id}`);
-    // };
-
-    // const handleViewDetails = (id: number) => {
-    //     toast.info(`Chuyển đến trang chi tiết cho Workspace ID: ${id}`);
-    // };
-
 
     if (isCreating) {
         return (
@@ -80,23 +71,11 @@ const ListingsManagementSection: React.FC = () => {
 
             <OwnerWorkspacesTable 
                 key={reloadKey} 
-                // ĐÃ LOẠI BỎ props onAddRoom và onViewDetails để sửa lỗi TS2322
-                // onAddRoom={handleAddRoom}
-                // onViewDetails={handleViewDetails}
             />
         </div>
     );
 };
 
-const BookingsManagementSection: React.FC = () => (
-    <div className={cx('bookings-management')}>
-        <h3>📅 Quản Lý Lượt Đặt Chỗ</h3>
-        <p className={cx('placeholder')}>
-            [Bảng: Mã Booking, Khách hàng, Workspace, Thời gian, Tổng tiền, Trạng thái (Pending/Confirmed/Canceled)]
-        </p>
-        <button className={cx('filter-btn')}>Lọc Booking Theo Ngày</button>
-    </div>
-);
 
 const OwnerDashboard: React.FC = () => {
     const [stats, setStats] = useState<OwnerStats | null>(null);
@@ -208,8 +187,8 @@ const OwnerDashboard: React.FC = () => {
             case OwnerPage.Chat:
                 return (
                 <div className={cx('content-section')}>
-                    <h2 className={cx('section-title')}>QUẢN LÝ  chat</h2>
-                    {/* Thay thế placeholder bằng component mới */}
+                    <h2 className={cx('section-title')}>💬 TRUNG TÂM HỖ TRỢ KHÁCH HÀNG</h2>
+                    <OwnerChatSection />
                 </div>
                 );
             case OwnerPage.Settings:
@@ -253,9 +232,9 @@ const OwnerDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Notification })} onClick={() => setActivePage(OwnerPage.Notification)}>
                         <FontAwesomeIcon icon={faBell} /> <span>Quản Lý Thông Báo</span>
                     </li>
-                    {/* <li className={cx('nav-item', { active: activePage === OwnerPage.Chat })} onClick={() => setActivePage(OwnerPage.Chat)}>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Chat })} onClick={() => setActivePage(OwnerPage.Chat)}>
                         <FontAwesomeIcon icon={faMessage} /> <span>Quản Lý chat</span>
-                    </li> */}
+                    </li>
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
                         <FontAwesomeIcon icon={faUserCog} /> <span>Thiết Lập</span>
                     </li>

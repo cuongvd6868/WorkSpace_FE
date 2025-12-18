@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { handleError } from '~/utils/handleError';
 import { API_BASE_URL } from '~/utils/API';
-import { WorkSpaceRoom } from '~/types/WorkSpaceRoom';
+import { WorkSpaceRoom, WorkSpaceRoomDetail } from '~/types/WorkSpaceRoom';
 
 export type RoomSearchParams = {
     workspaceId: number;
@@ -26,6 +26,20 @@ export const searchRooms = async (params: RoomSearchParams): Promise<WorkSpaceRo
             },
         });
 
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        return null;
+    }
+};
+
+export const getRoomDetail = async (roomId: number | string): Promise<WorkSpaceRoomDetail | null> => {
+    const endpoint = `v1/workspacerooms/${roomId}/detail`;
+    const fullUrl = `${API_BASE_URL}${endpoint}`;
+
+    try {
+        const response = await axios.get<WorkSpaceRoomDetail>(fullUrl);
+        
         return response.data;
     } catch (error) {
         handleError(error);

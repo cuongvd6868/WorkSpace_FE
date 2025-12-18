@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookingData, useBooking } from "~/context/BookingContext";
 import { WorkSpaceRoom } from "~/types/WorkSpaceRoom";
@@ -14,6 +14,7 @@ import {
     Info,
     CreditCard
 } from "lucide-react";
+import RoomDetailModal from "../RoomDetailModal/RoomDetailModal";
 
 interface RoomTableProps {
     rooms: WorkSpaceRoom[];
@@ -43,6 +44,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
 }) => {
     const navigate = useNavigate();
     const { setBookingData } = useBooking();
+    const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
 
     const handleBookRoom = (room: WorkSpaceRoom) => {
         if (!lastSearchTime) return;
@@ -108,7 +110,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
                                     return (
                                         <tr key={room.id} className={cx('room-row', { selected: isChecked })}>
                                             <td className={cx('info-cell')}>
-                                                <div className={cx('room-main-info')}>
+                                                <div className={cx('room-main-info')} onClick={() => setSelectedRoomId(room.id)}>
                                                     <span className={cx('room-name')}>{room.title}</span>
                                                     <span className={cx('badge', room.roomType.toLowerCase().replace(/\s/g, '-'))}>
                                                         {room.roomType}
@@ -171,6 +173,11 @@ const RoomTable: React.FC<RoomTableProps> = ({
                     </div>
                 </div>
             )}
+            <RoomDetailModal
+                roomId={selectedRoomId!} 
+                isOpen={!!selectedRoomId} 
+                onClose={() => setSelectedRoomId(null)} 
+            />
         </div>
     );
 };

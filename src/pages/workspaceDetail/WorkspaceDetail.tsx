@@ -453,10 +453,11 @@ const WorkspaceDetail: React.FC = () => {
             />
             {isChatOpen && (
                 <ChatWidget
-                    workspaceId={workspace.id}
-                    hostName={workspace.hostName}
-                    onClose={() => setIsChatOpen(false)}
-                />
+    isOpen={isChatOpen}
+    workspaceId={workspace.id}
+    hostName={workspace.hostName}
+    onClose={() => setIsChatOpen(false)}
+/>
             )}
 
             {isGalleryModalOpen && (

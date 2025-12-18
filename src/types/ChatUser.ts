@@ -38,3 +38,33 @@ export interface SendMessageRequest {
   sessionId: string;
   message: string;
 }
+
+export interface OwnerChatSession {
+    sessionId: string;
+    customerName: string;
+    customerEmail: string;
+    createdAt: string;
+    lastMessageAt: string;
+    isActive: boolean;
+    assignedOwnerId: number;
+    assignedOwnerName: string;
+    workspaceId: number;
+    workspaceName: string;
+}
+
+export interface OwnerChatMessage {
+    id: number;
+    sessionId: string;
+    senderName: string;
+    isOwner: boolean; 
+    content: string;
+    sentAt: string;
+}
+
+// Cấu trúc Response của API Reply (Hình 2)
+export interface OwnerReplyResponse {
+    succeeded: boolean;
+    message: string;
+    errors: string[] | null;
+    data: OwnerChatMessage;
+}

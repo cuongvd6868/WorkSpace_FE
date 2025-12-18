@@ -1,0 +1,122 @@
+.chat-container {
+    display: flex;
+    height: 70vh;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.session-list {
+    width: 300px;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+
+    .list-header {
+        padding: 20px;
+        font-weight: bold;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+    }
+
+    .session-item {
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.2s;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:hover { background: #e9ecef; }
+        &.active { background: #fff; border-left: 4px solid #007bff; }
+
+        .avatar { font-size: 30px; color: #ccc; margin-right: 12px; }
+        .info {
+            flex: 1;
+            .name { font-weight: 600; font-size: 14px; color: #333; }
+            .workspace { font-size: 12px; color: #777; }
+        }
+        .online-status { color: #28a745; font-size: 8px; }
+    }
+}
+
+.chat-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .window-header {
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+    }
+
+    .message-list {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #fdfdfd;
+
+        .message-row {
+            display: flex;
+            margin-bottom: 15px;
+
+            &.isOwner {
+                justify-content: flex-end;
+                .bubble {
+                    background: #007bff;
+                    color: #fff;
+                    border-radius: 15px 15px 2px 15px;
+                }
+            }
+
+            .bubble {
+                max-width: 70%;
+                padding: 10px 15px;
+                background: #e9ecef;
+                border-radius: 15px 15px 15px 2px;
+                position: relative;
+
+                .text { font-size: 14px; line-height: 1.4; }
+                .time { font-size: 10px; margin-top: 4px; opacity: 0.7; text-align: right; }
+            }
+        }
+    }
+
+    .input-area {
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 10px;
+
+        input {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            border-radius: 20px;
+            outline: none;
+            &:focus { border-color: #007bff; }
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            &:disabled { opacity: 0.5; }
+        }
+    }
+
+    .empty-state {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #999;
+    }
+}

@@ -971,3 +971,60 @@ $search-button-hover: #3182CE;
   }
 }
 
+.chat-history-popover {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+
+    .history-header {
+        padding: 12px 16px;
+        font-weight: 700;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: #1e293b;
+    }
+
+    .history-list {
+        max-height: 400px;
+        overflow-y: auto;
+
+        .history-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+
+            &:hover { background: #f8fafc; }
+
+            .item-avatar {
+                width: 35px; height: 35px;
+                background: #eef2ff; color: #6366f1;
+                border-radius: 10px;
+                display: flex; align-items: center; justify-content: center;
+            }
+
+            .item-info {
+                flex: 1;
+                .item-name { font-weight: 600; font-size: 1.1rem; color: #334155; margin: 0; }
+                .item-owner { font-size: 1rem; color: #94a3b8; margin: 0; }
+            }
+
+            .dot {
+                width: 8px; height: 8px; background: #22c55e;
+                border-radius: 50%;
+            }
+        }
+    }
+
+    .history-loading, .history-empty {
+        padding: 20px; text-align: center; color: #94a3b8; font-size: 0.85rem;
+    }
+}
+
+.spin { animation: rotate 1s linear infinite; }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
