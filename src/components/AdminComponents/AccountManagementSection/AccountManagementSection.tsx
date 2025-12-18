@@ -122,9 +122,16 @@ const AccountManagementSection: React.FC = () => {
                                     )}
                                     {user.isActive ? ' Khóa' : ' Mở Khóa'}
                                 </button>
-                                <button className={cx('action-btn', 'btn-delete')} disabled>
-                                    <FontAwesomeIcon icon={faTrashCan} /> Xóa
-                                </button>
+                                 {/* NÚT SET ROLE */}
+    <button
+        className={cx('action-btn', 'btn-role')}
+        onClick={() => {
+            console.log('Set role cho user:', user.id);
+            // sau này mở modal set role tại đây
+        }}
+    >
+        <FontAwesomeIcon icon={faUserTie} /> Set Role
+    </button>
                             </td>
                         </tr>
                     ))}

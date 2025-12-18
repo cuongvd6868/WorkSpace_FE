@@ -290,3 +290,29 @@ $color-failed: #e67e22;     // Cam (Lỗi thanh toán)
         font-size: 1em;
     }
 }
+.cancel-button {
+    width: 170px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    // display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    margin-left: auto;
+
+    &:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
