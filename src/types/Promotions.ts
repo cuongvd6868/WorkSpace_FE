@@ -9,3 +9,10 @@ export type Promotions = {
     usageLimit: number,
     remainingUsage: number
 }
+
+export type PromotionWorkspace = {
+    id: number,
+    code: string,
+    description: string,
+    discountValue: number
+}

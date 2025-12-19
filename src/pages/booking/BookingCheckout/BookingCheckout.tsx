@@ -9,7 +9,10 @@ import {
     CheckCircle, AlertCircle, Phone, Mail, FileText
 } from 'lucide-react';
 import { toast } from 'react-toastify';
-
+import { 
+    SelectedService 
+} from '~/types/Booking';
+import { Drink } from '~/types/Drink';
 import { 
     createBookingCustomer, 
     createBookingGuest, 
@@ -22,6 +25,8 @@ import { Promotions } from '~/types/Promotions';
 import { GetPromotionByCode } from '~/services/PromotionService';
 import payos_logo from '~/assets/img/payment/payos_logo.svg';
 import vnpay_logo from '~/assets/img/payment/vnpay_logo.svg';
+import { getAllDrinkService } from '~/services/DrinkService';
+import { CLOUD_NAME } from '~/config/cloudinaryConfig';
 
 const cx = classNames.bind(styles);
 
@@ -53,6 +58,45 @@ const BookingCheckout: React.FC = () => {
     const [promotion, setPromotion] = useState<Promotions>();
     const [promotionLoading, setPromotionLoading] = useState<boolean>(true);
 
+    // --- State cho Dịch vụ đồ uống (API) ---
+    const [drinks, setDrinks] = useState<Drink[]>([]);
+    const [selectedServices, setSelectedServices] = useState<{[key: number]: number}>({}); // Lưu dạng { id: số_lượng }
+    const [loadingDrinks, setLoadingDrinks] = useState(true);
+
+    useEffect(() => {
+    const fetchDrinks = async () => {
+        if (bookingData?.room?.id) {
+            try {
+                setLoadingDrinks(true);
+                const data = await getAllDrinkService(bookingData.room.id);
+                setDrinks(data);
+            } catch (error) {
+                console.error("Lỗi lấy danh sách đồ uống:", error);
+            } finally {
+                setLoadingDrinks(false);
+            }
+        }
+    };
+    fetchDrinks();
+}, [bookingData?.room?.id]);
+// --- Hàm xử lý thay đổi số lượng đồ uống ---
+const handleServiceQuantityChange = (drinkId: number, delta: number) => {
+    setSelectedServices(prev => {
+        const currentQty = prev[drinkId] || 0;
+        const newQty = Math.max(0, currentQty + delta); // Không cho phép nhỏ hơn 0
+        
+        // Nếu số lượng mới là 0, có thể xóa key đó khỏi object để sạch data
+        if (newQty === 0) {
+            const { [drinkId]: _, ...rest } = prev;
+            return rest;
+        }
+        
+        return {
+            ...prev,
+            [drinkId]: newQty
+        };
+    });
+};
 
     // --- KIỂM TRA DỮ LIỆU ĐẶT PHÒNG ---
     useEffect(() => {
@@ -73,10 +117,23 @@ const BookingCheckout: React.FC = () => {
     }
 
     const { room, totalAmount, totalHours, startTimeUtc, endTimeUtc, numberOfParticipants, workspaceName, workspaceAddressLine } = bookingData;
-    const taxAmount = totalAmount * 0.1;
-    const finalAmount = (totalAmount + taxAmount) - discountAmount;
-    // nền tảng đớp
-    const serviceFee = finalAmount * 0.1; 
+    // const taxAmount = totalAmount * 0.1;
+    // const finalAmount = (totalAmount + taxAmount) - discountAmount;
+    // const serviceFee = finalAmount * 0.1; 
+
+    // 1. Tính tổng tiền đồ uống
+const servicesTotal = drinks.reduce((sum, drink) => {
+    const qty = selectedServices[drink.id] || 0;
+    return sum + (drink.price * qty);
+}, 0);
+
+// 2. Tổng tiền trước thuế (Phòng + Nước)
+const subTotal = totalAmount + servicesTotal; 
+
+// 3. Tính toán các chi phí phát sinh dựa trên subTotal
+const calculatedTax = subTotal * 0.1;
+const calculatedFinal = (subTotal + calculatedTax) - discountAmount;
+const calculatedServiceFee = calculatedFinal * 0.1;
 
     //============================ Logic xử lý Mã Khuyến Mãi ============================
 
@@ -106,6 +163,7 @@ const BookingCheckout: React.FC = () => {
         
         return 0;
     } 
+    
     
     const handleApplyPromotion = async () => {
         if (isProcessing) return;
@@ -188,10 +246,14 @@ const BookingCheckout: React.FC = () => {
                 endTimeUtc: endTimeUtc,
                 numberOfParticipants: numberOfParticipants,
                 specialRequests: specialRequests,
-                totalPrice: totalAmount, // Tổng giá cơ bản
-                taxAmount: taxAmount,
-                serviceFee: serviceFee,
-                finalAmount: finalAmount, // Tổng cuối cùng sau giảm giá
+                totalPrice: subTotal, // Tổng giá cơ bản
+                taxAmount: calculatedTax,
+                serviceFee: calculatedServiceFee,
+                finalAmount: calculatedFinal, // Tổng cuối cùng sau giảm giá
+                services: Object.entries(selectedServices).map(([id, qty]) => ({
+        serviceId: Number(id),
+        quantity: qty
+    }))
             };
 
             let bookingResponse: CreateBookingResponse;
@@ -249,6 +311,8 @@ const BookingCheckout: React.FC = () => {
             setIsProcessing(false);
         }
     };
+// 1. Tính tổng tiền đồ uống trước
+
 
     return (
         <div className={cx('checkout-page-wrapper')}>
@@ -375,6 +439,44 @@ const BookingCheckout: React.FC = () => {
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    {/* ============================ DỊCH VỤ ĐI KÈM (Đồ uống) ============================ */}
+                    <div className={cx('section-card', 'services-section')}>
+                        <h2 className={cx('card-title')}>
+                            <Clock size={20} />
+                            Dịch vụ đồ uống đi kèm
+                        </h2>
+                        
+                        {loadingDrinks ? (
+                            <div className={cx('loading-placeholder')}>Đang tải danh sách đồ uống...</div>
+                        ) : (
+                            <div className={cx('drinks-list')}>
+                                {drinks.map((drink) => (
+                                    <div key={drink.id} className={cx('drink-item')}>
+                                        <div className={cx('drink-info')}>
+                                            <img src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${drink.imageUrl}`} alt=""/>
+                                            <div>
+                                                <span className={cx('drink-name')}>{drink.name}</span>
+                                                <span className={cx('drink-price')}>{drink.price.toLocaleString()} VNĐ</span>
+                                            </div>
+                                        </div>
+                                        <div className={cx('quantity-controls')}>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleServiceQuantityChange(drink.id, -1)}
+                                                className={cx('qty-btn')}
+                                            >-</button>
+                                            <span className={cx('qty-value')}>{selectedServices[drink.id] || 0}</span>
+                                            <button 
+                                                type="button"
+                                                onClick={() => handleServiceQuantityChange(drink.id, 1)}
+                                                className={cx('qty-btn')}
+                                            >+</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
 
@@ -510,9 +612,16 @@ const BookingCheckout: React.FC = () => {
                                 <span className={cx('label')}>Giá thuê cơ bản</span>
                                 <span className={cx('value')}>{totalAmount.toLocaleString()} VNĐ</span>
                             </div>
+                            {servicesTotal > 0 && (
+                                
+                        <div className={cx('price-item')}>
+                            <span className={cx('label')}>Dịch vụ đồ uống</span>
+                            <span className={cx('value')}>{servicesTotal.toLocaleString()} VNĐ</span>
+                        </div>
+                    )}
                             <div className={cx('price-item')}>
                                 <span className={cx('label')}>VAT</span>
-                                <span className={cx('value')}>{taxAmount.toLocaleString()} VNĐ</span>
+                                <span className={cx('value')}>{calculatedTax.toLocaleString()} VNĐ</span>
                             </div>
                             {discountAmount > 0 && (
                                 <div className={cx('price-item', 'discount-line')}>
@@ -522,7 +631,7 @@ const BookingCheckout: React.FC = () => {
                             )}
                             <div className={cx('price-item', 'total-line')}>
                                 <span className={cx('label')}>Tổng cộng</span>
-                                <span className={cx('value', 'final-price')}>{finalAmount.toLocaleString()} VNĐ</span>
+                                <span className={cx('value', 'final-price')}>{calculatedFinal.toLocaleString()} VNĐ</span>
                             </div>
                         </div>
                         <p className={cx('tax-note')}>Đã bao gồm thuế và phí dịch vụ.</p>

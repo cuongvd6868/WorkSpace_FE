@@ -11,6 +11,11 @@ export type CustomerDetails = {
   phoneNumber: string;
 }
 
+export type SelectedService = {
+  serviceId: number;
+  quantity: number;
+};
+
 export type BookingDetails = {
   workSpaceRoomID: number;
   startTimeUtc: string; // Định dạng "YYYY-MM-DDTHH:mm:ssZ"
@@ -21,6 +26,7 @@ export type BookingDetails = {
   taxAmount: number;
   serviceFee: number;
   finalAmount: number;
+  services?: SelectedService[];
 }
 
 export type CreateBookingRequestForGuest = {

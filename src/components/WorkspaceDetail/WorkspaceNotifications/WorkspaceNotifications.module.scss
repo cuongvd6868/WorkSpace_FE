@@ -1,0 +1,99 @@
+.noti-container {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+.noti-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e67e22; // Màu cam cảnh báo/thông báo
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+
+    h3 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin: 0;
+    }
+}
+
+.noti-list {
+    max-height: 250px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ddd;
+        border-radius: 10px;
+    }
+}
+
+.noti-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: #fffaf5; // Màu nền cam nhạt
+    border-radius: 8px;
+    border-left: 4px solid #e67e22;
+}
+
+.noti-icon {
+    color: #e67e22;
+    flex-shrink: 0;
+}
+
+.noti-content {
+    .title {
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin-bottom: 2px;
+        color: #333;
+    }
+    .text {
+        font-size: 1.3rem;
+        color: #666;
+        line-height: 1.4;
+        margin: 0;
+    }
+}
+
+.status-box {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 1.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    &.error { color: #d9534f; }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.empty-msg {
+    text-align: center;
+    color: #999;
+    font-size: 1.3rem;
+    font-style: italic;
+}

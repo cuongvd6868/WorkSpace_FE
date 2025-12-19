@@ -23,3 +23,13 @@ export const GetPromotionByCode = async (code: string) => {
         throw error; 
     }
 }
+
+export const GetPromotionByWorkspace = async (id: number) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/promotions/workspace/${id}`)
+        return response.data
+    } catch (error) {
+        handleError(error); 
+        throw error; 
+    }  
+}

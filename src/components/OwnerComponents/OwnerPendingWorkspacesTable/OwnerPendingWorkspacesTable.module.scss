@@ -1,0 +1,157 @@
+// Variables - Định nghĩa bảng màu chuyên nghiệp
+$primary-color: #3b82f6; // Blue
+$warning-bg: #fff7ed;
+$warning-text: #c2410c;
+$text-main: #1e293b;
+$text-sub: #64748b;
+$bg-white: #ffffff;
+$border-color: #e2e8f0;
+$hover-row: #f8fafc;
+$transition: all 0.3s ease;
+
+.table-container {
+    background: $bg-white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 20px;
+    border: 1px solid $border-color;
+    overflow: hidden;
+
+    .loading, .empty-state {
+        padding: 60px;
+        text-align: center;
+        color: $text-sub;
+        font-style: italic;
+        font-size: 1.1rem;
+    }
+}
+
+.pending-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0; // Quan trọng để bo góc dòng trơn tru
+
+    thead {
+        tr {
+            background-color: #f1f5f9;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            color: $text-sub;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid $border-color;
+
+            &:first-child { border-top-left-radius: 12px; }
+            &:last-child { border-top-right-radius: 12px; }
+        }
+    }
+
+    tbody {
+        tr {
+            transition: $transition;
+
+            &:hover {
+                background-color: $hover-row;
+                transform: translateY(-2px); // Hiệu ứng nổi nhẹ khi di chuột
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            td {
+                padding: 16px;
+                vertical-align: middle;
+                border-bottom: 1px solid $border-color;
+                color: $text-main;
+                font-size: 1.1rem;
+            }
+
+            &:last-child td {
+                border-bottom: none;
+            }
+        }
+    }
+
+    // Cột Hình ảnh
+    .thumbnail {
+        width: 100px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: $transition;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    // Cột Thông tin chính
+    .workspace-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .workspace-title {
+        font-weight: 700;
+        color: $text-main;
+        font-size: 1.2rem;
+    }
+
+    .workspace-desc {
+        font-size: 1rem;
+        color: $text-sub;
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    // Badge trạng thái
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        background-color: $warning-bg;
+        color: $warning-text;
+        border-radius: 9999px; // Hình viên thuốc (Pill)
+        font-size: 1rem;
+        font-weight: 600;
+        border: 1px solid rgba($warning-text, 0.2);
+
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: $warning-text;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite; // Hiệu ứng nháy nhẹ cho trạng thái "chờ"
+        }
+    }
+}
+
+// Animation nháy cho badge "Đang chờ duyệt"
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+    .table-container {
+        overflow-x: auto;
+        padding: 12px;
+    }
+    
+    .pending-table {
+        min-width: 800px;
+    }
+}

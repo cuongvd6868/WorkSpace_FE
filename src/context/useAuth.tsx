@@ -19,75 +19,58 @@ type UserContextType = {
 
 const UserContext = createContext<UserContextType>({} as UserContextType);
 
-type Props = {
-    children: React.ReactNode;
-};
-
-export const UserProvider: React.FC<Props> = ({ children }) => {
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<UserProfile | null>(null);
     const [isReady, setIsReady] = useState(false);
 
-const logout = useCallback(() => {
-        localStorage.clear(); 
+    // Dùng useCallback để tránh render lặp vô tận
+    const logout = useCallback(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
         setToken(null);
         setUser(null);
         delete axios.defaults.headers.common["Authorization"];
-        window.location.href = "/"; // Force reload app để xóa sạch State ngầm
-    }, []);
+        navigate("/login");
+    }, [navigate]);
 
+    // Load data khi khởi động app
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         const storedToken = localStorage.getItem("token");
+
         if (storedUser && storedToken) {
             try {
-                const parsedUser = JSON.parse(storedUser);
-                setUser(parsedUser);
+                setUser(JSON.parse(storedUser));
                 setToken(storedToken);
-                axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
-            } catch (e) {
-                localStorage.clear();
+            } catch (error) {
+                logout(); 
             }
         }
         setIsReady(true);
-    }, []);
+    }, [logout]);
 
-useEffect(() => {
+    // Kích hoạt Interceptor cho tất cả các Instance
+    useEffect(() => {
         if (isReady) {
+            // Fix: Truyền instance vào từng hàm setup
             setupAxiosInterceptors(axios, logout, navigate);
-            
             setupAxiosInterceptors(chatApi, logout, navigate);
-
             setupAxiosInterceptors(ownerApi, logout, navigate);
         }
     }, [isReady, logout, navigate]);
+
     const handleAuthSuccess = (data: any) => {
         const userObj: UserProfile = {
             userName: data.userName || data.username,
             email: data.email,
             roles: data.roles || []
         };
-
         localStorage.setItem("token", data.jwToken);
         localStorage.setItem("user", JSON.stringify(userObj));
-
-        axios.defaults.headers.common["Authorization"] = `Bearer ${data.jwToken}`;
         setToken(data.jwToken);
         setUser(userObj);
-    };
-
-    const registerUser = async (email: string, username: string, password: string, confirmPassword: string) => {
-        try {
-            const res = await registerAPI(email, username, password, confirmPassword);
-            if (res?.data) {
-                handleAuthSuccess(res.data);
-                toast.success("Đăng ký thành công!");
-                navigate("/");
-            }
-        } catch (error) {
-            toast.error("Đăng ký thất bại.");
-        }
     };
 
     const loginUser = async (email: string, password: string) => {
@@ -96,7 +79,6 @@ useEffect(() => {
             if (res?.data) {
                 handleAuthSuccess(res.data);
                 toast.success("Đăng nhập thành công!");
-
                 const roles = res.data.roles || [];
                 if (roles.includes("Owner")) navigate("/owner");
                 else if (roles.includes("Staff")) navigate("/staff");
@@ -125,14 +107,22 @@ useEffect(() => {
         }
     };
 
-    const isLoggedIn = () => !!user;
+    const registerUser = async (email: string, username: string, password: string, confirmPassword: string) => {
+        try {
+            const res = await registerAPI(email, username, password, confirmPassword);
+            if (res?.data) {
+                handleAuthSuccess(res.data);
+                toast.success("Đăng ký thành công!");
+                navigate("/");
+            }
+        } catch (error) {
+            toast.error("Đăng ký thất bại.");
+        }
+    };
 
     return (
-        <UserContext.Provider value={{ user, token, registerUser, loginUser, googleLogin, logout, isLoggedIn }}>
-            {/* Chỉ render Children khi IsReady để tránh lỗi gọi API lúc chưa có Token */}
-            {isReady ? children : (
-                <div className="flex items-center justify-center h-screen">Đang tải...</div>
-            )}
+        <UserContext.Provider value={{ user, token, registerUser, loginUser, googleLogin, logout, isLoggedIn: () => !!user }}>
+            {isReady ? children : <div className="flex items-center justify-center h-screen">Đang tải cấu hình...</div>}
         </UserContext.Provider>
     );
 };
