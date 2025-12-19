@@ -269,3 +269,54 @@ $color-border-subtle: #e9ecef;
         }
     }
 }
+/* DrinkServiceFormModal.module.scss - FIXED HEIGHT VERSION */
+
+// ... (Giữ nguyên các biến và keyframes ở trên)
+
+.modal-content {
+    background-color: $bg-card;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 650px; 
+    
+    // --- THÊM CÁC DÒNG NÀY ---
+    max-height: 90vh;        // Giới hạn tối đa 90% chiều cao màn hình
+    display: flex;           // Chuyển sang flexbox
+    flex-direction: column;  // Sắp xếp các phần con theo cột
+    // ------------------------
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden; // Đảm bảo các góc bo tròn không bị vỡ
+    animation: slideInUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.modal-header {
+    flex-shrink: 0; // Không cho phép Header bị co lại
+    display: flex;
+    justify-content: space-between;
+    // ... (Giữ nguyên padding và nội dung cũ)
+}
+
+.drink-form {
+    padding: 30px;
+    
+    // --- THÊM CÁC DÒNG NÀY ---
+    overflow-y: auto;        // Hiện thanh cuộn nếu nội dung quá dài
+    flex-grow: 1;            // Cho phép phần form chiếm hết không gian trống ở giữa
+    // ------------------------
+
+    // Tùy chỉnh thanh cuộn cho đẹp (Optional)
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #ced4da;
+        border-radius: 10px;
+    }
+}
+
+.modal-footer {
+    flex-shrink: 0; // Không cho phép Footer bị co lại
+    display: flex;
+    // ... (Giữ nguyên padding và nội dung cũ)
+}

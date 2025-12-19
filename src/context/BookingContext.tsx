@@ -7,9 +7,8 @@ export interface BookingData {
     startTimeUtc: string;
     endTimeUtc: string;
     numberOfParticipants: number;
-    totalAmount: number; // Tổng tiền tính toán
-    totalHours: number; // Tổng số giờ thuê
-    // THÊM CÁC TRƯỜNG DỮ LIỆU CẦN THIẾT TỪ WORKSPACE
+    totalAmount: number; 
+    totalHours: number; 
     workspaceAddressLine: string;
     workspaceName: string;       
 }

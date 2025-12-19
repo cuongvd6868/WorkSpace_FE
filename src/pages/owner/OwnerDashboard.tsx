@@ -18,11 +18,12 @@ import OwnerPromotionsSection from "~/components/OwnerComponents/OwnerPromotions
 import NotificationManagementSection from "~/components/OwnerComponents/NotificationManagementSection/NotificationManagementSection";
 import DrinkServiceManagementSection from "~/components/OwnerComponents/DrinkServiceManagementSection/DrinkServiceManagementSection";
 import OwnerChatSection from "~/components/OwnerComponents/OwnerChatSection/OwnerChatSection";
+import OwnerPendingWorkspacesTable from "~/components/OwnerComponents/OwnerPendingWorkspacesTable/OwnerPendingWorkspacesTable";
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
     Overview = 'overview',
-    Finance = 'finance',
+    Pending = 'pending',
     Listings = 'listings', 
     Bookings = 'bookings',
     Promotions = 'promotions',
@@ -141,11 +142,11 @@ const OwnerDashboard: React.FC = () => {
 
                     </div>
                 );
-            case OwnerPage.Finance:
+            case OwnerPage.Pending:
                 return (
                     <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>💰 TÀI CHÍNH & THANH TOÁN</h2>
-                        <FinanceSection stats={stats} isLoading={isLoading} />
+                        <h2 className={cx('section-title')}>Chờ duyệt</h2>
+                        <OwnerPendingWorkspacesTable/>
                     </div>
                 );
             case OwnerPage.Listings:
@@ -214,8 +215,8 @@ const OwnerDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Overview })} onClick={() => setActivePage(OwnerPage.Overview)}>
                         <FontAwesomeIcon icon={faChartBar} /> <span>Tổng Quan</span>
                     </li>
-                    <li className={cx('nav-item', { active: activePage === OwnerPage.Finance })} onClick={() => setActivePage(OwnerPage.Finance)}>
-                        <FontAwesomeIcon icon={faWallet} /> <span>Tài Chính</span>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Pending })} onClick={() => setActivePage(OwnerPage.Pending)}>
+                        <FontAwesomeIcon icon={faBuilding} /> <span>Workspace Chờ duyệt</span>
                     </li>
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Listings })} onClick={() => setActivePage(OwnerPage.Listings)}>
                         <FontAwesomeIcon icon={faBuilding} /> <span>Quản Lý Listing</span>

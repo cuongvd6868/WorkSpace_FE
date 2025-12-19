@@ -319,3 +319,14 @@ export interface RawWorkspaceUpdateData extends WorkspaceUpdatePayload {
     workspaceId: number; // ID được truyền qua Path Parameter
     newImageFiles?: File[]; // File ảnh mới (để upload)
 }
+
+export interface WorkspacePending {
+  id: number;
+  title: string;
+  description: string;
+  workSpaceTypeName: string; 
+  addressLine: string;
+  city: string;
+  totalRooms: number;
+  thumbnailUrl: string;
+}

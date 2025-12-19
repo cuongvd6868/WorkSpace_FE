@@ -22,6 +22,8 @@ import ComparisonModal from "~/components/WorkspaceDetail/ComparisonBar/Comparis
 import HostInfo from "~/components/WorkspaceDetail/HostInfo/HostInfo";
 import ChatWidget from "~/components/ChatComponent/ChatWidget";
 import { CLOUD_NAME } from "~/config/cloudinaryConfig";
+import WorkspaceNotifications from "~/components/WorkspaceDetail/WorkspaceNotifications/WorkspaceNotifications";
+import WorkspacePromotions from "~/components/WorkspaceDetail/WorkspacePromotions/WorkspacePromotions";
 
 const cx = classNames.bind(styles);
 
@@ -361,7 +363,7 @@ const WorkspaceDetail: React.FC = () => {
 
                 {/* RIGHT COLUMN (SIDEBAR) */}
                 <div className={cx('right-column')}>
-                    
+                    <WorkspacePromotions workspaceId={workspace.id} />
                     {/* THÔNG TIN CHỦ HỘ/HOST */}
                     <HostInfo
                         hostId={workspace.hostId}
@@ -387,6 +389,9 @@ const WorkspaceDetail: React.FC = () => {
                             </a>
                         </div>
                     </section>
+                        <div className={cx('notification-sidebar-section')}>
+                        <WorkspaceNotifications workspaceId={workspace.id} />
+                    </div>
                 </div>
             </div>
 

@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import MeetingParticipantPicker from "../MeetingParticipantPicker/MeetingParticipantPicker";
 import flagImg from '~/assets/img/logo_img/vietnamFlagSvg.svg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBriefcase, faHeart, faLocationDot, faMessage, faPaperPlane, faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBriefcase, faHeart, faLocationDot, faMessage, faPaperPlane, faQuestionCircle, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { getLocationsByName } from "~/services/AddressService";
 import HeadlessTippy from '@tippyjs/react/headless';
 import Popper from "../Popper/Popper";
@@ -19,6 +19,8 @@ import { GetWorkSpaceQuickSearch } from "~/services/WorkSpaceService";
 import { chatService } from "~/services/ChatService";
 import { Loader } from "lucide-react";
 import ChatWidget from "../ChatComponent/ChatWidget";
+import { NotificationView } from "~/types/Notification";
+import { getAllNotification } from "~/services/NotificationService";
 
 const cx = classNames.bind(styles);
 
@@ -97,6 +99,22 @@ const handleOpenChatFromHistory = (sid: string, workspaceName: string) => {
   const [quickSearchResult, setQuickSearchResult] = useState<WorkSpaceQuickSearch[]>([]);
   const [showQuickSearchResult, setShowQuickSearchResult] = useState(false);
   const [quickSearchLoading, setQuickSearchLoading] = useState(false);
+
+  // --- State cho Thông báo hệ thống ---
+const [notifications, setNotifications] = useState<NotificationView[]>([]);
+const [loadingNoti, setLoadingNoti] = useState(false);
+
+const fetchNotifications = async () => {
+    try {
+        setLoadingNoti(true);
+        const data = await getAllNotification();
+        setNotifications(data || []);
+    } catch (error) {
+        console.error("Lỗi tải thông báo:", error);
+    } finally {
+        setLoadingNoti(false);
+    }
+};
 
   const handleQuickSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -291,6 +309,45 @@ const handleOpenChatFromHistory = (sid: string, workspaceName: string) => {
                                     <FontAwesomeIcon icon={faPaperPlane} className={cx('logo-icon')} />
                                 </div>
                             </HeadlessTippy>
+                <HeadlessTippy
+    interactive
+    placement="bottom-end"
+    offset={[0, 10]}
+    delay={[200, 0]}
+    onTrigger={fetchNotifications} // Gọi API khi hover
+    render={attrs => (
+        <div className={cx('notification-popover')} tabIndex={-1} {...attrs}>
+            <Popper>
+                <div className={cx('noti-header')}>Thông báo hệ thống</div>
+                <div className={cx('noti-list')}>
+                    {loadingNoti ? (
+                        <div className={cx('noti-loading')}>
+                            <Loader size={16} className={cx('spin')} /> Đang tải...
+                        </div>
+                    ) : notifications.length > 0 ? (
+                        notifications.map((noti) => (
+                            <div key={noti.id} className={cx('noti-item')}>
+                                <div className={cx('noti-icon')}>
+                                    <FontAwesomeIcon icon={faBell} />
+                                </div>
+                                <div className={cx('noti-info')}>
+                                    <p className={cx('noti-title')}>{noti.title}</p>
+                                    <p className={cx('noti-content')}>{noti.content}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className={cx('noti-empty')}>Không có thông báo nào</div>
+                    )}
+                </div>
+            </Popper>
+        </div>
+    )}
+>
+    <div className={cx('top-nav-item_i')}>
+        <FontAwesomeIcon icon={faBell} className={cx('logo-icon')} />
+    </div>
+</HeadlessTippy>
                 <div onClick={(e) => handleProtectedLinkClick(e, '/favorites', 'Vui lòng đăng nhập để truy cập danh sách yêu thích')} className={cx('top-nav-item_i')}><FontAwesomeIcon icon={faHeart} className={cx('logo-icon')} /> </div>   
                 <div onClick={(e) => handleProtectedLinkClick(e, '/booking-list', 'Vui lòng đăng nhập để truy cập danh sách đặt chỗ')} className={cx('top-nav-item')}>Danh sách đặt chỗ</div>  
                 <div className={cx('right-section_vector')}>|</div>

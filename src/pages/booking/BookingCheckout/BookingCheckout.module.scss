@@ -713,3 +713,53 @@ $transition-speed: 0.2s ease-in-out;
 .payment-logo {
     width: 100px;
 }
+
+.drink-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+
+    .drink-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    img {
+        height: 40px;
+        width: 40px;
+    }
+
+    .drink-name {
+        font-weight: 500;
+        display: block;
+    }
+    .drink-price {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            &:hover { background: #f0f0f0; }
+        }
+        
+        .qty-value {
+            min-width: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    }
+}
