@@ -61,10 +61,16 @@ const Navbar: React.FC = () => {
         }
     };
 
-    const handleOpenChatFromHistory = (sid: string, workspaceName: string) => {
+const handleOpenChatFromHistory = (sid: string, workspaceName: string) => {
+    // Reset session cũ trước khi set session mới để ChatWidget nhận diện sự thay đổi SID
+    setSelectedSession(null); 
+    
+    // Sử dụng setTimeout cực ngắn để đảm bảo React trigger lại việc render với SID mới
+    setTimeout(() => {
         setSelectedSession({ sid, name: workspaceName });
         setIsChatOpen(true);
-    };
+    }, 0);
+};
 
   const locationRouter = useLocation();
   const isHomePage = locationRouter.pathname === '/';

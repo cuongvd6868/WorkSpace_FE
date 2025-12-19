@@ -32,3 +32,4 @@ export interface WorkSpaceRoomDetail {
   images: string[];
   amenities: Amenity[];
 }
+
