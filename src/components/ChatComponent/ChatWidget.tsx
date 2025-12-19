@@ -5,6 +5,7 @@ import styles from './ChatWidget.module.scss';
 import { chatService } from '~/services/ChatService';
 import { ChatMessage } from '~/types/ChatUser';
 import { useAuth } from '~/context/useAuth';
+import moment from 'moment';
 
 const cx = classNames.bind(styles);
 
@@ -13,13 +14,13 @@ interface ChatWidgetProps {
     hostName?: string;
     isOpen: boolean;
     onClose: () => void;
-    externalSessionId?: string;
+    externalSessionId?: string | null;
 }
 
 const ChatWidget: React.FC<ChatWidgetProps> = ({ 
     workspaceId, hostName, isOpen, onClose, externalSessionId 
 }) => {
-    const { user } = useAuth();
+    const { user, isLoggedIn } = useAuth();
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [currentSid, setCurrentSid] = useState<string | null>(externalSessionId || null);
@@ -27,8 +28,20 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     const [loading, setLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // 1. Theo dõi sự thay đổi từ Props (Khi click từ Navbar)
     useEffect(() => {
-        if (!isOpen || !user) return;
+        if (externalSessionId) {
+            setCurrentSid(externalSessionId);
+            setMessages([]); // Xóa tin nhắn cũ ngay lập tức để tránh hiện nhầm nội dung
+            setDisplayOwnerName(hostName || 'Hỗ trợ');
+        }
+    }, [externalSessionId, hostName]);
+
+    // 2. Khởi tạo Chat (Dành cho trường hợp vào từ trang chi tiết Workspace)
+    useEffect(() => {
+        // Nếu đã có externalSessionId hoặc không mở widget thì bỏ qua
+        if (!isOpen || !user || externalSessionId) return;
+
         const initChat = async () => {
             try {
                 const mySessions = await chatService.getMySessions();
@@ -36,55 +49,92 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                 if (existing) {
                     setCurrentSid(existing.sessionId);
                     setDisplayOwnerName(hostName || existing.assignedOwnerName || 'Chủ nhà');
+                } else {
+                    // Reset nếu là workspace mới chưa từng chat
+                    setCurrentSid(null);
+                    setMessages([]);
                 }
-            } catch (error) { console.error(error); }
+            } catch (error) { 
+                console.error("Lỗi khởi tạo chat:", error); 
+            }
         };
         initChat();
-    }, [isOpen, workspaceId, hostName, user]);
+    }, [isOpen, workspaceId, hostName, user, externalSessionId]);
 
+    // 3. Cơ chế Real-time: Tự động lấy tin nhắn khi có SID
     useEffect(() => {
         let interval: NodeJS.Timeout;
-        if (isOpen && currentSid && user) {
-            const fetchMsg = async () => {
-                try {
-                    const history = await chatService.getChatHistory(currentSid);
-                    setMessages(history);
-                } catch (e) {}
-            };
-            fetchMsg();
-            interval = setInterval(fetchMsg, 4000);
-        }
-        return () => clearInterval(interval);
-    }, [isOpen, currentSid, user]);
 
+        const fetchMsg = async () => {
+            if (!currentSid) return;
+            try {
+                const history = await chatService.getChatHistory(currentSid);
+                setMessages(history || []);
+            } catch (e) {
+                console.error("Lỗi đồng bộ tin nhắn:", e);
+            }
+        };
+
+        if (isOpen && currentSid && isLoggedIn()) {
+            fetchMsg(); // Gọi ngay lần đầu
+            interval = setInterval(fetchMsg, 4000); // Polling mỗi 4 giây
+        }
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [isOpen, currentSid, isLoggedIn]);
+
+    // 4. Tự động cuộn xuống cuối khi có tin nhắn mới
     useEffect(() => {
         if (scrollRef.current) {
-            scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+            scrollRef.current.scrollTo({ 
+                top: scrollRef.current.scrollHeight, 
+                behavior: 'smooth' 
+            });
         }
     }, [messages]);
 
+    // 5. Xử lý gửi tin nhắn
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
         const text = inputValue.trim();
         if (!text || !user || loading) return;
+
         setLoading(true);
         try {
             let sid = currentSid;
+
+            // Nếu chưa có phiên chat (Chat mới từ trang chi tiết)
             if (!sid && workspaceId) {
-                const res = await chatService.startChat({ initialMessage: text, workSpaceId: workspaceId });
+                const res = await chatService.startChat({ 
+                    initialMessage: text, 
+                    workSpaceId: workspaceId 
+                });
                 if (res.succeeded) {
                     sid = res.data.sessionId;
                     setCurrentSid(sid);
                 }
-            } else if (sid) {
-                await chatService.sendMessage({ sessionId: sid, message: text });
+            } 
+            // Nếu đã có phiên chat (Tiếp tục hội thoại)
+            else if (sid) {
+                await chatService.sendMessage({ 
+                    sessionId: sid, 
+                    message: text 
+                });
             }
+
             setInputValue('');
+            // Refresh tin nhắn ngay sau khi gửi
             if (sid) {
                 const history = await chatService.getChatHistory(sid);
                 setMessages(history);
             }
-        } catch (error) {} finally { setLoading(false); }
+        } catch (error) {
+            console.error("Lỗi gửi tin nhắn:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -100,21 +150,36 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                         </div>
                         <div className={cx('name-stack')}>
                             <div className={cx('label')}>
-                                <span></span>
                                 <span className={cx('owner-name')}>{displayOwnerName}</span>
                             </div>
                             <span className={cx('sub-text')}>Đang trực tuyến</span>
                         </div>
                     </div>
-                    <button className={cx('close-icon')} onClick={onClose}><X size={20} /></button>
+                    <button className={cx('close-icon')} onClick={onClose}>
+                        <X size={20} />
+                    </button>
                 </div>
 
                 <div className={cx('chat-body')} ref={scrollRef}>
-                    {messages.map((msg) => (
-                        <div key={msg.id} className={cx('message-row', { 'is-me': !msg.isOwner })}>
-                            <div className={cx('message-bubble')}>{msg.content}</div>
+                    {messages.length > 0 ? (
+                        messages.map((msg) => (
+                            <div 
+                                key={msg.id || Math.random()} 
+                                className={cx('message-row', { 'is-me': !msg.isOwner })}
+                            >
+                                <div className={cx('message-container')}>
+                                    <div className={cx('message-bubble')}>{msg.content}</div>
+                                    <div className={cx('message-time')}>
+                                        {moment(msg.sentAt).format('HH:mm')}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className={cx('empty-chat')}>
+                            Bắt đầu cuộc trò chuyện với {displayOwnerName}
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 <form className={cx('footer')} onSubmit={handleSend}>
@@ -123,8 +188,14 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                             value={inputValue} 
                             onChange={(e) => setInputValue(e.target.value)} 
                             placeholder="Nhập tin nhắn..." 
+                            disabled={loading}
                         />
-                        <button type="submit" disabled={!inputValue.trim()}><Send size={18} /></button>
+                        <button 
+                            type="submit" 
+                            disabled={!inputValue.trim() || loading}
+                        >
+                            <Send size={18} />
+                        </button>
                     </div>
                 </form>
             </div>

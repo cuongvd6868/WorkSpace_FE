@@ -153,10 +153,16 @@ $bg-chat: #f8fafc;
     }
 
     .message-bubble {
-        max-width: 85%;
+        max-width: 200px;
         padding: 10px 14px;
         font-size: 14px;
         line-height: 1.5;
+
+        word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+        
     }
 }
 
@@ -208,4 +214,80 @@ $bg-chat: #f8fafc;
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(40px) scale(0.95); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.message-row {
+    display: flex;
+    margin-bottom: 12px;
+    
+    &.is-me {
+        justify-content: flex-end;
+        .message-container {
+            align-items: flex-end;
+        }
+        .message-bubble {
+            background-color: #0084ff; // Màu xanh cho tin nhắn của khách
+            color: white;
+            border-radius: 18px 18px 2px 18px;
+        }
+    }
+
+    &:not(.is-me) {
+        justify-content: flex-start;
+        .message-container {
+            align-items: flex-start;
+        }
+        .message-bubble {
+            background-color: #f0f0f0; // Màu xám cho tin nhắn của chủ nhà
+            color: #333;
+            border-radius: 18px 18px 18px 2px;
+        }
+    }
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.message-time {
+    font-size: 10px;
+    color: #999;
+    margin-top: 2px;
+    padding: 0 4px;
+}
+
+.empty-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: #94a3b8; // Màu chữ xám nhẹ (slate-400)
+    gap: 12px;
+
+    // Hiệu ứng icon hoặc hình ảnh minh họa (nếu có)
+    &::before {
+        content: '💬'; // Bạn có thể thay bằng icon svg hoặc font-awesome
+        font-size: 40px;
+        opacity: 0.5;
+        margin-bottom: 8px;
+    }
+
+    p {
+        font-size: 10px;
+        line-height: 1.6;
+        margin: 0;
+        max-width: 200px;
+    }
+
+    .highlight-name {
+        color: #6366f1; // Màu nhấn cho tên chủ nhà
+        font-weight: 600;
+        display: block;
+        margin-top: 4px;
+    }
 }
