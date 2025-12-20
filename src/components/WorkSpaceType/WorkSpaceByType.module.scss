@@ -13,7 +13,6 @@
         display: flex;
         align-items: center;
         gap: 3px;
-        
         padding: 7px 15px;
         border-radius: 20px;
         cursor: pointer;
@@ -32,11 +31,9 @@
             color: #4E5358;
         }
 
-        // Trạng thái active
         &.active {
-            background-color: #006CE4;
-            border: 1px solid #006CE4;
             background-color: #F0F6FE;
+            border: 1px solid #006CE4;
             
             .workspace-type_name {
                 color: #006CE4;
@@ -47,41 +44,35 @@
             }
         }
 
-        // Hiệu ứng hover (tuỳ chọn)
         &:hover {
             background-color: #F2F2F2;
-            
-            .workspace-type_name {
-                color: #1A1A1A;
-            }
         }
     }
 }
 
-    .title_container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    
-        .icon {
-            color: #073E68;
-            font-size: 2.5rem;
-            padding-bottom: 5px;
-        }
+.title_container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-        h2 {
-            color: dark;
-        }
-
-    }
-    .desc {
-        font-size: 1.4rem;
-        color: #53565a;
-        font-weight: 500;
-        margin-top: 5px;
-        margin-bottom: 23px;
+    .icon {
+        color: #073E68;
+        font-size: 2.5rem;
+        padding-bottom: 5px;
     }
 
+    h2 {
+        color: #1a1a1a;
+    }
+}
+
+.desc {
+    font-size: 1.4rem;
+    color: #53565a;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 23px;
+}
 
 .slider-container {
     position: relative;
@@ -93,7 +84,6 @@
 
 .promotion-slider {
     width: 100%;
-    // padding: 0 10px; 
     box-sizing: border-box;
 }
 
@@ -109,7 +99,6 @@
     top: 50%;
     transform: translateY(-50%); 
     z-index: 10;
-
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -117,7 +106,6 @@
     border: 1px solid #dcdcdc;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     color: #333; 
-    
     display: flex;
     align-items: center;
     justify-content: center;
@@ -130,12 +118,8 @@
     }
 }
 
-.prev-btn {
-    left: -18px;
-}
-.next-btn {
-    right: -18px; 
-}
+.prev-btn { left: -18px; }
+.next-btn { right: -18px; }
 
 :global(.swiper-button-disabled) {
     opacity: 0; 
@@ -143,45 +127,14 @@
     pointer-events: none; 
 }
 
-.promotion_header {
-    display: flex; 
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 23px;
-
-    .icon {
-        color: #073E68;
-        font-size: 2.5rem;
-        padding-bottom: 5px;
-    }
-
-    .title {
-        color: #073E68;
-    }
-}
-
 @media (max-width: 1024px) {
-    .promotion-slider {
-        padding: 0 15px;
-    }
-    
-    .prev-btn {
-        left: -5px;
-    }
-    .next-btn {
-        right: -5px;
-    }
+    .promotion-slider { padding: 0 15px; }
+    .prev-btn { left: -5px; }
+    .next-btn { right: -5px; }
 }
 
 @media (max-width: 768px) {
-    .promotion-slider {
-        padding: 0 10px;
-    }
-    
-    .prev-btn {
-        left: 0;
-    }
-    .next-btn {
-        right: 0;
-    }
+    .promotion-slider { padding: 0 10px; }
+    .prev-btn { left: 0; }
+    .next-btn { right: 0; }
 }
