@@ -25,7 +25,7 @@ const PostItem: React.FC<postProp> = ({post}) => {
             <div className={cx('sub-container')}>
                 <h3 className={cx('title')}>{post.title}</h3>
                 <div className={cx('info')}>
-                    <img src={post.avatar} alt="" className={cx('avatar')}/>
+                    <img src='https://5sfashion.vn/storage/upload/images/ckeditor/4KG2VgKFDJWqdtg4UMRqk5CnkJVoCpe5QMd20Pf7.jpg' alt="" className={cx('avatar')}/>
                     <p className={cx('username')}>{post.userName}</p>
                     <img src={checkImg} alt="" className={cx('check')}/>
                 </div>

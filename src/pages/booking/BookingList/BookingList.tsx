@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboardList, faUser, faStar } from "@fortawesome/free-solid-svg-icons"; // Thêm faStar
 import ReviewModal from "./ReviewModal/ReviewModal";
 import { toast } from "react-toastify";
+import CancelBookingModal from "./CancelModal/CancelBookingModal";
 
 const cx = classNames.bind(styles);
 
@@ -37,6 +38,32 @@ const BookingList: React.FC = () => {
     const [bookings, setBookings] = useState<BookingListType[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Thêm vào state của BookingList
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [bookingToCancel, setBookingToCancel] = useState<BookingListType | null>(null);
+
+    // Hàm tải dữ liệu (Đưa ra ngoài useEffect để gọi lại được)
+    const fetchBookings = async () => {
+        setIsLoading(true);
+        try {
+            const data = await GetBookingsByUser();
+            setBookings(data);
+        } catch (err) {
+            setError("Không thể tải danh sách đặt chỗ.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchBookings();
+    }, []);
+
+    const handleOpenCancel = (booking: BookingListType) => {
+        setBookingToCancel(booking);
+        setIsCancelModalOpen(true);
+    };
 
     // 💥 STATE CHO MODAL
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -181,7 +208,7 @@ const BookingList: React.FC = () => {
                                 {isPending && (
                                     <button
                                         className={cx('cancel-button')}
-                                        // onClick={() => handleCancelBooking(booking.bookingCode)}
+                                        onClick={() => handleOpenCancel(booking)} // Gọi hàm này
                                     >
                                         ❌ Hủy đặt chỗ
                                     </button>
@@ -200,6 +227,15 @@ const BookingList: React.FC = () => {
                     booking={selectedBooking}
                     // 💥 THÊM PROP MỚI ĐƯỢC YÊU CẦU
                     onReviewSuccess={handleReviewSuccess}
+                />
+            )}
+
+            {isCancelModalOpen && bookingToCancel && (
+                <CancelBookingModal
+                    bookingId={bookingToCancel.id}
+                    bookingCode={bookingToCancel.bookingCode}
+                    onClose={() => setIsCancelModalOpen(false)}
+                    onSuccess={fetchBookings} // Truyền hàm fetchBookings để tự động load lại
                 />
             )}
         </div>

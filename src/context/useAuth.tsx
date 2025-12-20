@@ -17,49 +17,68 @@ type UserContextType = {
     isLoggedIn: () => boolean;
 };
 
+// Hàm gán token đồng bộ ngay lập tức cho các Instance
+const setAxiosHeaderSync = (token: string | null) => {
+    const instances = [axios, chatApi, ownerApi];
+    instances.forEach(ins => {
+        if (token) {
+            ins.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        } else {
+            delete ins.defaults.headers.common["Authorization"];
+        }
+    });
+};
+
 const UserContext = createContext<UserContextType>({} as UserContextType);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
-    const [token, setToken] = useState<string | null>(null);
-    const [user, setUser] = useState<UserProfile | null>(null);
+
+    // 1️⃣ KHỞI TẠO STATE & GẮN TOKEN NGAY LẬP TỨC (Dùng hàm để chạy đồng bộ)
+    const [token, setToken] = useState<string | null>(() => {
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setAxiosHeaderSync(storedToken); // Ép Axios có token trước khi Render
+        }
+        return storedToken;
+    });
+
+    const [user, setUser] = useState<UserProfile | null>(() => {
+        const storedUser = localStorage.getItem("user");
+        try {
+            return storedUser ? JSON.parse(storedUser) : null;
+        } catch {
+            return null;
+        }
+    });
+
     const [isReady, setIsReady] = useState(false);
 
-    // Dùng useCallback để tránh render lặp vô tận
     const logout = useCallback(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setToken(null);
         setUser(null);
-        delete axios.defaults.headers.common["Authorization"];
+        setAxiosHeaderSync(null); // Xóa sạch token trong Header
         navigate("/login");
     }, [navigate]);
 
-    // Load data khi khởi động app
+    // 2️⃣ CẤU HÌNH INTERCEPTORS SAU KHI COMPONENT MOUNT
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        const storedToken = localStorage.getItem("token");
+        // Đăng ký interceptors cho các instance
+        const id1 = setupAxiosInterceptors(axios, logout, navigate);
+        const id2 = setupAxiosInterceptors(chatApi, logout, navigate);
+        const id3 = setupAxiosInterceptors(ownerApi, logout, navigate);
 
-        if (storedUser && storedToken) {
-            try {
-                setUser(JSON.parse(storedUser));
-                setToken(storedToken);
-            } catch (error) {
-                logout(); 
-            }
-        }
         setIsReady(true);
-    }, [logout]);
 
-    // Kích hoạt Interceptor cho tất cả các Instance
-    useEffect(() => {
-        if (isReady) {
-            // Fix: Truyền instance vào từng hàm setup
-            setupAxiosInterceptors(axios, logout, navigate);
-            setupAxiosInterceptors(chatApi, logout, navigate);
-            setupAxiosInterceptors(ownerApi, logout, navigate);
-        }
-    }, [isReady, logout, navigate]);
+        return () => {
+            // Cleanup để tránh đăng ký trùng lặp khi re-render
+            axios.interceptors.response.eject(id1);
+            chatApi.interceptors.response.eject(id2);
+            ownerApi.interceptors.response.eject(id3);
+        };
+    }, [logout, navigate]);
 
     const handleAuthSuccess = (data: any) => {
         const userObj: UserProfile = {
@@ -69,6 +88,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         localStorage.setItem("token", data.jwToken);
         localStorage.setItem("user", JSON.stringify(userObj));
+        
+        setAxiosHeaderSync(data.jwToken); // Cập nhật Header cho instance
         setToken(data.jwToken);
         setUser(userObj);
     };
@@ -122,7 +143,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return (
         <UserContext.Provider value={{ user, token, registerUser, loginUser, googleLogin, logout, isLoggedIn: () => !!user }}>
-            {isReady ? children : <div className="flex items-center justify-center h-screen">Đang tải cấu hình...</div>}
+            {/* 3️⃣ QUAN TRỌNG: Chỉ render app khi hệ thống auth đã nạp xong token */}
+            {isReady ? children : (
+                <div className="flex items-center justify-center h-screen bg-gray-50">
+                    <div className="text-gray-500 animate-pulse">Đang tải dữ liệu phiên làm việc...</div>
+                </div>
+            )}
         </UserContext.Provider>
     );
 };

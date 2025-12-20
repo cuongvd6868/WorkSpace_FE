@@ -69,7 +69,7 @@ const PostPage: React.FC = () => {
                 
                 {/* Thông tin tác giả và ngày đăng */}
                 <div className={cx('post-meta')}>
-                    <img src={authorAvatar} alt={authorName} className={cx('author-avatar')} />
+                    <img src='https://5sfashion.vn/storage/upload/images/ckeditor/4KG2VgKFDJWqdtg4UMRqk5CnkJVoCpe5QMd20Pf7.jpg' alt={authorName} className={cx('author-avatar')} />
                     <div className={cx('meta-info')}>
                         <span className={cx('author-name')}>Đăng bởi: **{authorName}**</span>
                         <span className={cx('post-date')}>

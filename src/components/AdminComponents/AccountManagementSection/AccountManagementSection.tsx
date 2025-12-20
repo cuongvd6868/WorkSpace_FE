@@ -8,7 +8,8 @@ import {
     getStaffsAccount, 
     getOwnersAccount, 
     getCustomerAccount, 
-    handleBlockUser 
+    handleBlockUser, 
+    handleUpdateUserRole
 } from '~/services/AdminService'; 
 import { UserAdminView } from '~/types/Admin';
 
@@ -16,11 +17,74 @@ const cx = classNames.bind(styles);
 
 type AccountType = 'customers' | 'owners' | 'staffs';
 
+// Tạo file RoleModal.tsx hoặc để trong cùng file
+const RoleModal: React.FC<{
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (role: string) => void;
+    userName: string;
+    isUpdating: boolean;
+}> = ({ isOpen, onClose, onConfirm, userName, isUpdating }) => {
+    const roles = [
+        { value: 'Staff', label: 'Nhân Viên', icon: faUserTie },
+        { value: 'Admin', label: 'Quản Trị Viên', icon: faUserTie },
+        { value: 'Owner', label: 'Chủ Workspace', icon: faBuildingUser },
+    ];
+
+    if (!isOpen) return null;
+
+    return (
+        <div className={cx('modal-overlay')}>
+            <div className={cx('modal-content')}>
+                <h3>Cập nhật vai trò cho: <span>{userName}</span></h3>
+                <div className={cx('role-options')}>
+                    {roles.map((role) => (
+                        <button
+                            key={role.value}
+                            className={cx('role-item')}
+                            onClick={() => onConfirm(role.value)}
+                            disabled={isUpdating}
+                        >
+                            <FontAwesomeIcon icon={role.icon} />
+                            {role.label}
+                        </button>
+                    ))}
+                </div>
+                <button className={cx('btn-cancel')} onClick={onClose} disabled={isUpdating}>
+                    Hủy
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const AccountManagementSection: React.FC = () => {
     const [activeTab, setActiveTab] = useState<AccountType>('customers');
     const [users, setUsers] = useState<UserAdminView[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isBlocking, setIsBlocking] = useState<number | null>(null);
+
+    const [selectedUser, setSelectedUser] = useState<UserAdminView | null>(null);
+    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [isUpdatingRole, setIsUpdatingRole] = useState(false);
+
+    // Hàm xử lý cập nhật Role
+    const onUpdateRole = async (role: string) => {
+        if (!selectedUser) return;
+        
+        setIsUpdatingRole(true);
+        try {
+            await handleUpdateUserRole(selectedUser.id, role);
+            toast.success(`Cập nhật vai trò ${role} thành công!`);
+            setIsRoleModalOpen(false);
+            // Tải lại danh sách để đồng bộ dữ liệu
+            fetchUsers(activeTab); 
+        } catch (error) {
+            toast.error('Cập nhật vai trò thất bại.');
+        } finally {
+            setIsUpdatingRole(false);
+        }
+    };
 
     // 1. Hàm tải dữ liệu người dùng
     const fetchUsers = useCallback(async (type: AccountType) => {
@@ -125,10 +189,10 @@ const AccountManagementSection: React.FC = () => {
                                  {/* NÚT SET ROLE */}
     <button
         className={cx('action-btn', 'btn-role')}
-        onClick={() => {
-            console.log('Set role cho user:', user.id);
-            // sau này mở modal set role tại đây
-        }}
+       onClick={() => {
+             setSelectedUser(user);
+             setIsRoleModalOpen(true);
+         }}
     >
         <FontAwesomeIcon icon={faUserTie} /> Set Role
     </button>
@@ -167,6 +231,15 @@ const AccountManagementSection: React.FC = () => {
 
             {/* Bảng dữ liệu */}
             <UserTable />
+            {selectedUser && (
+                <RoleModal
+                    isOpen={isRoleModalOpen}
+                    userName={selectedUser.fullName}
+                    isUpdating={isUpdatingRole}
+                    onClose={() => setIsRoleModalOpen(false)}
+                    onConfirm={onUpdateRole}
+                />
+            )}
         </div>
     );
 };
