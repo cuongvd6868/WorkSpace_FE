@@ -35,3 +35,12 @@ export const getAllNotificationByWorkspaceId = async (id: number) => {
     }
 }
 
+export const deleteNotification = async (id: number) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}v1/notification/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+}

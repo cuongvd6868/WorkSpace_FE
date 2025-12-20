@@ -99,7 +99,6 @@ const BookingManagementSection: React.FC = () => {
                             <th>Thời gian</th>
                             <th>Trạng thái</th>
                             <th>Tổng tiền</th>
-                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,15 +124,6 @@ const BookingManagementSection: React.FC = () => {
                                 </td>
                                 <td className={cx('final-amount')}>
                                     {formatCurrency(booking.finalAmount, booking.currency)}
-                                </td>
-                                <td className={cx('action-btns')}>
-                                    <button 
-                                        className={cx('view-btn')}
-                                        title="Xem chi tiết Booking"
-                                    >
-                                        <FontAwesomeIcon icon={faEye} />
-                                    </button>
-                                    {/* Nút cập nhật trạng thái sẽ được thêm vào đây khi có API */}
                                 </td>
                             </tr>
                         ))}

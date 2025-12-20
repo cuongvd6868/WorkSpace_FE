@@ -17,6 +17,7 @@ import OwnerRegistrationCensorSection from "~/components/AdminComponents/OwnerRe
 import NotificationManagementSection from "~/components/AdminComponents/NotificationManagementSection/NotificationManagementSection";
 import PromotionManagementSection from "~/components/AdminComponents/PromotionManagementSection/PromotionManagementSection";
 import BookingManagementSection from "~/components/AdminComponents/BookingManagementSection/BookingManagementSection";
+import TopBookedSection from "~/components/AdminComponents/TopBookedSection/TopBookedSection";
 
 const cx = classNames.bind(styles);
 
@@ -28,7 +29,7 @@ enum AdminPage {
     Promotions = 'promotions',
     Bookings = 'Bookings',
     Accounts = 'accounts',
-    Settings = 'settings',
+    TopBooking = 'TopBookings',
 }
 
 const AdminDasdboard: React.FC = () => {
@@ -97,11 +98,7 @@ const AdminDasdboard: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* 3. Hoạt động Gần đây */}
-                        <div className={cx('recent-activity')}>
-                             <h3>📝 HOẠT ĐỘNG GẦN ĐÂY</h3>
-                             <p className={cx('placeholder')}>[Danh sách 5 booking, giao dịch gần nhất]</p>
-                        </div>
+
                     </div>
                 );
             case AdminPage.Accounts:
@@ -126,8 +123,13 @@ const AdminDasdboard: React.FC = () => {
                         <OwnerRegistrationCensorSection />
                     </div>
                 );
-            case AdminPage.Settings:
-                return <h2 className={cx('section-title')}>⚙️ CÀI ĐẶT HỆ THỐNG</h2>;
+            case AdminPage.TopBooking:
+                return (
+        <div className={cx('content-section')}>
+            <h2 className={cx('section-title')}>🏆 TOP 5 WORKSPACE ĐƯỢC ĐẶT NHIỀU NHẤT</h2>
+            <TopBookedSection />
+        </div>
+    );
             case AdminPage.Notifications:
                 return (
                     <div className={cx('content-section')}>
@@ -164,9 +166,9 @@ const AdminDasdboard: React.FC = () => {
                         <li className={cx('nav-item', { active: activePage === AdminPage.Overview })} onClick={() => setActivePage(AdminPage.Overview)}>
                             <FontAwesomeIcon icon={faTachometerAlt} /> <span>Dashboard</span>
                         </li>
-                        <li className={cx('nav-item', { active: activePage === AdminPage.Revenue })} onClick={() => setActivePage(AdminPage.Revenue)}>
+                        {/* <li className={cx('nav-item', { active: activePage === AdminPage.Revenue })} onClick={() => setActivePage(AdminPage.Revenue)}>
                             <FontAwesomeIcon icon={faDollarSign} /> <span>Doanh Thu</span>
-                        </li>
+                        </li> */}
                         <li className={cx('nav-item', { active: activePage === AdminPage.Censor })} onClick={() => setActivePage(AdminPage.Censor)}>
                             <FontAwesomeIcon icon={faCheckSquare} /> <span>Kiểm duyệt</span>
                         </li>
@@ -182,8 +184,8 @@ const AdminDasdboard: React.FC = () => {
                         <li className={cx('nav-item', { active: activePage === AdminPage.Accounts })} onClick={() => setActivePage(AdminPage.Accounts)}>
                             <FontAwesomeIcon icon={faUsers} /> <span>Tài Khoản</span>
                         </li>
-                        <li className={cx('nav-item', { active: activePage === AdminPage.Settings })} onClick={() => setActivePage(AdminPage.Settings)}>
-                            <FontAwesomeIcon icon={faCog} /> <span>Cài Đặt</span>
+                        <li className={cx('nav-item', { active: activePage === AdminPage.TopBooking })} onClick={() => setActivePage(AdminPage.TopBooking)}>
+                            <FontAwesomeIcon icon={faCog} /> <span>TOP</span>
                         </li>
                     </ul>
                 </div>

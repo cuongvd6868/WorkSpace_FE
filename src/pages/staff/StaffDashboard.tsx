@@ -229,10 +229,6 @@ const StaffDashboard: React.FC = () => {
                         <FontAwesomeIcon icon={faNewspaper} /> <span>Bài viết</span>
                     </li>
                 </ul>
-                <div className={cx('task-summary')}>
-                    <h4>✅ Tóm Tắt Nhiệm Vụ</h4>
-                    <p>Total Pending: **60**</p>
-                </div>
             </nav>
 
             {/* Main Content */}

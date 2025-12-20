@@ -136,3 +136,16 @@ export interface Booking {
 }
 
 export type AllBookingsResponse = Booking[];
+
+export interface TopBookedWorkspace {
+    id: number;
+    title: string;
+    description: string;
+    address: string;
+    minPrice: number;
+    imageUrl: string;
+    hostId: number;
+    hostName: string;
+    hostAvatar: string;
+    hostEmail: string;
+}

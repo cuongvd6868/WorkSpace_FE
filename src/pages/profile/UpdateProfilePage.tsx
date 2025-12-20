@@ -20,6 +20,7 @@ import styles from './UpdateProfilePage.module.scss';
 import { useAuth } from "~/context/useAuth";
 import { updateProfile } from "~/services/ProfileService";
 import { UpdateProfileRequest } from "~/types/Profile";
+import { Link } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
@@ -136,7 +137,6 @@ const UpdateProfilePage: React.FC = () => {
                                         {user?.email.split('@')[0]}
                                     </h3>
                                     <div className={cx('status')}>
-                                        <FontAwesomeIcon icon={faCheckCircle} className={cx('verified-icon')} />
                                         <span className={cx('email-text')}>{user?.email}</span>
                                     </div>
                                 </div>
@@ -242,6 +242,12 @@ const UpdateProfilePage: React.FC = () => {
                                         />
                                         <FontAwesomeIcon icon={faCalendarAlt} className={cx('input-icon')} />
                                     </div>
+                                </div>
+                                <div className={cx('change-password')}>
+                                    <Link to={'/change-password'}>
+                                            Đổi mật khẩu
+                                    </Link>
+                                    
                                 </div>
 
                                 {/* Save button */}
