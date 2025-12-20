@@ -26,6 +26,7 @@ import WorkspaceNotifications from "~/components/WorkspaceDetail/WorkspaceNotifi
 import WorkspacePromotions from "~/components/WorkspaceDetail/WorkspacePromotions/WorkspacePromotions";
 import MapImg from '~/assets/img/map/mapImg.png';
 import WorkspaceReviewSwiper from "~/components/WorkspaceDetail/WorkspaceReviewSwiper/WorkspaceReviewSwiper";
+import LoadingSpinner from "~/components/LoadingSpinner/LoadingSpinner";
 
 const cx = classNames.bind(styles);
 
@@ -284,9 +285,8 @@ const WorkspaceDetail: React.FC = () => {
     // LOGIC RENDER
     if (loading) {
         return (
-            <div className={cx('wrapper')}>
-                <Loader className={cx('loader-icon')} size={48} />
-                <p>Đang chuẩn bị trải nghiệm Workspace tuyệt vời nhất...</p>
+            <div className={cx('loading-state')}>
+                <LoadingSpinner/>
             </div>
         );
     }
@@ -304,7 +304,7 @@ const WorkspaceDetail: React.FC = () => {
         <div className={cx('wrapper')}>
             <header className={cx('header')}>
                 <div className={cx('header-content')}>
-                    <h1>{workspace.title} {workspace.id}</h1>
+                    <h1>{workspace.title}</h1>
                     <p className={cx('address')}><MapPin size={16} /> {workspace.addressLine}</p>
                     <div className={cx('contact-info')}>
                         <span><Phone size={14} /> {workspace.hostContactPhone}</span>
