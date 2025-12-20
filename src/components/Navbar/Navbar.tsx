@@ -354,7 +354,9 @@ const fetchNotifications = async () => {
                 <div onClick={(e) => handleProtectedLinkClick(e, '/host-register', 'Vui lòng đăng nhập để đăng không gian')} className={cx('top-nav-item')}>Đăng không gian của quý vị</div>           
                 {isLoggedIn() ? (
                   <div className={cx('toggle_auth')}>
-                    <div className={cx('nav_btn_login')}>{user?.userName}</div>
+                    <Link to={'/update-profile'}>
+                      <div className={cx('nav_btn_login')}>{user?.userName}</div>
+                    </Link>
                     <FontAwesomeIcon icon={faRightFromBracket} className={cx('logo-icon')} onClick={handleLogout}/>
                   </div>
                 ): 
