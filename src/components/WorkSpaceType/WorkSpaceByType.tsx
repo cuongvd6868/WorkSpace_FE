@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from './WorkSpaceByType.module.scss';
 import classNames from "classnames/bind";
 import { WorkSpaceType } from "~/types/WorkSpaceType";
@@ -16,6 +16,8 @@ import {
 import WorkSpaceItem from "./WorkSpaceItem/WorkSpaceItem";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+// Import kiểu Swiper ở đây
+import type { Swiper as SwiperType } from 'swiper'; 
 import 'swiper/css';
 
 const iconMap: Record<string, any> = {
@@ -37,31 +39,27 @@ const ChevronRightIcon = () => (
     </svg>
 );
 
-
 const cx = classNames.bind(styles);
 
 const WorkSpaceByType: React.FC = () => {
-    // workspace type
+    const prevRef = useRef<HTMLButtonElement>(null);
+    const nextRef = useRef<HTMLButtonElement>(null);
+
     const [workSpaceTypes, setWorkSpaceTypes] = useState<WorkSpaceType[]>([]);
     const [typeLoading, setTypeLoading] = useState<boolean>(true);
     const [workSpaceTypesError, setWorkSpaceTypesError] = useState<string | null>(null);
     const [workSpaceType, setWorkSpaceType] = useState<number | null>(null);
 
-    // workspace
     const [workSpace, setWorkSpace] = useState<WorkSpace[]>([]);
     const [workSpaceLoading, setWorkSpaceLoading] = useState<boolean>(true);
     const [workSpaceError, setWorkSpaceError] = useState<string | null>(null);
 
-    // fetch workspace type
     useEffect(() => {
         const fetchWorkSpaceType = async () => {
             try {
                 setTypeLoading(true);
-                setWorkSpaceError(null);
                 const apiResponse = await GetAllWorkSpaceTypes();
                 setWorkSpaceTypes(apiResponse);
-                
-                // Mặc định active cái đầu tiên khi có dữ liệu
                 if (apiResponse.length > 0) {
                     setWorkSpaceType(apiResponse[0].id);
                 }
@@ -75,7 +73,6 @@ const WorkSpaceByType: React.FC = () => {
         fetchWorkSpaceType();
     }, []);
 
-    // fetch workspace
     useEffect(() => {
         const fetchWorkSpace = async (id: number) => {
             try {
@@ -90,8 +87,6 @@ const WorkSpaceByType: React.FC = () => {
                 setWorkSpaceLoading(false);
             }
         }
-        
-        // Chỉ fetch khi workSpaceType có giá trị hợp lệ
         if (workSpaceType) {
             fetchWorkSpace(workSpaceType);
         }
@@ -108,6 +103,7 @@ const WorkSpaceByType: React.FC = () => {
                 <h2>Bắt đầu với không gian phù hợp nhất</h2>
             </div>
             <p className={cx('desc')}>Khám phá các loại không gian làm việc linh hoạt, đáp ứng mọi nhu cầu từ cá nhân đến nhóm.</p>
+            
             <div className={cx('workspace-type_container')}>
                 {workSpaceTypes.map((type) => (
                     <div className={cx('workspace-type_item', { active: workSpaceType === type.id })} key={type.id} onClick={() => handleTypeClick(type.id)}>
@@ -116,14 +112,22 @@ const WorkSpaceByType: React.FC = () => {
                     </div>
                 ))}
             </div>
+
             <div className={cx('slider-container')}>
                 <Swiper
                     modules={[Navigation]}
                     spaceBetween={24} 
                     slidesPerView={3}
                     navigation={{
-                        nextEl: `.${cx('nav-btn')}.${cx('next-btn')}`,
-                        prevEl: `.${cx('nav-btn')}.${cx('prev-btn')}`,
+                        prevEl: prevRef.current,
+                        nextEl: nextRef.current,
+                    }}
+                    // Sửa kiểu dữ liệu Swiper ở đây
+                    onBeforeInit={(swiper: SwiperType) => {
+                        if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
+                            swiper.params.navigation.prevEl = prevRef.current;
+                            swiper.params.navigation.nextEl = nextRef.current;
+                        }
                     }}
                     className={cx('promotion-slider')}
                     breakpoints={{
@@ -132,17 +136,17 @@ const WorkSpaceByType: React.FC = () => {
                         1024: { slidesPerView: 4, spaceBetween: 14 },
                     }}
                 >
-                {workSpace.map((w) => (
-                    <SwiperSlide key={w.id} className={cx('promotion-slide')}>
-                        <WorkSpaceItem workSpace={w} />
-                    </SwiperSlide>
-                ))}
+                    {workSpace.map((w) => (
+                        <SwiperSlide key={w.id} className={cx('promotion-slide')}>
+                            <WorkSpaceItem workSpace={w} />
+                        </SwiperSlide>
+                    ))}
                 </Swiper>
 
-                <button className={cx('nav-btn', 'prev-btn')}>
+                <button ref={prevRef} className={cx('nav-btn', 'prev-btn')}>
                     <ChevronLeftIcon />
                 </button>
-                <button className={cx('nav-btn', 'next-btn')}>
+                <button ref={nextRef} className={cx('nav-btn', 'next-btn')}>
                     <ChevronRightIcon />
                 </button>
             </div>

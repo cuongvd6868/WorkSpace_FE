@@ -8,6 +8,7 @@ import { faClipboardList, faUser, faStar } from "@fortawesome/free-solid-svg-ico
 import ReviewModal from "./ReviewModal/ReviewModal";
 import { toast } from "react-toastify";
 import CancelBookingModal from "./CancelModal/CancelBookingModal";
+import { Link } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
