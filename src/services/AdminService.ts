@@ -8,7 +8,8 @@ import {
     Promotion,
     CreatePromotionRequest,
     ActivatePromotionRequest,
-    Booking
+    Booking,
+    UpdateUserRoleRequest
 } from "~/types/Admin";
 import { getAuthHeaders } from "./AuthService";
 
@@ -168,6 +169,8 @@ export const createPromotion = async (data: CreatePromotionRequest): Promise<any
         throw error;
     }
 };
+
+
 export const handleActivatePromotion = async (
     id: number, 
     requestBody?: ActivatePromotionRequest
@@ -185,6 +188,16 @@ export const handleActivatePromotion = async (
         return response.data;
     } catch (error) {
         handleError(error);
+        throw error;
+    }
+};
+
+// trong file ~/services/AdminService.ts
+export const handleUpdateUserRole = async (userId: number, role: string) => {
+    try {
+        const response = await axios.put(`${API_BASE_URL}v1/admin/users/${userId}/role`, { role });
+        return response.data;
+    } catch (error) {
         throw error;
     }
 };

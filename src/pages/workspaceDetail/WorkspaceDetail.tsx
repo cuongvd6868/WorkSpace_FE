@@ -24,6 +24,7 @@ import ChatWidget from "~/components/ChatComponent/ChatWidget";
 import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 import WorkspaceNotifications from "~/components/WorkspaceDetail/WorkspaceNotifications/WorkspaceNotifications";
 import WorkspacePromotions from "~/components/WorkspaceDetail/WorkspacePromotions/WorkspacePromotions";
+import MapImg from '~/assets/img/map/mapImg.png';
 
 const cx = classNames.bind(styles);
 
@@ -370,13 +371,13 @@ const WorkspaceDetail: React.FC = () => {
                         hostName={workspace.hostName}
                         hostPhone={workspace.hostContactPhone}
                         hostEmail={workspace.hostCompanyName}
-                        hostAvatarUrl={workspace.hostAvatar}
+                        hostAvatarUrl={'https://5sfashion.vn/storage/upload/images/ckeditor/4KG2VgKFDJWqdtg4UMRqk5CnkJVoCpe5QMd20Pf7.jpg'}
                         workspaceTitle={workspace.title}
-                        onOpenChat={() => setIsChatOpen(true)} // Truyền function mở chat
+                        onOpenChat={() => setIsChatOpen(true)} 
                     />
 
                     {/* BẢN ĐỒ */}
-                    <section className={cx('map-section')}>
+                    {/* <section className={cx('map-section')}>
                         <h2 className={cx('section-heading')}>
                             <Map size={24} />
                             Vị Trí
@@ -388,7 +389,35 @@ const WorkspaceDetail: React.FC = () => {
                                 Mở trên Google Maps <ExternalLink size={12} />
                             </a>
                         </div>
-                    </section>
+                    </section> */}
+                    <section className={cx('map-section')}>
+    <h2 className={cx('section-heading')}>
+        <Map size={24} />
+        Vị Trí
+    </h2>
+    <div className={cx('map-container')}>
+        {/* Thẻ img thay thế cho background-image */}
+        <img 
+            src={`${MapImg}` || "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1000"} 
+            alt="Bản đồ vị trí" 
+            className={cx('map-image')}
+        />
+        
+        {/* Lớp phủ để text dễ đọc hơn */}
+        <div className={cx('map-overlay')}>
+            <p className={cx('map-address')}>{workspace.addressLine}</p>
+            <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(workspace.addressLine)}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={cx('map-link')}
+            >
+                Mở trên Google Maps <ExternalLink size={14} />
+            </a>
+        </div>
+    </div>
+</section>
+                    
                         <div className={cx('notification-sidebar-section')}>
                         <WorkspaceNotifications workspaceId={workspace.id} />
                     </div>

@@ -77,6 +77,10 @@ export type BookingListType = {
 }
 
 export interface ReviewData {
-  rating: number; // Tương ứng với 'rating': integer(int32) trong API
-  comment: string; // Tương ứng với 'comment': "string" trong API
+  rating: number; 
+  comment: string; 
+}
+
+export interface CustomerCancelRequest {
+  reason: string;
 }

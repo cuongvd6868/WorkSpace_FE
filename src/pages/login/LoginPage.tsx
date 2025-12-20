@@ -7,9 +7,11 @@ import NavbarLogin from '~/components/NavbarLogin/NavbarLogin';
 import logImg from '~/assets/img/login/log.svg';
 import resImg from '~/assets/img/login/register.svg';
 import { useGoogleLogin } from '@react-oauth/google';
-
+import { forgotPassword } from '~/services/ProfileService';
 import { registerAPI } from '~/services/AuthService'; 
 import { Link } from 'react-router-dom';
+
+
 
 
 const cx = classNames.bind(styles);
@@ -51,6 +53,22 @@ const LoginPage: React.FC = () => {
         flow: 'auth-code',
         scope: 'openid profile email',
     });
+
+    // Handle forgot password
+    const handleForgetPassword = async () => {
+        if (!loginEmail) {
+            toast.error("Vui lòng nhập Email của bạn vào ô đăng nhập để lấy lại mật khẩu.");
+            return;
+        }
+
+        try {
+            const message = await forgotPassword({ email: loginEmail });
+            toast.success(message);
+        } catch (error: any) {
+            // Lỗi đã qua handleError nên chỉ cần lấy message
+            toast.error(error.message || "Gửi yêu cầu thất bại.");
+        }
+    };
 
     // Handle login form submission
     const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -149,11 +167,13 @@ const LoginPage: React.FC = () => {
                                 </button>
                             </div>
                             <div className={cx('password-service')}>
-                                <Link to={'/change-password'}>
-
-                                <p className={cx('change-password')}>Đổi mật khẩu</p>
-                                </Link>
-                                <p className={cx('forget-password')}>Quên mật khẩu</p>
+                                <p 
+                                        className={cx('forget-password')} 
+                                        onClick={handleForgetPassword}
+                                        style={{ cursor: 'pointer' }} // Thêm style để user biết là click được
+                                    >
+                                        Quên mật khẩu?
+                                    </p>
                             </div>
 
                         </form>

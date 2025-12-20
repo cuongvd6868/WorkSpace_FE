@@ -6,6 +6,7 @@ import Banner from "~/components/Banner/Banner";
 import WorkSpaceByType from "~/components/WorkSpaceType/WorkSpaceByType";
 import Reason from "~/components/Reason/Reason";
 import Postfeatured from "~/components/Post/Postfeatured/Postfeatured";
+import WorkSpaceByWard from "~/components/WorkSpaceWard/WorkSpaceByWard";
 
 
 const cx = classNames.bind(styles);
@@ -15,8 +16,9 @@ const HomePage : React.FC = () => {
         <div className={cx('wrapper')}>
             <div className={cx('home')}>
                 <PromotionList/>
-                <Banner/>
                 <WorkSpaceByType/>
+                <Banner/>
+                <WorkSpaceByWard/>
                 <Reason/>
                 <Postfeatured/>
             </div>

@@ -1,0 +1,82 @@
+.wrapper {
+    margin-top: 25px;
+    width: 100%;
+
+    .container {
+        margin: 0 auto;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .ward_tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .ward_btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+
+            &:hover {
+                border-color: #007bff;
+                color: #007bff;
+            }
+
+            &.active {
+                border: 1px solid #006CE4;
+                color: #006CE4;
+                background-color: #F2F2F2;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .swiper_container {
+        position: relative;
+        min-height: 300px;
+        
+        // Tùy chỉnh màu nút điều hướng của Swiper
+        :global(.swiper-button-next),
+        :global(.swiper-button-prev) {
+            color: #007bff;
+            transform: scale(0.7);
+        }
+
+        :global(.swiper-pagination-bullet-active) {
+            background: #007bff;
+        }
+    }
+}
+
+    .title_container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    
+        .icon {
+            color: #073E68;
+            font-size: 2.5rem;
+            padding-bottom: 5px;
+        }
+
+        h2 {
+            color: dark;
+        }
+
+    }

@@ -3,7 +3,8 @@ import {
   CreateBookingRequestForGuest,
   CreatePaymentUrlResponse,
   CreateBookingRequestForCustomer,
-  ReviewData
+  ReviewData,
+  CustomerCancelRequest
 } from '~/types/Booking'; 
 import { API_BASE_URL } from '~/utils/API';
 import { handleError } from '~/utils/handleError';
@@ -101,5 +102,15 @@ export const postReview = async (bookingId: number, reviewData: ReviewData) => {
     console.error(`Lỗi gửi đánh giá cho booking ${bookingId}:`, error);
     handleError(error); 
     throw error;
+  }
+}
+
+export const cancelBooking = async (id: string, data: CustomerCancelRequest) => {
+  try {
+    const response = await axios.put(`${API_BASE_URL}v1/booking/${id}/cancel`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error cancel booking:', error);
+    throw error; 
   }
 }

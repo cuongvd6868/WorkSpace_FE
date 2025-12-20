@@ -264,7 +264,7 @@ const SearchResultsPage: React.FC = () => {
             {error && !loading && (
                 <div className={cx('error-state')}>
                     <FontAwesomeIcon icon={faExclamationCircle} className={cx('error-icon')} />
-                    <p>Lỗi: {error}</p>
+                    <p>{error}</p>
                     {(selectedAmenitiesFromUrl.length > 0 || minPriceFromUrl !== DEFAULT_MIN_PRICE || maxPriceFromUrl !== DEFAULT_MAX_PRICE) && (
                         <button onClick={() => {
                             const params = new URLSearchParams(location.search);

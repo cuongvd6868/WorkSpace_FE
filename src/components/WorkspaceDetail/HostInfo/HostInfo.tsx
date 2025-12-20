@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames/bind";
 import styles from './HostInfo.module.scss';
 import { ExternalLink, Phone, Users } from "lucide-react";
+import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 
 const cx = classNames.bind(styles);
 
@@ -24,7 +25,7 @@ const HostInfo: React.FC<HostInfoProps> = ({hostId, hostName, hostPhone, hostEma
                 Liên Hệ Chủ Hộ
             </h2>
             <div className={cx('host-card')}>
-                <img src={hostAvatarUrl} alt={hostName} className={cx('host-avatar')} />
+                <img src={hostAvatarUrl} alt={hostAvatarUrl} className={cx('host-avatar')} />
                 <div className={cx('host-details')}>
                     <strong>{hostName}</strong>
                     <p>Đại diện {workspaceTitle}</p>

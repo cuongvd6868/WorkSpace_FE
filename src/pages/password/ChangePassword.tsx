@@ -13,6 +13,10 @@ import {
   ChevronRight
 } from "lucide-react";
 
+import { changePassword } from "~/services/ProfileService";
+import { ChangePasswordRequest } from "~/types/Profile";
+import { toast } from "react-toastify";
+
 const cx = classNames.bind(styles);
 
 const ChangePassword: React.FC = () => {
@@ -66,21 +70,35 @@ const ChangePassword: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // --- HÀM SUBMIT ĐÃ ĐƯỢC GẮN API ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
     
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      alert("🎉 Đổi mật khẩu thành công!");
+
+    const data: ChangePasswordRequest = {
+      currentPassword,
+      newPassword,
+      confirmPassword
+    };
+
+    try {
+      const message = await changePassword(data);
+      toast.success(message);
+      
+      // Reset form khi thành công
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    }, 1500);
+      setErrors({});
+    } catch (error: any) {
+      // Lỗi được xử lý qua handleError ở service
+      toast.error(error.message || "Đổi mật khẩu thất bại");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordStrength = checkPasswordStrength(newPassword);

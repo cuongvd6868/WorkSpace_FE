@@ -102,6 +102,10 @@ export interface BookingStatus {
     name: string; // Tên trạng thái, ví dụ: "Completed"
 }
 
+export interface UpdateUserRoleRequest {
+    role: string;
+}
+
 export interface Booking {
     isReviewed: boolean;
     id: number;
