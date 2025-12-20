@@ -7,11 +7,17 @@
     padding-bottom: 50px;
 }
 
+.status-message {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    &.error { color: #ff4d4f; }
+}
+
 .slider-container {
     position: relative;
     width: 100%;
     margin: 0 auto; 
-    padding: 0; 
     box-sizing: border-box;
 }
 
@@ -23,9 +29,7 @@
 
 .promotion-slide {
     height: auto; 
-    & > * {
-        height: 100%;
-    }
+    & > * { height: 100%; }
 }
 
 .nav-btn {
@@ -33,7 +37,6 @@
     top: 50%;
     transform: translateY(-50%); 
     z-index: 10;
-
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -41,7 +44,6 @@
     border: 1px solid #dcdcdc;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     color: #333; 
-    
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,12 +56,8 @@
     }
 }
 
-.prev-btn {
-    left: -18px;
-}
-.next-btn {
-    right: -18px; 
-}
+.prev-btn { left: -18px; }
+.next-btn { right: -18px; }
 
 :global(.swiper-button-disabled) {
     opacity: 0; 
@@ -72,129 +70,57 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 23px;
-
     .icon {
         color: #073E68;
         font-size: 2.5rem;
-        padding-bottom: 5px;
     }
-
-    .title {
-        color: #073E68;
-    }
+    .title { color: #073E68; margin: 0; }
 }
 
-@media (max-width: 1024px) {
-    .promotion-slider {
-        padding: 0 15px;
-    }
-    
-    .prev-btn {
-        left: -5px;
-    }
-    .next-btn {
-        right: -5px;
-    }
-}
-
-@media (max-width: 768px) {
-    .promotion-slider {
-        padding: 0 10px;
-    }
-    
-    .prev-btn {
-        left: 0;
-    }
-    .next-btn {
-        right: 0;
-    }
-}
-
+/* Skeleton Styles */
 .promotion-slider-skeleton {
     display: flex;
-    justify-content: space-between;
-    // Điều chỉnh cột để khớp với slidesPerView={3}
-    gap: 24px; // Khoảng cách giữa các item
+    gap: 24px;
     width: 100%;
-
-    // Điều chỉnh breakpoint để khớp với Swiper breakpoints
-    @media (max-width: 1024px) {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-    @media (max-width: 768px) {
-        grid-template-columns: repeat(1, 1fr);
-        gap: 16px;
-    }
+    padding: 0 10px;
 }
 
 .promotion-slide-skeleton {
-    // Đảm bảo Skeleton có kích thước và hình dạng tương tự PromotionItem
+    flex: 1;
     border-radius: 8px;
     padding: 16px;
-    background-color: #ffffff; /* Hoặc màu nền của item */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Nếu item có shadow */
-    width: 35%;
+    background-color: #ffffff;
+    border: 1px solid #eee;
+    min-height: 150px;
 }
 
-.skeleton-image {
-    height:40px; 
-    .react-loading-skeleton {
-        border-radius: 8px; /* Nếu ảnh có border-radius */
-    }
-}
 @keyframes shimmer-sweep {
-  0% {
-    background-position: -1000px 0; 
-  }
-  100% {
-    background-position: 1000px 0; 
-  }
-}
-/* 1. Đảm bảo container cha có màu nền tĩnh */
-.slider-container_loading {
-    background-color: #ffffff; /* Hoặc màu nền trang */
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
 }
 
-/* 2. Áp dụng Shimmer lên container của từng slide */
-.promotion-slide-skeleton.shimmer-enabled {
-    /* Đặt màu nền tĩnh để khớp với baseColor của SkeletonTheme */
-    background-color: #EBEBEB; 
-    overflow: hidden; /* Đảm bảo hiệu ứng không tràn ra ngoài */
-    
-    /* Thiết lập nền gradient và kích thước */
+.shimmer-enabled {
     background-image: linear-gradient(
         to right, 
-        #EBEBEB 0%,      
-        #F5F5F5 20%,     
-        #EBEBEB 40%,     
-        #EBEBEB 100%
+        #f6f7f8 0%, 
+        #edeef1 20%, 
+        #f6f7f8 40%, 
+        #f6f7f8 100%
     );
     background-repeat: no-repeat;
     background-size: 1000px 100%;
-
-    /* Áp dụng animation quét */
-    animation: shimmer-sweep 1.5s linear infinite; 
+    animation: shimmer-sweep 1.5s linear infinite;
 }
 
-/* 3. Đảm bảo các phần tử <Skeleton> bên trong không che mất hiệu ứng */
-/* Chúng ta cần target các element mà react-loading-skeleton tạo ra */
-.promotion-slide-skeleton.shimmer-enabled [class*="react-loading-skeleton"] {
-    /* Tắt background-image và animation mặc định của thư viện */
-    background-image: none !important; 
-    animation: none !important;
-    
-    /* Thiết lập màu nền tĩnh là highlightColor để tạo hình dạng */
-    background-color: #F5F5F5 !important;
+@media (max-width: 1024px) {
+    .promotion-slider-skeleton { gap: 20px; }
+    .promotion-slide-skeleton:last-child { display: none; }
+    .prev-btn { left: -5px; }
+    .next-btn { right: -5px; }
 }
 
-/* 4. Xử lý khoảng padding bên trong PromotionSkeleton */
-/* Để các khoảng padding 10px 0 có màu baseColor (tức là màu nền của .promotion-slide-skeleton) */
-/* Cần đảm bảo rằng các div con có màu nền trong suốt để màu quét được nhìn thấy, 
-   hoặc div con phải là chính <Skeleton> element */
-
-/* Nếu khoảng padding là do div bao bọc <Skeleton> gây ra: */
-.promotion-slide-skeleton > div {
-    /* Đảm bảo các div bao bọc này không có màu nền chặn hiệu ứng */
-    background-color: transparent !important;
+@media (max-width: 768px) {
+    .promotion-slide-skeleton:nth-child(2) { display: none; }
+    .prev-btn { left: 0; }
+    .next-btn { right: 0; }
 }
