@@ -25,6 +25,7 @@ import { CLOUD_NAME } from "~/config/cloudinaryConfig";
 import WorkspaceNotifications from "~/components/WorkspaceDetail/WorkspaceNotifications/WorkspaceNotifications";
 import WorkspacePromotions from "~/components/WorkspaceDetail/WorkspacePromotions/WorkspacePromotions";
 import MapImg from '~/assets/img/map/mapImg.png';
+import WorkspaceReviewSwiper from "~/components/WorkspaceDetail/WorkspaceReviewSwiper/WorkspaceReviewSwiper";
 
 const cx = classNames.bind(styles);
 
@@ -283,7 +284,7 @@ const WorkspaceDetail: React.FC = () => {
     // LOGIC RENDER
     if (loading) {
         return (
-            <div className={cx('loading-container')}>
+            <div className={cx('wrapper')}>
                 <Loader className={cx('loader-icon')} size={48} />
                 <p>Đang chuẩn bị trải nghiệm Workspace tuyệt vời nhất...</p>
             </div>
@@ -376,51 +377,38 @@ const WorkspaceDetail: React.FC = () => {
                         onOpenChat={() => setIsChatOpen(true)} 
                     />
 
-                    {/* BẢN ĐỒ */}
-                    {/* <section className={cx('map-section')}>
+
+                    <section className={cx('map-section')}>
                         <h2 className={cx('section-heading')}>
                             <Map size={24} />
                             Vị Trí
                         </h2>
-                        <div className={cx('map-placeholder')}>
+                        <div className={cx('map-container')}>
+                            {/* Thẻ img thay thế cho background-image */}
+                            <img 
+                                src={`${MapImg}` || "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1000"} 
+                                alt="Bản đồ vị trí" 
+                                className={cx('map-image')}
+                            />
                             
-                            <p className={cx('map-address')}>{workspace.addressLine}</p>
-                            <a href={`https://maps.google.com/?q=${encodeURIComponent(workspace.addressLine)}`} target="_blank" rel="noopener noreferrer" className={cx('map-link')}>
-                                Mở trên Google Maps <ExternalLink size={12} />
-                            </a>
+                            {/* Lớp phủ để text dễ đọc hơn */}
+                            <div className={cx('map-overlay')}>
+                                <p className={cx('map-address')}>{workspace.addressLine}</p>
+                                <a 
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(workspace.addressLine)}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className={cx('map-link')}
+                                >
+                                    Mở trên Google Maps <ExternalLink size={14} />
+                                </a>
+                            </div>
                         </div>
-                    </section> */}
-                    <section className={cx('map-section')}>
-    <h2 className={cx('section-heading')}>
-        <Map size={24} />
-        Vị Trí
-    </h2>
-    <div className={cx('map-container')}>
-        {/* Thẻ img thay thế cho background-image */}
-        <img 
-            src={`${MapImg}` || "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=1000"} 
-            alt="Bản đồ vị trí" 
-            className={cx('map-image')}
-        />
-        
-        {/* Lớp phủ để text dễ đọc hơn */}
-        <div className={cx('map-overlay')}>
-            <p className={cx('map-address')}>{workspace.addressLine}</p>
-            <a 
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(workspace.addressLine)}`} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className={cx('map-link')}
-            >
-                Mở trên Google Maps <ExternalLink size={14} />
-            </a>
-        </div>
-    </div>
-</section>
-                    
+                    </section>
                         <div className={cx('notification-sidebar-section')}>
                         <WorkspaceNotifications workspaceId={workspace.id} />
                     </div>
+                    {/* <WorkspaceReviewSwiper workspaceId={workspace.id} /> */}
                 </div>
             </div>
 

@@ -102,8 +102,8 @@ const OwnerDashboard: React.FC = () => {
     const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
     { title: "Doanh Thu Của Tôi (T.Này)", value: `${stats?.monthlyRevenue} VND`, change: "+15.2%", icon: faDollarSign, color: "green" },
     { title: "Lượt Booking Mới", value: `${stats?.totalBookings} Đơn`, change: "+5%", icon: faCalendarCheck, color: "blue" },
-    { title: "Tỷ Lệ Lấp Đầy", value: `${stats?.occupancyRate}%`, change: "+2.1%", icon: faChartBar, color: "purple" },
-    { title: "Workspace Hết Hạn Duyệt", value: `${stats?.pendingWorkspaces} mục`, change: "Khẩn cấp!", icon: faBuilding, color: "red" },
+    // { title: "Tỷ Lệ Lấp Đầy", value: `${stats?.occupancyRate}%`, change: "+2.1%", icon: faChartBar, color: "purple" },
+    { title: "Workspace Hết Chờ Duyệt", value: `${stats?.pendingWorkspaces} mục`, change: "Khẩn cấp!", icon: faBuilding, color: "red" },
     ];
     const [activePage, setActivePage] = useState<OwnerPage>(OwnerPage.Overview);
     const {user, logout, isLoggedIn} = useAuth();
@@ -236,9 +236,9 @@ const OwnerDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Chat })} onClick={() => setActivePage(OwnerPage.Chat)}>
                         <FontAwesomeIcon icon={faMessage} /> <span>Quản Lý chat</span>
                     </li>
-                    <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
+                    {/* <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
                         <FontAwesomeIcon icon={faUserCog} /> <span>Thiết Lập</span>
-                    </li>
+                    </li> */}
                 </ul>
                 
                 {isLoggedIn() ? (

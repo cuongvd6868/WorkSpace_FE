@@ -1,0 +1,108 @@
+.review-section {
+    background: #1e293b; // Đồng bộ màu nền dark
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 24px;
+    border: 1px solid #334155;
+    position: relative;
+    overflow: hidden;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .title {
+            font-size: 1.1rem;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+    }
+}
+
+.review-card {
+    padding: 20px 10px 40px 10px; // Padding dưới cho pagination
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .quote-icon {
+        color: #6366f1;
+        opacity: 0.2;
+        margin-bottom: -20px;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 12px;
+    }
+
+    .comment {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #e2e8f0;
+        font-style: italic;
+        margin-bottom: 20px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #6366f1;
+        }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+
+            .name {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #f8fafc;
+            }
+
+            .room {
+                font-size: 0.75rem;
+                color: #94a3b8;
+            }
+        }
+    }
+}
+
+// Custom Swiper Pagination
+:global(.swiper-pagination-bullet) {
+    background: #475569;
+}
+:global(.swiper-pagination-bullet-active) {
+    background: #6366f1 !important;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}

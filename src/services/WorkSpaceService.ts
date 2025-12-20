@@ -1,6 +1,6 @@
 import { SearchState } from '~/context/SearchContext';
 import axios from 'axios';
-import { WorkSpaceSearch } from '~/types/WorkSpaces'; 
+import { WorkspaceReview, WorkSpaceSearch } from '~/types/WorkSpaces'; 
 import { handleError } from '~/utils/handleError';
 import { API_BASE_URL } from '~/utils/API';
 
@@ -84,3 +84,13 @@ export const GetWorkSpaceQuickSearch = async (title: string) => {
         throw error;     
     }
 }
+
+export const getWorkspaceReviews = async (workspaceId: number): Promise<WorkspaceReview[]> => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/workspaces/${workspaceId}/reviews`);
+        return response.data;
+    } catch (error) {
+        console.error(`Lỗi khi lấy reviews của workspace ${workspaceId}:`, error);
+        throw error;
+    }
+};

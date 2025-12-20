@@ -247,3 +247,8 @@ $danger-soft: #f44336;
     cursor: pointer;
     text-decoration: underline;
 }
+
+.btn-group {
+    display: flex;
+    gap: 6px;
+}

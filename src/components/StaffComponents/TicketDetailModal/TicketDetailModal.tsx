@@ -28,40 +28,41 @@ const TicketDetailModal: React.FC<TicketDetailModalProps> = ({ ticket, onClose, 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-    // Xử lý gửi trả lời
-    const handleSendReply = async () => {
-        if (!replyMessage.trim()) {
-            toast.warn("Vui lòng nhập nội dung trả lời.");
-            return;
-        }
+// Xử lý gửi trả lời
+    const handleSendReply = async () => {
+        if (!replyMessage.trim()) {
+            toast.warn("Vui lòng nhập nội dung trả lời.");
+            return;
+        }
 
-        setIsSubmitting(true);
-        const payload: ReplyTicketPayload = { message: replyMessage };
+        setIsSubmitting(true);
+        const payload: ReplyTicketPayload = { message: replyMessage };
 
-        try {
-            // 1. Gửi phản hồi
-            await replyToTicket(ticket.id, payload);
-            
-            // 2. Nếu thành công, tự động chuyển trạng thái sang "Đang xử lý" (1) nếu đang là "Mới" (0)
-            if (currentStatus === 0) {
-                const statusPayload: UpdateStatusPayload = { status: 1 };
-                await updateTicketStatus(ticket.id, statusPayload);
-                setCurrentStatus(1); // Cập nhật trạng thái hiển thị
-            }
-            
-            toast.success("Đã gửi phản hồi thành công!");
-            setReplyMessage('');
-            onUpdate(); // Kích hoạt cập nhật danh sách cha
-        } catch (error) {
-            toast.error("Gửi phản hồi thất bại. Vui lòng thử lại.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+        try {
+            // 1. Gửi phản hồi
+            await replyToTicket(ticket.id, payload);
+            
+            // 2. Nếu thành công, tự động chuyển trạng thái sang "Đang xử lý" (1) nếu đang là "Mới" (0)
+            if (currentStatus === 0) {
+                const statusPayload: UpdateStatusPayload = { status: 1 };
+                await updateTicketStatus(ticket.id, statusPayload);
+            }
+            
+            toast.success("Đã gửi phản hồi thành công!");
+            
+            // 3. Thực hiện các bước dọn dẹp và đóng modal
+            setReplyMessage('');
+            onUpdate(); // Load lại danh sách ở trang cha
+            onClose();  // <--- THÊM DÒNG NÀY ĐỂ ĐÓNG MODAL
+        } catch (error) {
+            toast.error("Gửi phản hồi thất bại. Vui lòng thử lại.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     // Xử lý cập nhật trạng thái
     const handleStatusChange = async (newStatus: number) => {
-        // Chỉ cho phép cập nhật khi status nằm trong [0, 1, 2]
         if (newStatus === currentStatus || ![0, 1, 2].includes(newStatus)) return;
 
         setIsUpdatingStatus(true);
@@ -70,8 +71,10 @@ const TicketDetailModal: React.FC<TicketDetailModalProps> = ({ ticket, onClose, 
         try {
             await updateTicketStatus(ticket.id, statusPayload);
             setCurrentStatus(newStatus);
-            toast.info(`Trạng thái Ticket #${ticket.id} đã được cập nhật thành ${TICKET_STATUS_MAP[newStatus as keyof typeof TICKET_STATUS_MAP].name}.`);
-            onUpdate(); // Kích hoạt cập nhật danh sách cha
+            toast.info(`Trạng thái Ticket #${ticket.id} đã được cập nhật.`);
+            
+            onUpdate(); 
+            onClose();  
         } catch (error) {
             toast.error("Cập nhật trạng thái thất bại.");
         } finally {

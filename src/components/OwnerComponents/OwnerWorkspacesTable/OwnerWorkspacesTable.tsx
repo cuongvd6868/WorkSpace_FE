@@ -299,6 +299,7 @@ const OwnerWorkspacesTable: React.FC = () => {
                 <WorkspaceDetailModal
                     workspace={workspaceDetail}
                     onClose={handleCloseDetailModal}
+                    onRefresh={handleRefresh} 
                 />
             )}
 

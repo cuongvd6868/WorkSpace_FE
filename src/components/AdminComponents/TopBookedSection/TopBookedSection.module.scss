@@ -1,0 +1,192 @@
+// Tái sử dụng các tông màu từ Dashboard Dark Mode
+$dark-bg: #0f172a;
+$card-bg: #1e293b;
+$border-color: #334155;
+$text-main: #f8fafc;
+$text-muted: #94a3b8;
+$accent-color: #6366f1;
+$gold-color: #fbbf24; // Màu vàng cho Top 1
+
+.wrapper {
+    padding: 10px;
+    animation: fadeIn 0.5s ease;
+
+    .header-ranking {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding: 12px 16px;
+        background: rgba($accent-color, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid $accent-color;
+
+        .icon-fire {
+            color: #ef4444;
+            font-size: 1.6rem;
+        }
+
+        p {
+            margin: 0;
+            color: $text-muted;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.table-container {
+    background-color: $card-bg;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    overflow-x: auto; // Chống bể layout trên màn hình nhỏ
+
+    .top-table {
+        width: 100%;
+        border-collapse: collapse;
+        color: $text-main;
+
+        th {
+            background-color: rgba($dark-bg, 0.5);
+            padding: 16px;
+            text-align: left;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: $text-muted;
+            border-bottom: 1px solid $border-color;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid $border-color;
+            vertical-align: middle;
+        }
+
+        // Style cho dòng Top 1
+        .top-1 {
+            background: rgba($gold-color, 0.03);
+            
+            .rank-cell .crown {
+                color: $gold-color;
+                filter: drop-shadow(0 0 5px rgba($gold-color, 0.5));
+            }
+
+            .ws-name {
+                color: $gold-color;
+            }
+        }
+
+        .rank-cell {
+            text-align: center;
+            width: 80px;
+            font-weight: 700;
+            font-size: 1.2rem;
+
+            .rank-num {
+                color: $text-muted;
+            }
+        }
+
+        .workspace-info {
+            .info-flex {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .ws-img {
+                    width: 80px;
+                    height: 50px;
+                    border-radius: 6px;
+                    object-fit: cover;
+                    border: 1px solid $border-color;
+                }
+
+                .text {
+                    display: flex;
+                    flex-direction: column;
+                    
+                    .ws-name {
+                        font-weight: 600;
+                        font-size: 1.3rem;
+                        margin-bottom: 4px;
+                    }
+
+                    .ws-id {
+                        font-size: 0.75rem;
+                        color: $text-muted;
+                    }
+                }
+            }
+        }
+
+        .host-info {
+            .host-flex {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .host-avatar {
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    border: 1.5px solid $accent-color;
+                }
+
+                .host-text {
+                    .host-name {
+                        margin: 0;
+                        font-size: 1.1rem;
+                        font-weight: 500;
+                    }
+                    .host-email {
+                        margin: 0;
+                        font-size: 1rem;
+                        color: $text-muted;
+                        svg { margin-right: 5px; font-size: 0.7rem; }
+                    }
+                }
+            }
+        }
+
+        .price-cell {
+            font-family: 'Monaco', monospace;
+            color: #10b981; // Màu xanh emerald cho giá tiền
+            font-weight: 600;
+        }
+
+        .address-cell {
+            font-size: 1.1rem;
+            color: $text-muted;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            
+            svg { color: $accent-color; margin-right: 6px; }
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: rgba($text-main, 0.02);
+        }
+    }
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: $accent-color;
+    gap: 16px;
+    font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

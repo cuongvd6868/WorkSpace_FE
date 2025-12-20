@@ -1,0 +1,157 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-container {
+    background: #fff;
+    width: 100%;
+    max-width: 1100px;
+    height: 90vh;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+
+    .header-title {
+        .badge {
+            background: #fef3c7;
+            color: #d97706;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 99px;
+            letter-spacing: 0.5px;
+        }
+        h2 { margin-top: 8px; font-size: 1.5rem; color: #1e293b; }
+    }
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar {
+    background: #f8fafc;
+    padding: 30px;
+    border-right: 1px solid #f1f5f9;
+
+    .host-card {
+        margin-bottom: 30px;
+        h3 { font-size: 0.9rem; color: #64748b; margin-bottom: 15px; text-transform: uppercase; }
+        .host-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            .avatar {
+                width: 45px; height: 45px; background: #6366f1; color: #fff;
+                display: flex; align-items: center; justify-content: center;
+                border-radius: 12px; font-weight: bold; font-size: 1.2rem;
+            }
+            .name { font-weight: 700; color: #1e293b; margin: 0; }
+            .email { font-size: 0.85rem; color: #64748b; margin: 0; }
+        }
+    }
+
+    .quick-stats {
+        .stat-item {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
+            color: #475569; font-size: 0.95rem;
+            svg { width: 18px; color: #94a3b8; }
+        }
+    }
+}
+
+.main-scroll {
+    padding: 30px;
+    overflow-y: auto;
+    background: #fff;
+
+    .section {
+        margin-bottom: 40px;
+        .section-title { font-size: 1.1rem; color: #1e293b; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    }
+}
+
+.description-box {
+    background: #f1f5f9; padding: 20px; border-radius: 12px; line-height: 1.6; color: #334155;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+
+    .image-item {
+        aspect-ratio: 16/10;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.3s ease;
+            &:hover { transform: scale(1.1); }
+        }
+    }
+}
+
+.room-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.room-card {
+    display: flex; gap: 15px; padding: 15px; border: 1px solid #f1f5f9; border-radius: 12px;
+    transition: all 0.2s;
+    &:hover { border-color: #6366f1; background: #f5f3ff; }
+    .room-thumb { 
+        width: 80px; height: 80px; border-radius: 8px; overflow: hidden;
+        img { width: 100%; height: 100%; object-fit: cover; }
+    }
+    .room-details {
+        h4 { margin: 0 0 8px 0; font-size: 1rem; }
+        .room-specs {
+            display: flex; gap: 12px; font-size: 0.85rem; color: #64748b;
+            .price { color: #059669; font-weight: 700; }
+        }
+    }
+}
+
+.footer {
+    padding: 20px 30px;
+    background: #fff;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+
+    button {
+        padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer;
+        display: flex; align-items: center; gap: 8px; transition: 0.2s;
+    }
+    .btn-reject { background: #fee2e2; color: #dc2626; border: none; &:hover { background: #fecaca; } }
+    .btn-approve { background: #059669; color: #fff; border: none; &:hover { background: #047857; } }
+}
+
+.close-btn { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }

@@ -9,7 +9,8 @@ import {
     CreatePromotionRequest,
     ActivatePromotionRequest,
     Booking,
-    UpdateUserRoleRequest
+    UpdateUserRoleRequest,
+    TopBookedWorkspace
 } from "~/types/Admin";
 import { getAuthHeaders } from "./AuthService";
 
@@ -208,6 +209,20 @@ export const getAllBookings = async (): Promise<Booking[]> => {
             `${API_BASE_URL}v1/admin/admin/All-bookings`,
             getAuthHeaders() 
         );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
+export const getTopBookedWorkspaces = async (count: number = 5): Promise<TopBookedWorkspace[]> => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/workspaces/top-booked`, {
+            params: {
+                count: count
+            }
+        });
         return response.data;
     } catch (error) {
         handleError(error);

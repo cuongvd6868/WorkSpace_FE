@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faCheckCircle, faSpinner, faPlus, faUserTie, faUser, faBuildingUser, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { 
+    faBan, faCheckCircle, faSpinner, faPlus, faUserTie, 
+    faUser, faBuildingUser, faTrashCan, faUserGroup 
+} from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import styles from './AccountManagementSection.module.scss';
 import { 
@@ -17,7 +20,7 @@ const cx = classNames.bind(styles);
 
 type AccountType = 'customers' | 'owners' | 'staffs';
 
-// Tạo file RoleModal.tsx hoặc để trong cùng file
+// --- Modal cập nhật vai trò ---
 const RoleModal: React.FC<{
     isOpen: boolean;
     onClose: () => void;
@@ -25,10 +28,12 @@ const RoleModal: React.FC<{
     userName: string;
     isUpdating: boolean;
 }> = ({ isOpen, onClose, onConfirm, userName, isUpdating }) => {
+    // THÊM: "Customer" vào danh sách roles
     const roles = [
+        { value: 'Customer', label: 'Khách Hàng', icon: faUser },
         { value: 'Staff', label: 'Nhân Viên', icon: faUserTie },
-        { value: 'Admin', label: 'Quản Trị Viên', icon: faUserTie },
         { value: 'Owner', label: 'Chủ Workspace', icon: faBuildingUser },
+        { value: 'Admin', label: 'Quản Trị Viên', icon: faUserTie },
     ];
 
     if (!isOpen) return null;
@@ -58,6 +63,7 @@ const RoleModal: React.FC<{
     );
 };
 
+// --- Component Chính ---
 const AccountManagementSection: React.FC = () => {
     const [activeTab, setActiveTab] = useState<AccountType>('customers');
     const [users, setUsers] = useState<UserAdminView[]>([]);
@@ -68,25 +74,7 @@ const AccountManagementSection: React.FC = () => {
     const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
     const [isUpdatingRole, setIsUpdatingRole] = useState(false);
 
-    // Hàm xử lý cập nhật Role
-    const onUpdateRole = async (role: string) => {
-        if (!selectedUser) return;
-        
-        setIsUpdatingRole(true);
-        try {
-            await handleUpdateUserRole(selectedUser.id, role);
-            toast.success(`Cập nhật vai trò ${role} thành công!`);
-            setIsRoleModalOpen(false);
-            // Tải lại danh sách để đồng bộ dữ liệu
-            fetchUsers(activeTab); 
-        } catch (error) {
-            toast.error('Cập nhật vai trò thất bại.');
-        } finally {
-            setIsUpdatingRole(false);
-        }
-    };
-
-    // 1. Hàm tải dữ liệu người dùng
+    // Hàm tải dữ liệu người dùng
     const fetchUsers = useCallback(async (type: AccountType) => {
         setIsLoading(true);
         try {
@@ -104,50 +92,60 @@ const AccountManagementSection: React.FC = () => {
             }
             setUsers(data);
         } catch (err) {
-            // Hiển thị lỗi rõ ràng hơn
-            toast.error(`Lỗi tải dữ liệu tài khoản ${type}. Vui lòng kiểm tra API.`);
+            toast.error(`Lỗi tải dữ liệu tài khoản ${type}.`);
             setUsers([]);
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    // 2. useEffect để tải dữ liệu khi tab thay đổi
     useEffect(() => {
         fetchUsers(activeTab);
     }, [activeTab, fetchUsers]);
 
-    // 3. Hàm xử lý Khóa/Mở khóa tài khoản
+    // Xử lý cập nhật Role
+    const onUpdateRole = async (role: string) => {
+        if (!selectedUser) return;
+        
+        setIsUpdatingRole(true);
+        try {
+            await handleUpdateUserRole(selectedUser.id, role);
+            toast.success(`Đã chuyển ${selectedUser.fullName} sang vai trò ${role}!`);
+            setIsRoleModalOpen(false);
+            fetchUsers(activeTab); 
+        } catch (error) {
+            toast.error('Cập nhật vai trò thất bại.');
+        } finally {
+            setIsUpdatingRole(false);
+        }
+    };
+
+    // Xử lý Khóa/Mở khóa
     const handleToggleBlock = async (id: number, currentStatus: boolean) => {
         setIsBlocking(id);
         try {
-            // API của bạn chỉ có hàm block, ta giả định nó toggle trạng thái
             await handleBlockUser(id); 
-            
-            // Cập nhật trạng thái isActive ngay lập tức trong state (optimistic update)
             setUsers(prevUsers => 
                 prevUsers.map(user => 
                     user.id === id ? { ...user, isActive: !currentStatus } : user
                 )
             );
-            toast.success(currentStatus ? 'Đã KHÓA tài khoản thành công!' : 'Đã MỞ KHÓA tài khoản thành công!');
+            toast.success(currentStatus ? 'Đã KHÓA tài khoản!' : 'Đã MỞ KHÓA tài khoản!');
         } catch (error) {
-            toast.error('Thao tác Khóa/Mở khóa thất bại.');
+            toast.error('Thao tác thất bại.');
         } finally {
             setIsBlocking(null);
         }
     };
-    
-    // 4. Component hiển thị bảng
+
+    // Bảng hiển thị
     const UserTable: React.FC = () => {
         if (isLoading) {
-            return <div className={cx('loading')}>
-                <FontAwesomeIcon icon={faSpinner} spin /> Đang tải dữ liệu...
-            </div>;
+            return <div className={cx('loading')}><FontAwesomeIcon icon={faSpinner} spin /> Đang tải...</div>;
         }
 
         if (users.length === 0) {
-            return <div className={cx('no-data')}>Không có tài khoản nào thuộc nhóm này.</div>;
+            return <div className={cx('no-data')}>Không có tài khoản nào.</div>;
         }
 
         return (
@@ -159,7 +157,7 @@ const AccountManagementSection: React.FC = () => {
                         <th>Họ Tên</th>
                         <th>Email</th>
                         <th>Trạng Thái</th>
-                        <th>Action</th>
+                        <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -174,28 +172,30 @@ const AccountManagementSection: React.FC = () => {
                                 {user.isActive ? ' Active' : ' Blocked'}
                             </td>
                             <td>
-                                <button
-                                    className={cx('action-btn', user.isActive ? 'btn-block' : 'btn-unblock')}
-                                    onClick={() => handleToggleBlock(user.id, user.isActive)}
-                                    disabled={isBlocking === user.id}
-                                >
-                                    {isBlocking === user.id ? (
-                                        <FontAwesomeIcon icon={faSpinner} spin />
-                                    ) : (
-                                        <FontAwesomeIcon icon={user.isActive ? faBan : faCheckCircle} />
-                                    )}
-                                    {user.isActive ? ' Khóa' : ' Mở Khóa'}
-                                </button>
-                                 {/* NÚT SET ROLE */}
-    <button
-        className={cx('action-btn', 'btn-role')}
-       onClick={() => {
-             setSelectedUser(user);
-             setIsRoleModalOpen(true);
-         }}
-    >
-        <FontAwesomeIcon icon={faUserTie} /> Set Role
-    </button>
+                                <div className={cx('btn-group')}>
+                                    <button
+                                        className={cx('action-btn', user.isActive ? 'btn-block' : 'btn-unblock')}
+                                        onClick={() => handleToggleBlock(user.id, user.isActive)}
+                                        disabled={isBlocking === user.id}
+                                    >
+                                        {isBlocking === user.id ? (
+                                            <FontAwesomeIcon icon={faSpinner} spin />
+                                        ) : (
+                                            <FontAwesomeIcon icon={user.isActive ? faBan : faCheckCircle} />
+                                        )}
+                                        {user.isActive ? ' Khóa' : ' Mở'}
+                                    </button>
+                                    
+                                    <button
+                                        className={cx('action-btn', 'btn-role')}
+                                        onClick={() => {
+                                            setSelectedUser(user);
+                                            setIsRoleModalOpen(true);
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faUserGroup} /> Role
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
@@ -206,31 +206,20 @@ const AccountManagementSection: React.FC = () => {
 
     return (
         <div className={cx('account-management')}>
-            
-            {/* Thanh Tabs */}
             <div className={cx('tabs')}>
-                <button 
-                    className={cx('tab-btn', { active: activeTab === 'customers' })}
-                    onClick={() => setActiveTab('customers')}
-                >
+                <button className={cx('tab-btn', { active: activeTab === 'customers' })} onClick={() => setActiveTab('customers')}>
                     <FontAwesomeIcon icon={faUser} /> Khách Hàng
                 </button>
-                <button 
-                    className={cx('tab-btn', { active: activeTab === 'owners' })}
-                    onClick={() => setActiveTab('owners')}
-                >
+                <button className={cx('tab-btn', { active: activeTab === 'owners' })} onClick={() => setActiveTab('owners')}>
                     <FontAwesomeIcon icon={faBuildingUser} /> Chủ Workspace
                 </button>
-                <button 
-                    className={cx('tab-btn', { active: activeTab === 'staffs' })}
-                    onClick={() => setActiveTab('staffs')}
-                >
+                <button className={cx('tab-btn', { active: activeTab === 'staffs' })} onClick={() => setActiveTab('staffs')}>
                     <FontAwesomeIcon icon={faUserTie} /> Nhân Viên
                 </button>
             </div>
 
-            {/* Bảng dữ liệu */}
             <UserTable />
+
             {selectedUser && (
                 <RoleModal
                     isOpen={isRoleModalOpen}

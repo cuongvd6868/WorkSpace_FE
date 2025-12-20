@@ -7,11 +7,11 @@ import styles from './NotificationManagementSection.module.scss';
 import { 
     getPersonalNotifications, 
     createOwnerNotification, 
-    updateNotification, 
-} from "~/services/OwnerService"; // Giả định các hàm này đã được cập nhật để nhận token
+    updateNotification,
+} from "~/services/OwnerService"; 
 import { NotificationItem, NotificationCreateRequest, NotificationUpdateRequest } from "~/types/Owner";
-// GIẢ ĐỊNH: Import hook để lấy token từ context xác thực
 import { useAuth } from "~/context/useAuth"; 
+import { deleteNotification } from "~/services/NotificationService";
 
 const cx = classNames.bind(styles);
 
@@ -30,10 +30,9 @@ const formatTime = (isoString: string) => {
     }
 };
 
-// --- 1. Form Tạo Thông Báo (Đã cập nhật để nhận hàm xử lý có token) ---
+// --- 1. Form Tạo Thông Báo ---
 interface CreateNotificationFormProps {
     onCreationSuccess: () => void;
-    // THÊM: Hàm tạo thông báo, nhận payload và xử lý API (bao gồm token)
     handleCreate: (payload: NotificationCreateRequest) => Promise<number>; 
 }
 
@@ -53,7 +52,6 @@ const CreateNotificationForm: React.FC<CreateNotificationFormProps> = ({ onCreat
         const payload: NotificationCreateRequest = { title, content };
 
         try {
-            // SỬ DỤNG HÀM XỬ LÝ CÓ TOKEN
             const newId = await handleCreate(payload); 
             toast.success(`Thông báo "${title}" đã được tạo thành công! ID: ${newId}`);
             setTitle('');
@@ -100,7 +98,7 @@ const CreateNotificationForm: React.FC<CreateNotificationFormProps> = ({ onCreat
     );
 };
 
-// --- 2.1. Component hiển thị/chỉnh sửa một thông báo (Đã cập nhật để nhận hàm xử lý có token) ---
+// --- 2.1. Component hiển thị/chỉnh sửa một thông báo ---
 interface NotificationItemProps {
     notif: NotificationItem;
     onUpdateSuccess: () => void;
@@ -108,8 +106,8 @@ interface NotificationItemProps {
     toggleExpand: (id: number) => void;
     editingId: number | null;
     setEditingId: (id: number | null) => void;
-    // THÊM: Hàm cập nhật thông báo, nhận payload và xử lý API (bao gồm token)
     handleUpdate: (payload: NotificationUpdateRequest) => Promise<string>; 
+    handleDelete: (id: number) => Promise<void>; // THÊM PROP DELETE
 }
 
 const NotificationItemDisplay: React.FC<NotificationItemProps> = ({ 
@@ -119,10 +117,10 @@ const NotificationItemDisplay: React.FC<NotificationItemProps> = ({
     toggleExpand,
     editingId,
     setEditingId,
-    handleUpdate // THÊM HÀM UPDATE
+    handleUpdate,
+    handleDelete // NHẬN PROP DELETE
 }) => {
     
-    // Logic chỉnh sửa
     const isEditing = editingId === notif.id;
     const [editTitle, setEditTitle] = useState(notif.title);
     const [editContent, setEditContent] = useState(notif.content);
@@ -152,7 +150,6 @@ const NotificationItemDisplay: React.FC<NotificationItemProps> = ({
         };
 
         try {
-            // SỬ DỤNG HÀM XỬ LÝ CÓ TOKEN
             const message = await handleUpdate(payload); 
             toast.success(`Cập nhật thông báo thành công: ${message}`);
             setEditingId(null);
@@ -199,7 +196,6 @@ const NotificationItemDisplay: React.FC<NotificationItemProps> = ({
         );
     }
     
-    // Chế độ xem thông thường
     return (
         <div key={notif.id} className={cx('notification-item')}>
             <div className={cx('item-header')} onClick={() => toggleExpand(notif.id)}>
@@ -213,16 +209,29 @@ const NotificationItemDisplay: React.FC<NotificationItemProps> = ({
                     <FontAwesomeIcon icon={faCalendarAlt} className={cx('time-icon')} />
                     {formatTime(notif.createUtc)}
                     {isOwner && (
-                        <button 
-                            type="button" 
-                            className={cx('edit-action-btn')} 
-                            onClick={(e) => { 
-                                e.stopPropagation(); 
-                                setEditingId(notif.id);
-                            }}
-                        >
-                            <FontAwesomeIcon icon={faEdit} /> Sửa
-                        </button>
+                        <>
+                            <button 
+                                type="button" 
+                                className={cx('edit-action-btn')} 
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    setEditingId(notif.id);
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faEdit} /> Sửa
+                            </button>
+                            {/* BỔ SUNG NÚT XÓA */}
+                            <button 
+                                type="button" 
+                                className={cx('delete-action-btn')} 
+                                onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    handleDelete(notif.id);
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faTrash} /> Xóa
+                            </button>
+                        </>
                     )}
                     <FontAwesomeIcon 
                         icon={notif.id === expandedId ? faChevronUp : faChevronDown} 
@@ -238,18 +247,17 @@ const NotificationItemDisplay: React.FC<NotificationItemProps> = ({
     );
 }
 
-// --- 2. Danh Sách Thông Báo (Tải dữ liệu) ---
+// --- 2. Danh Sách Thông Báo ---
 const NotificationList: React.FC<{ 
     notifications: NotificationItem[], 
     isLoading: boolean, 
     error: string | null, 
     onUpdateSuccess: () => void,
-    handleUpdate: (payload: NotificationUpdateRequest) => Promise<string>; // THÊM HÀM UPDATE
-}> = ({ notifications, isLoading, error, onUpdateSuccess, handleUpdate }) => {
+    handleUpdate: (payload: NotificationUpdateRequest) => Promise<string>,
+    handleDelete: (id: number) => Promise<void> // THÊM PROP DELETE
+}> = ({ notifications, isLoading, error, onUpdateSuccess, handleUpdate, handleDelete }) => {
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
-
-    // ... (Loading/Error/Empty state logic)
 
     if (isLoading) {
         return <div className={cx('loading-state')}>Đang tải thông báo...</div>;
@@ -282,7 +290,8 @@ const NotificationList: React.FC<{
                         toggleExpand={toggleExpand}
                         editingId={editingId}
                         setEditingId={setEditingId}
-                        handleUpdate={handleUpdate} // TRUYỀN HÀM UPDATE
+                        handleUpdate={handleUpdate}
+                        handleDelete={handleDelete} // TRUYỀN PROP DELETE
                     />
                 ))}
         </div>
@@ -290,18 +299,16 @@ const NotificationList: React.FC<{
 };
 
 
-// --- 3. Component Quản Lý Tổng Thể (Đã cập nhật logic token) ---
+// --- 3. Component Quản Lý Tổng Thể ---
 const NotificationManagementSection: React.FC = () => {
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showCreateForm, setShowCreateForm] = useState(false);
     
-    // THAY ĐỔI LỚN: Lấy token từ Auth Context
     const { user } = useAuth(); 
     const ownerToken: any = localStorage.getItem('token');
 
-    // Kiểm tra token cơ bản
     const checkToken = (): boolean => {
         if (!ownerToken) {
             toast.error("Lỗi xác thực: Vui lòng đăng nhập lại để thực hiện hành động này.");
@@ -310,30 +317,34 @@ const NotificationManagementSection: React.FC = () => {
         return true;
     }
 
-    // Hàm gọi API tạo thông báo (Bao gồm token)
     const handleCreateNotification = async (payload: NotificationCreateRequest) => {
-        if (!checkToken()) {
-            throw new Error("Missing Token");
-        }
-        // Gọi service function đã được cập nhật để nhận token
+        if (!checkToken()) throw new Error("Missing Token");
         return createOwnerNotification(payload, ownerToken); 
     };
 
-    // Hàm gọi API cập nhật thông báo (Bao gồm token)
     const handleUpdateNotification = async (payload: NotificationUpdateRequest) => {
-        if (!checkToken()) {
-            throw new Error("Missing Token");
-        }
-        // Gọi service function đã được cập nhật để nhận token
+        if (!checkToken()) throw new Error("Missing Token");
         return updateNotification(payload, ownerToken); 
     };
 
-    // Hàm tải danh sách thông báo (Không cần token)
+    // BỔ SUNG HÀM XỬ LÝ XÓA
+    const handleDeleteNotification = async (id: number) => {
+        if (!checkToken()) return;
+        if (!window.confirm("Bạn có chắc chắn muốn xóa thông báo này?")) return;
+
+        try {
+            await deleteNotification(id);
+            toast.success("Xóa thông báo thành công!");
+            fetchNotifications(); // Tải lại danh sách
+        } catch (error) {
+            toast.error("Không thể xóa thông báo.");
+        }
+    };
+
     const fetchNotifications = async () => {
         setIsLoading(true);
         setError(null);
         try {
-            // GET /personal không cần token
             const data = await getPersonalNotifications();
             setNotifications(data);
         } catch (err: any) {
@@ -356,7 +367,6 @@ const NotificationManagementSection: React.FC = () => {
         <div className={cx('notification-management-wrapper')}>
             
             <div className={cx('action-bar')}>
-                {/* ... (Buttons) */}
                 <button 
                     className={cx('toggle-form-btn', {active: showCreateForm})} 
                     onClick={() => setShowCreateForm(prev => !prev)}
@@ -377,7 +387,7 @@ const NotificationManagementSection: React.FC = () => {
                 <div className={cx('create-section-container')}>
                     <CreateNotificationForm 
                         onCreationSuccess={handleCreationOrUpdateSuccess} 
-                        handleCreate={handleCreateNotification} // TRUYỀN HÀM TẠO CÓ TOKEN
+                        handleCreate={handleCreateNotification} 
                     />
                 </div>
             )}
@@ -391,7 +401,8 @@ const NotificationManagementSection: React.FC = () => {
                 isLoading={isLoading} 
                 error={error} 
                 onUpdateSuccess={handleCreationOrUpdateSuccess}
-                handleUpdate={handleUpdateNotification} // TRUYỀN HÀM CẬP NHẬT CÓ TOKEN
+                handleUpdate={handleUpdateNotification}
+                handleDelete={handleDeleteNotification} // TRUYỀN HÀM DELETE
             />
         </div>
     );

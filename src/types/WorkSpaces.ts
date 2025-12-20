@@ -43,3 +43,16 @@ export type WorkSpaceQuickSearch = {
     id: number,
     title: string
 }
+
+export interface WorkspaceReview {
+    id: number;
+    rating: number;
+    comment: string;
+    createdDate: string;
+    userId: number;
+    reviewerName: string;
+    reviewerAvatar: string;
+    roomId: number;
+    roomName: string;
+    roomType: string;
+}
