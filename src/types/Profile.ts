@@ -13,3 +13,16 @@ export interface ChangePasswordResponse {
 export interface ForgotPasswordRequest {
     email: string;
 }
+
+export interface UpdateProfileRequest {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    avatar: string; 
+    dateOfBirth: string;
+}
+
+export interface UpdateProfileParams {
+    profileData: UpdateProfileRequest;
+    avatarFile?: File; 
+}

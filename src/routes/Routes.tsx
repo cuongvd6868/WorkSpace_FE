@@ -15,11 +15,10 @@ import HostRegistrationPage from "~/pages/host/HostRegistrationPage/HostRegistra
 import SupportPage from "~/pages/support/SupportPage";
 import PostPage from "~/pages/post/PostPage";
 import FavoriteList from "~/pages/favorites/FavoriteList";
-
+import UpdateProfilePage from "~/pages/profile/UpdateProfilePage";
 import VerifyAccountPage from "~/pages/login/VerifyAccountPage"; 
 
 import ChangePassword from "~/pages/password/ChangePassword";
-import TestChat from "~/pages/test/TestChat";
 
 
 
@@ -42,13 +41,13 @@ export const router = createBrowserRouter([{
         {path: "/staff", element: <StaffDashboard/>},
         {path: "/support", element: <SupportPage/>},
         {path: "/favorites", element: <FavoriteList/>},
+        {path: "/update-profile", element: <UpdateProfilePage/>},
 
         
         // Route mới để xử lý verify email
         {path: "/confirm-email", element: <VerifyAccountPage/>},
 
         {path: "/change-password", element: <ChangePassword/>},
-        {path: "/test", element: <TestChat/>},
 
     ]
 }]);

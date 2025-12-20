@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bell, Info, Loader, AlertCircle } from 'lucide-react';
 import classNames from 'classnames/bind';
 import styles from './WorkspaceNotifications.module.scss'; // Tạo file scss tương ứng
-import { getAllNotificationByWorkspace } from '~/services/NotificationService';
+import { getAllNotificationByWorkspace, getAllNotificationByWorkspaceId } from '~/services/NotificationService';
 import { NotificationView } from '~/types/Notification';
 
 const cx = classNames.bind(styles);
@@ -20,9 +20,7 @@ const WorkspaceNotifications: React.FC<Props> = ({ workspaceId }) => {
         const fetchWorkspaceNotifications = async () => {
             setLoading(true);
             try {
-                // Lưu ý: API personal thường dựa trên token, 
-                // nhưng nếu API cần workspaceId thì bạn truyền vào params
-                const data = await getAllNotificationByWorkspace();
+                const data = await getAllNotificationByWorkspaceId(workspaceId);
                 setNotifications(data || []);
             } catch (err) {
                 setError("Không thể tải thông báo của không gian này.");
