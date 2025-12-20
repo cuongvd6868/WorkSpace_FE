@@ -5,7 +5,7 @@ import { Recommendation } from '~/types/Chat';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap, faMapMarker, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { CLOUD_NAME } from "~/config/cloudinaryConfig";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
@@ -30,6 +30,25 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
     hostName
   } = recommendation;
 
+  const navigate = useNavigate();
+
+const handleViewOnMap = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Chuyển sang trang map và truyền dữ liệu workspace hiện tại
+    navigate('/map-view', {
+        state: {
+            // Chuyển đổi recommendation sang format mà trang Map yêu cầu (nếu cần)
+            results: [{
+                ...recommendation,
+                id: workSpaceId, // Đảm bảo ID đồng nhất để Map dễ xử lý
+            }],
+            focusId: workSpaceId
+        }
+    });
+};
+
   return (
     <div className={cx('wrapper')}>
       <div className={cx('card-container')}>
@@ -45,10 +64,14 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ recommendation 
           )}
         </div>
         <div className={cx("desc")}>
-          <div className={cx('map-container')}>
-            <FontAwesomeIcon icon={faMap}  className={cx('map-icon')}/>
-            <p className={cx('map-title')}>Xem trên bản đồ</p>
-          </div>
+<div 
+    className={cx('map-container')} 
+    onClick={handleViewOnMap} 
+    style={{ cursor: 'pointer' }} // Thêm con trỏ tay để người dùng biết click được
+>
+    <FontAwesomeIcon icon={faMap} className={cx('map-icon')}/>
+    <p className={cx('map-title')}>Xem trên bản đồ</p>
+</div>
           <p className={cx('title')}>{title}</p>
           <p className={cx('sub-title')}>{description}</p>
           <div className={cx('price-container')}>

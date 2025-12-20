@@ -238,7 +238,6 @@ const fetchNotifications = async () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/';
     toast.dark('Bạn vừa đăng xuất khỏi hệ thống!')
   };
 

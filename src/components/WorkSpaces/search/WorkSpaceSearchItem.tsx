@@ -29,6 +29,18 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
         navigate(`/workspace/${workspaceId}`);
     };
 
+    const handleViewOnMap = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Ngăn sự kiện lan ra các phần tử cha
+        
+        // Chuyển hướng đến trang map và truyền item hiện tại vào state để trang Map biết cần focus vào đâu
+        navigate('/map-view', { 
+            state: { 
+                results: [workspace], // Truyền danh sách chỉ có 1 item hoặc toàn bộ tùy logic trang Map của bạn
+                focusId: workspace.id 
+            } 
+        });
+    };
+
     useEffect(() => {
         const fetchIdFavorite = async () => {
             if (!isToken()) {
@@ -116,10 +128,10 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
                                     <p className={cx('comment')}>168 đánh giá</p>
                                 </div>
                                 <div>
-                                    <p className={cx('rate')}>9.2</p>
+                                    <p className={cx('rate')}>10</p>
                                 </div>
                             </div>
-                            <p className={cx('review')}>Địa điểm 9.2</p>
+                            <p className={cx('review')}>Địa điểm 10</p>
                         </div>
                     </div>
                     <div className={cx('description-bottom')}>
@@ -128,10 +140,10 @@ const WorkSpaceSearchItem: React.FC<WorkSpaceProp> = ({ workspace }) => {
                                 <FontAwesomeIcon icon={faCheck} className={cx('icon')}/>
                                 <p>Miễn phí hủy</p>
                             </div>
-                            <div className={cx('map')}>
-                                <FontAwesomeIcon icon={faMap} className={cx('icon')}/>
-                                <p>Xem trên bản đồ</p>
-                            </div>
+<div className={cx('map')} onClick={handleViewOnMap} style={{ cursor: 'pointer' }}>
+    <FontAwesomeIcon icon={faMap} className={cx('icon')}/>
+    <p>Xem trên bản đồ</p>
+</div>
                         </div>
                         <button className={cx('more-btn')} onClick={() => handleDetailClick(workspace.id)}>Xem chỗ trống</button>
                     </div>
