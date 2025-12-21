@@ -1,0 +1,208 @@
+.wrapper {
+    background-color: #fdfdfd; // Màu nền trắng ngà nhẹ sang trọng
+    padding: 30px 0;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    max-width: 68%;
+    margin: 0 auto;
+}
+
+.header-section {
+    margin-bottom: 40px;
+    text-align: center;
+
+    .top-label {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #3b82f6;
+    }
+
+    .main-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 15px 0;
+    }
+
+    .divider {
+        width: 60px;
+        height: 4px;
+        background: #3b82f6;
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+}
+
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.post-item {
+    display: flex;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border: 1px solid #f1f5f9;
+    height: 260px; // Ép chiều cao cố định để list đều đặn
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0 30px 60px -12px rgba(50, 50, 93, 0.1), 0 18px 36px -18px rgba(0, 0, 0, 0.1);
+        border-color: #dbeafe;
+
+        .image {
+            transform: scale(1.1);
+        }
+    }
+
+    &.featured {
+        background: linear-gradient(to right, #ffffff, #f0f7ff);
+        border-left: 6px solid #3b82f6;
+    }
+}
+
+.image-wrapper {
+    width: 40%; // Chiếm 40% bề ngang cho ảnh
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(4px);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+}
+
+.info-content {
+    width: 60%;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .meta-tags {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+
+        .category {
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+    }
+
+    .title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 15px;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 25px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+.footer-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+
+    .read-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #1e293b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+
+        &:hover {
+            background: #3b82f6;
+        }
+    }
+
+    .save-btn {
+        background: #f1f5f9;
+        border: none;
+        padding: 10px;
+        border-radius: 12px;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 850px) {
+    .post-item {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .image-wrapper, .info-content {
+        width: 100%;
+    }
+
+    .image-wrapper {
+        height: 250px;
+    }
+}
+
+.loading-state {
+    margin-top: 70px;
+}

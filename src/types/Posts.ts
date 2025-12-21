@@ -31,3 +31,10 @@ export interface PostRequest {
 export interface PostUpdateRequest extends PostRequest {
     id: number; 
 }
+
+export interface PostAllView {
+    id: number;
+    title: string;
+    imageData: string;
+    isFeatured: boolean;
+}

@@ -408,7 +408,7 @@ const WorkspaceDetail: React.FC = () => {
                         <div className={cx('notification-sidebar-section')}>
                         <WorkspaceNotifications workspaceId={workspace.id} />
                     </div>
-                    {/* <WorkspaceReviewSwiper workspaceId={workspace.id} /> */}
+                    <WorkspaceReviewSwiper workspaceId={workspace.id} />
                 </div>
             </div>
 

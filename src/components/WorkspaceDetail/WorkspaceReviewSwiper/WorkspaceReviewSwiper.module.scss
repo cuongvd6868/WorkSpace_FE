@@ -1,63 +1,69 @@
 .review-section {
-    background: #1e293b; // Đồng bộ màu nền dark
-    border-radius: 16px;
-    padding: 20px;
-    margin-top: 24px;
-    border: 1px solid #334155;
-    position: relative;
-    overflow: hidden;
+    // width: 100%;
+    max-width: 400px; // Hoặc 100% tùy layout của bạn
+    margin: 20px auto;
+    padding: 0 15px;
+    overflow: hidden; // Rất quan trọng để chặn list vô tận
+}
 
-    .header {
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .rating-summary {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-
-        .title {
-            font-size: 1.1rem;
-            color: #f8fafc;
-            font-weight: 600;
-        }
-
-        .rating-summary {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
+        gap: 6px;
+        font-size: 0.9rem;
+        color: #64748b;
     }
 }
 
+.mySwiper {
+    width: 100%;
+    padding-bottom: 40px !important; // Chừa chỗ cho dots pagination
+}
+
+.swiper-slide-custom {
+    height: auto; // Đảm bảo slide co dãn theo nội dung
+}
+
 .review-card {
-    padding: 20px 10px 40px 10px; // Padding dưới cho pagination
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    border: 1px solid #e2e8f0;
 
     .quote-icon {
-        color: #6366f1;
-        opacity: 0.2;
-        margin-bottom: -20px;
+        color: #e2e8f0;
+        margin-bottom: 10px;
     }
 
     .rating-stars {
         display: flex;
-        gap: 4px;
-        margin-bottom: 12px;
+        gap: 2px;
+        margin-bottom: 15px;
     }
 
     .comment {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #e2e8f0;
         font-style: italic;
+        color: #475569;
+        line-height: 1.6;
         margin-bottom: 20px;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        font-size: 1rem;
     }
 
     .user-info {
@@ -67,11 +73,12 @@
         text-align: left;
 
         .avatar {
-            width: 44px;
-            height: 44px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #6366f1;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .user-meta {
@@ -79,30 +86,21 @@
             flex-direction: column;
 
             .name {
-                font-size: 0.9rem;
                 font-weight: 600;
-                color: #f8fafc;
+                font-size: 0.95rem;
+                color: #1e293b;
             }
 
             .room {
-                font-size: 0.75rem;
+                font-size: 0.8rem;
                 color: #94a3b8;
             }
         }
     }
 }
 
-// Custom Swiper Pagination
-:global(.swiper-pagination-bullet) {
-    background: #475569;
-}
-:global(.swiper-pagination-bullet-active) {
-    background: #6366f1 !important;
-}
-
 .loading {
     padding: 20px;
     text-align: center;
-    color: #94a3b8;
-    font-size: 0.9rem;
+    color: #64748b;
 }

@@ -6,6 +6,7 @@ import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import PostItem from "../PostItem/PostItem";
 import { FeaturePost } from "~/types/Posts";
 import { getAllFeaturedPost } from "~/services/PostService";
+import { Link } from "react-router-dom";
 
 const cx = classNames.bind(styles);
 
@@ -49,6 +50,11 @@ const Postfeatured: React.FC = () => {
                 {posts.map((p) => (
                     <PostItem post={p} key={p.id}/>
                 ))}
+            </div>
+            <div className={cx('btn-container')}>
+                <Link to={'/post-all'}>
+                    <button className={cx('btn')}>Xem thêm</button>
+                </Link>
             </div>
         </div>
     )
