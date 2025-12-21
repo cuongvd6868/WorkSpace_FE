@@ -288,6 +288,9 @@
 /* --- 4. Right Column (Host Info & Map) --- */
 /* ========================================================================= */
 .host-section {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+
+
     .host-card {
         display: flex;
         flex-direction: column;
@@ -398,6 +401,8 @@
 
 .map-section {
     margin-top: 20px;
+    border: 1px solid #e5e7eb; /* xám nhạt */
+
 
     .map-container {
         position: relative;

@@ -64,6 +64,7 @@ export type workSpaceRoom = {
 export type BookingListType = {
   id: number,
   bookingCode: string,
+  workSpaceId: number,
   workSpaceRoomId: number,
   startTimeUtc: string,
   endTimeUtc: string,

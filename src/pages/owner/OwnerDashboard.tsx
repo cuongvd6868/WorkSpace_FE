@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import { OwnerStats } from "~/types/Owner";
 import { getOwnerStats } from "~/services/OwnerService";
 import WeeklyRevenueChart from "~/components/OwnerComponents/Charts/WeeklyRevenueChart";
-import FinanceSection from "~/components/OwnerComponents/FinanceSection/FinanceSection";
 import OwnerBookingsSection from "~/components/OwnerComponents/OwnerBookingsSection/OwnerBookingsSection";
 import { CreateWorkspaceForm } from "~/components/OwnerComponents/CreateWorkspaceForm/CreateWorkspaceForm";
 import OwnerWorkspacesTable from "~/components/OwnerComponents/OwnerWorkspacesTable/OwnerWorkspacesTable";
@@ -19,6 +18,9 @@ import NotificationManagementSection from "~/components/OwnerComponents/Notifica
 import DrinkServiceManagementSection from "~/components/OwnerComponents/DrinkServiceManagementSection/DrinkServiceManagementSection";
 import OwnerChatSection from "~/components/OwnerComponents/OwnerChatSection/OwnerChatSection";
 import OwnerPendingWorkspacesTable from "~/components/OwnerComponents/OwnerPendingWorkspacesTable/OwnerPendingWorkspacesTable";
+import OwnerSettingsSection from "~/components/OwnerComponents/OwnerSettingsSection/OwnerSettingsSection";
+
+
 const cx = classNames.bind(styles);
 
 enum OwnerPage {
@@ -195,11 +197,10 @@ const OwnerDashboard: React.FC = () => {
             case OwnerPage.Settings:
                 return (
                     <div className={cx('content-section')}>
-                        <h2 className={cx('section-title')}>⚙️ THIẾT LẬP CÁ NHÂN</h2>
-                        <p className={cx('placeholder-long')}>
-                            [Thông tin cá nhân, Đổi mật khẩu, Thiết lập thông báo]
-                        </p>
-                    </div>
+                    <h2 className={cx('section-title')}>⚙️ THIẾT LẬP HỒ SƠ CHỦ WORKSPACE</h2>
+                    {/* Thay thế placeholder bằng component thực tế */}
+                    <OwnerSettingsSection />
+                </div>
                 );
             default:
                 return <div>Chào mừng, Owner!</div>;
@@ -219,7 +220,7 @@ const OwnerDashboard: React.FC = () => {
                         <FontAwesomeIcon icon={faBuilding} /> <span>Workspace Chờ duyệt</span>
                     </li>
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Listings })} onClick={() => setActivePage(OwnerPage.Listings)}>
-                        <FontAwesomeIcon icon={faBuilding} /> <span>Quản Lý Listing</span>
+                        <FontAwesomeIcon icon={faBuilding} /> <span>Quản Lý Workspace</span>
                     </li>
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Bookings })} onClick={() => setActivePage(OwnerPage.Bookings)}>
                         <FontAwesomeIcon icon={faCalendarCheck} /> <span>Quản Lý Booking</span>
@@ -236,9 +237,9 @@ const OwnerDashboard: React.FC = () => {
                     <li className={cx('nav-item', { active: activePage === OwnerPage.Chat })} onClick={() => setActivePage(OwnerPage.Chat)}>
                         <FontAwesomeIcon icon={faMessage} /> <span>Quản Lý chat</span>
                     </li>
-                    {/* <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
+                    <li className={cx('nav-item', { active: activePage === OwnerPage.Settings })} onClick={() => setActivePage(OwnerPage.Settings)}>
                         <FontAwesomeIcon icon={faUserCog} /> <span>Thiết Lập</span>
-                    </li> */}
+                    </li>
                 </ul>
                 
                 {isLoggedIn() ? (
