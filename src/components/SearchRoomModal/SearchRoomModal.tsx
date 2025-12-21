@@ -130,6 +130,13 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
         return selectedDate?.toDateString() === date.toDateString();
     };
 
+    const handleCapacityChange = (delta: number) => {
+        setCapacity(prev => {
+            const newValue = prev + delta;
+            return newValue < 1 ? 1 : newValue; // Không cho phép nhỏ hơn 1
+        });
+    };
+
     const formatTimeDisplay = () => {
         if (!selectedDate) return "Chọn ngày trước";
         
@@ -237,21 +244,41 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                 </div>
                             </div>
 
-                            {/* Số người */}
-                            <div className={cx('formGroup', 'capacityGroup')}>
-                                <label htmlFor="capacity" className={cx('inputLabel')}>
-                                    <Users size={16} /> Số lượng người
-                                </label>
-                                <input
-                                    id="capacity"
-                                    type="number"
-                                    min="1"
-                                    value={capacity}
-                                    onChange={(e) => setCapacity(Number(e.target.value))}
-                                    required
-                                    className={cx('inputField', 'capacityInput')}
-                                />
-                            </div>
+{/* Số người */}
+<div className={cx('formGroup', 'capacityGroup')}>
+    <label htmlFor="capacity" className={cx('inputLabel')}>
+        <Users size={16} /> Số lượng người
+    </label>
+    <div className={cx('capacity-control')}>
+        <button 
+            type="button" 
+            className={cx('capacity-btn')}
+            onClick={() => handleCapacityChange(-1)}
+            disabled={capacity <= 1}
+        >
+            −
+        </button>
+        <input
+            id="capacity"
+            type="number"
+            min="1"
+            value={capacity}
+            onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setCapacity(isNaN(val) || val < 1 ? 1 : val);
+            }}
+            required
+            className={cx('inputField', 'capacityInput')}
+        />
+        <button 
+            type="button" 
+            className={cx('capacity-btn')}
+            onClick={() => handleCapacityChange(1)}
+        >
+            +
+        </button>
+    </div>
+</div>
                         </div>
 
                         {/* Quick Selection */}
@@ -264,9 +291,6 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
                                 </button>
                                 <button type="button" className={cx('quick-option')} onClick={() => handleQuickTimeSelect(13, 18)} disabled={selectedDate === null}>
                                     Chiều (13:00-18:00)
-                                </button>
-                                <button type="button" className={cx('quick-option')} onClick={() => handleQuickTimeSelect(9, 17)} disabled={selectedDate === null}>
-                                    Cả ngày (9:00-17:00)
                                 </button>
                             </div>
                         </div>

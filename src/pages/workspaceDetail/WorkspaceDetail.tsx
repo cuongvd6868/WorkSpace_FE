@@ -372,7 +372,7 @@ const WorkspaceDetail: React.FC = () => {
                         hostName={workspace.hostName}
                         hostPhone={workspace.hostContactPhone}
                         hostEmail={workspace.hostCompanyName}
-                        hostAvatarUrl={'https://5sfashion.vn/storage/upload/images/ckeditor/4KG2VgKFDJWqdtg4UMRqk5CnkJVoCpe5QMd20Pf7.jpg'}
+                        hostAvatarUrl={workspace.hostAvatar}
                         workspaceTitle={workspace.title}
                         onOpenChat={() => setIsChatOpen(true)} 
                     />
@@ -475,12 +475,12 @@ const WorkspaceDetail: React.FC = () => {
             />
             {isChatOpen && (
                 <ChatWidget
-    isOpen={isChatOpen}
-    workspaceId={workspace.id}
-    hostName={workspace.hostName}
-    onClose={() => setIsChatOpen(false)}
-/>
-            )}
+                    isOpen={isChatOpen}
+                    workspaceId={workspace.id}
+                    hostName={workspace.hostName}
+                    onClose={() => setIsChatOpen(false)}
+                />
+                            )}
 
             {isGalleryModalOpen && (
                 <div className={cx('gallery-modal-overlay')} onClick={() => setIsGalleryModalOpen(false)}>

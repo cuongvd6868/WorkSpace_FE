@@ -177,7 +177,9 @@ const BookingList: React.FC = () => {
                             {/* KHỐI CHI TIẾT (Content Right) */}
                             <div className={cx('card-details-block')}>
                                 <div className={cx('room-info')}>
-                                    <div className={cx('room-title')}>{booking.workSpaceRoom.title}</div>
+                                    <Link to={`/workspace/${booking.workSpaceId}`}>
+                                        <div className={cx('room-title')}>{booking.workSpaceRoom.title}</div>
+                                    </Link>
                                     <p className={cx('booking-id')}>Mã đặt chỗ: <span>{booking.bookingCode}</span></p>
                                 </div>
 

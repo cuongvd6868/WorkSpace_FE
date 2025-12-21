@@ -756,3 +756,67 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
         padding: 0.5rem;
     }
 }
+
+.capacityGroup {
+    .capacity-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        width: fit-content;
+
+        .capacityInput {
+            width: 50px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0;
+            margin: 0;
+            
+            // Ẩn mũi tên mặc định của input type number
+            &::-webkit-inner-spin-button,
+            &::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+
+        .capacity-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: none;
+            background: #fff;
+            color: #1e293b;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+
+            &:hover:not(:disabled) {
+                background: #4f46e5;
+                color: #fff;
+                transform: translateY(-1px);
+            }
+
+            &:active:not(:disabled) {
+                transform: translateY(0);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background: #f1f5f9;
+            }
+        }
+    }
+}

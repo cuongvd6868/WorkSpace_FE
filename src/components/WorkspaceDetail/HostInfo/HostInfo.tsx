@@ -25,7 +25,7 @@ const HostInfo: React.FC<HostInfoProps> = ({hostId, hostName, hostPhone, hostEma
                 Liên Hệ Chủ Hộ
             </h2>
             <div className={cx('host-card')}>
-                <img src={hostAvatarUrl} alt={hostAvatarUrl} className={cx('host-avatar')} />
+                <img src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${hostAvatarUrl}`} alt={hostAvatarUrl} className={cx('host-avatar')} />
                 <div className={cx('host-details')}>
                     <strong>{hostName}</strong>
                     <p>Đại diện {workspaceTitle}</p>

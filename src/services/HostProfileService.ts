@@ -4,7 +4,7 @@ import {
     COVER_PRESET, 
     DOCUMENT_PRESET, 
 } from '~/config/cloudinaryConfig'; 
-import { HostProfileData } from '~/types/HostProfile'; 
+import { HostProfileData, HostProfileView } from '~/types/HostProfile'; 
 import { uploadToCloudinary } from './CloudinaryService';
 import { dataURLtoFile } from '~/utils/dataURLtoFile'; 
 import { API_BASE_URL } from '~/utils/API';
@@ -34,7 +34,6 @@ export const saveHostProfile = async (
     const documentPublicIds: string[] = []; 
     let signaturePublicId: string | undefined = undefined;
 
-    // --- 1. UPLOAD AVATAR & COVER ---
     if (avatarFile) {
         const avatarPromise = uploadToCloudinary(avatarFile, AVATAR_PRESET)
             .then(publicId => { finalData.avatar = publicId; });
@@ -47,16 +46,14 @@ export const saveHostProfile = async (
         uploadPromises.push(coverPromise);
     }
 
-    // --- 2. UPLOAD ẢNH HỢP ĐỒNG (TỪ DATA URL trong finalData.documentUrls) ---
     if (finalData.documentUrls && finalData.documentUrls.length > 0) {
         finalData.documentUrls.forEach((dataUrl, index) => {
             try {
-                // Chuyển Data URL sang File để upload
                 const file = dataURLtoFile(dataUrl, `contract_doc_${finalData.companyName}_${index + 1}.png`);
                 
                 const docPromise = uploadToCloudinary(file, DOCUMENT_PRESET)
                     .then(publicId => { 
-                        documentPublicIds.push(publicId); // Thu thập Public ID
+                        documentPublicIds.push(publicId); 
                     });
                 uploadPromises.push(docPromise);
             } catch (e) {
@@ -66,14 +63,13 @@ export const saveHostProfile = async (
         });
     }
 
-    // --- 3. UPLOAD CHỮ KÝ (TỪ DATA URL trong finalData.signatureDataUrl) ---
     if (finalData.signatureDataUrl) {
         try {
             const signatureFile = dataURLtoFile(finalData.signatureDataUrl, `signature_${finalData.companyName}.png`);
             
             const signaturePromise = uploadToCloudinary(signatureFile, AVATAR_PRESET) 
                 .then(publicId => { 
-                    signaturePublicId = publicId; // Thu thập Public ID
+                    signaturePublicId = publicId; 
                 });
             uploadPromises.push(signaturePromise);
         } catch (e) {
@@ -155,4 +151,96 @@ export const saveHostProfile = async (
         }
          throw new Error("Lưu thông tin Host Profile thất bại.");
     }
+};
+
+export const getHostProfileMe = async (token: string): Promise<HostProfileView> => {
+    try {
+        const response = await axios.get(`${DOTNET_API_URL}/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin Host Profile:", error);
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+            throw new Error("Phiên làm việc hết hạn. Vui lòng đăng nhập lại.");
+        }
+        throw new Error("Không thể tải thông tin cá nhân.");
+    }
+};
+
+interface UpdateHostProfileParams {
+    id: number;
+    profileData: Partial<ServiceHostProfileData>; // Cho phép cập nhật một phần dữ liệu
+    avatarFile?: File;
+    coverPhotoFile?: File;
+}
+
+export const updateHostProfile = async (
+    { id, profileData, avatarFile, coverPhotoFile }: UpdateHostProfileParams,
+    token: string
+): Promise<any> => {
+    
+    let finalData = { ...profileData };
+    const uploadPromises: Promise<void>[] = [];
+
+    // --- XỬ LÝ UPLOAD ẢNH MỚI (NẾU CÓ) ---
+    
+    // Nếu người dùng chọn file avatar mới
+    if (avatarFile) {
+        const avatarPromise = uploadToCloudinary(avatarFile, AVATAR_PRESET)
+            .then(publicId => { finalData.avatar = publicId; });
+        uploadPromises.push(avatarPromise);
+    }
+
+    // Nếu người dùng chọn file cover mới
+    if (coverPhotoFile) {
+        const coverPromise = uploadToCloudinary(coverPhotoFile, COVER_PRESET)
+            .then(publicId => { finalData.coverPhoto = publicId; });
+        uploadPromises.push(coverPromise);
+    }
+
+    // Chờ upload hoàn tất
+    try {
+        if (uploadPromises.length > 0) {
+            await Promise.all(uploadPromises);
+            // Đợi 1s để Cloudinary đồng bộ (giống service cũ của bạn)
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    } catch (error) {
+        console.error("Lỗi upload ảnh khi update:", error);
+        throw new Error("Lỗi tải ảnh lên hệ thống.");
+    }
+
+    // --- GỬI DỮ LIỆU CẬP NHẬT TỚI .NET BACKEND ---
+    try {
+        // Endpoint: PUT /api/v1/host-profile/{id}
+        const response = await axios.put(`${DOTNET_API_URL}/${id}`, finalData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi update Host Profile tới .NET:", error);
+        
+        if (axios.isAxiosError(error) && error.response) {
+            console.error("Chi tiết lỗi từ server:", error.response.data);
+            
+            // Xử lý lỗi Validation
+            if (error.response.status === 400 && error.response.data.errors) {
+                const validationErrors = error.response.data.errors;
+                const firstKey = Object.keys(validationErrors)[0];
+                throw new Error(validationErrors[firstKey][0]);
+            }
+
+            if (error.response.status === 404) {
+                throw new Error("Không tìm thấy thông tin profile để cập nhật.");
+            }
+        }
+        throw new Error("Cập nhật thông tin thất bại.");
+    }
 };
