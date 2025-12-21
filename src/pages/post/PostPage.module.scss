@@ -1,9 +1,8 @@
-// src/pages/PostPage/PostPage.module.scss
 
 .wrapper {
     display: flex;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 40px 0px;
     background-color: #fafafa; /* Nền nhẹ nhàng */
     min-height: 100vh;
 }
@@ -25,7 +24,7 @@
 }
 
 .error {
-    color: #e53935; /* Đỏ lỗi */
+    color: #e53935; 
 }
 
 /* --- Tiêu đề và Meta --- */

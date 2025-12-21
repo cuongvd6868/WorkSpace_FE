@@ -17,7 +17,7 @@ import PostPage from "~/pages/post/PostPage";
 import FavoriteList from "~/pages/favorites/FavoriteList";
 import UpdateProfilePage from "~/pages/profile/UpdateProfilePage";
 import VerifyAccountPage from "~/pages/login/VerifyAccountPage"; 
-
+import PostAllPage from "~/pages/post/postAll/PostAllPage";
 import ChangePassword from "~/pages/password/ChangePassword";
 
 
@@ -42,6 +42,7 @@ export const router = createBrowserRouter([{
         {path: "/support", element: <SupportPage/>},
         {path: "/favorites", element: <FavoriteList/>},
         {path: "/update-profile", element: <UpdateProfilePage/>},
+        {path: "/post-all", element: <PostAllPage/>},
 
         
         // Route mới để xử lý verify email
