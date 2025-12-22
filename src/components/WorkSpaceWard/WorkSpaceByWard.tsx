@@ -14,6 +14,7 @@ import { WorkspaceByWardModel } from "~/types/Ward";
 import WorkSpaceItem from "./WorkSpaceItem/WorkSpaceItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faRocket } from "@fortawesome/free-solid-svg-icons";
+import Skeleton from "react-loading-skeleton";
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +23,20 @@ const WorkSpaceByWard: React.FC = () => {
     const [selectedWard, setSelectedWard] = useState<string>("");
     const [workspaces, setWorkspaces] = useState<WorkspaceByWardModel[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+const WorkSpaceSkeleton = () => (
+    <div className={cx('skeleton-card')}>
+        <Skeleton height={220} borderRadius={16} />
+        <div className={cx('skeleton-body')}>
+            <Skeleton width="85%" height={22} style={{ marginBottom: 12 }} />
+            <Skeleton width="60%" height={16} style={{ marginBottom: 16 }} />
+            <div className={cx('skeleton-footer')}>
+                <Skeleton width="40%" height={24} />
+                <Skeleton width="25%" height={24} borderRadius={20} />
+            </div>
+        </div>
+    </div>
+);
 
     // 1. Lấy danh sách các Quận/Huyện khi load trang
     useEffect(() => {
@@ -82,7 +97,11 @@ const WorkSpaceByWard: React.FC = () => {
                 {/* Swiper Section */}
                 <div className={cx('swiper_container')}>
                     {loading ? (
-                        <div className={cx('loading')}>Đang tải dữ liệu...</div>
+                        <div className={cx('skeleton-row')}>
+                                {[1, 2, 3, 4].map((i) => (
+                                    <WorkSpaceSkeleton key={i} />
+                                ))}
+                            </div>
                     ) : workspaces.length > 0 ? (
                         <Swiper
                             modules={[Navigation, Pagination]}

@@ -80,3 +80,66 @@
         }
 
     }
+
+    $primary-color: #3b82f6;
+$text-dark: #1e293b;
+$text-light: #64748b;
+$bg-white: #ffffff;
+$radius: 16px;
+
+    // Layout 4 cái nằm ngang cho Skeleton
+.skeleton-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); // Ép 4 cột
+    gap: 24px;
+
+    @media (max-width: 1280px) { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.skeleton-card {
+    background: $bg-white;
+    border-radius: $radius;
+    padding: 0;
+    overflow: hidden;
+    
+    .skeleton-body {
+        padding: 20px 12px;
+    }
+    
+    .skeleton-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+}
+
+.display-area {
+    min-height: 400px;
+}
+
+.workspaces-swiper {
+    padding-bottom: 50px !important;
+}
+
+.empty-box {
+    text-align: center;
+    padding: 100px 0;
+    background: white;
+    border-radius: $radius;
+    border: 2px dashed #e2e8f0;
+    color: $text-light;
+}
+
+// Custom Swiper Arrows
+:global(.swiper-button-next), :global(.swiper-button-prev) {
+    color: $text-dark !important;
+    background: white;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    &::after { font-size: 1.2rem !important; font-weight: bold; }
+}

@@ -1,197 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+// Variables
+$primary: #4f46e5;
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$dark: #1f2937;
+$bg-main: #f9fafb;
+$white: #ffffff;
+$text-main: #111827;
+$text-sub: #6b7280;
+$shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+$shadow-md: 0 10px 15px -3px rgba(0,0,0,0.05);
+$radius: 12px;
 
-$color-primary: #3f51b5; // Màu xanh chính (hoặc màu dashboard của bạn)
-$color-green: #4caf50;
-$color-red: #f44336;
-$color-orange: #ff9800;
-$color-light-grey: #f8f9fa;
-$color-border: #e0e0e0;
-$color-text-dark: #333;
-$color-text-secondary: #777;
-$border-radius: 8px;
-$border-radius-large: 12px;
-$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-
-.bookings-management {
-    padding: 20px;
-    background-color: $color-light-grey; // Nền nhẹ
-    border-radius: $border-radius-large;
+.section-container {
+    font-family: 'Inter', sans-serif;
+    // padding: 32px;
+    background-color: $bg-main;
+    min-height: 100vh;
 }
 
-// 1. Thanh Filter/Tabs
-.booking-filters {
+// Header & Tabs
+.section-header {
+    margin-bottom: 32px;
     display: flex;
-    gap: 12px;
-    margin-bottom: 25px;
-    padding: 10px 0;
-    overflow-x: auto;
-    white-space: nowrap;
+    justify-content: space-between;
+    align-items: flex-end;
 
-    .filter-btn {
-        background-color: white;
-        border: 1px solid $color-border;
-        color: $color-text-secondary;
-        padding: 10px 18px;
-        border-radius: 20px; // Bo tròn hơn để trông như tags
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
+    h2 { font-size: 1.8rem; font-weight: 700; color: $text-main; margin: 0; }
+    p { color: $text-sub; margin-top: 4px; }
+}
+
+.filter-bar {
+    display: flex;
+    background: #e5e7eb;
+    padding: 4px;
+    border-radius: 10px;
+    gap: 4px;
+
+    .tab-item {
+        padding: 8px 16px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
         font-weight: 600;
-        min-width: 120px; // Đảm bảo nút có kích thước nhất định
-        
-        &:hover:not(.active) {
-            border-color: $color-primary;
-            color: $color-primary;
-            box-shadow: $shadow-sm;
-        }
+        font-size: 1.5rem;
+        color: $text-sub;
+        cursor: pointer;
+        transition: 0.2s;
 
         &.active {
-            background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(0,33,71,1) 0%, rgb(28, 119, 120) 90% );
-            color: white;
-            border-color: $color-primary;
-            box-shadow: 0 4px 6px rgba($color-primary, 0.3);
-        }
-
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            background: $white;
+            color: $primary;
+            box-shadow: $shadow-sm;
         }
     }
 }
 
-// 2. Bảng Dữ liệu
-.table-wrapper {
-    overflow-x: auto;
-    background-color: white;
-    border-radius: $border-radius-large;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); // Shadow rõ ràng hơn
+// Table Styling
+.content-card {
+    background: $white;
+    border-radius: $radius;
+    box-shadow: $shadow-md;
+    border: 1px solid #f3f4f6;
+    overflow: hidden;
 }
 
-.booking-table {
+.custom-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
-    
-    th, td {
-        padding: 18px 20px;
-        text-align: left;
-        border-bottom: 1px solid #f0f0f0; // Đường kẻ nhẹ
-    }
-    
+
     th {
-        background-color: $color-light-grey;
-        font-weight: 700;
-        color: $color-text-dark;
+        background: #fdfdfd;
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 1.2rem;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+        color: $text-sub;
+        border-bottom: 1px solid #f3f4f6;
     }
 
-    tbody tr {
-        transition: background-color 0.15s ease;
-        &:hover {
-            background-color: #fcfcfc; // Hiệu ứng hover nhẹ
-        }
-    }
-
-    // Hiển thị mã Booking nổi bật
-    td:first-child {
-        font-weight: 700;
-        color: $color-primary;
+    td {
+        padding: 20px 24px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f3f4f6;
     }
 }
 
-.time-arrow {
-    margin: 0 8px;
-    font-size: 0.7em;
-    color: $color-text-secondary;
-    vertical-align: middle;
-}
-
-// 3. Status Labels (Nhãn trạng thái)
-.status-label {
-    padding: 6px 12px;
-    border-radius: 20px; // Rất bo tròn
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-    min-width: 100px;
-    text-align: center;
-    
-    &.pending { 
-        background-color: #fff3e0; // Light Orange
-        color: $color-orange; 
-    } 
-    &.confirmed { 
-        background-color: #e8f5e9; // Light Green
-        color: $color-green; 
-    } 
-    &.cancelled, &.rejected { 
-        background-color: #ffebee; // Light Red
-        color: $color-red; 
-    } 
-    &.checked_in { 
-        background-color: #e3f2fd; // Light Blue
-        color: $color-primary; 
-    } 
-    &.completed { 
-        background-color: #f5f5f5; 
-        color: $color-text-secondary; 
-    } 
-}
-
-// 4. Action Buttons (Nút hành động)
-.action-cell {
+.customer-info {
     display: flex;
+    flex-direction: column;
+    .booking-id { font-weight: 700; color: $primary; font-size: 1.2rem; }
+    .customer-name { font-size: 1rem; color: $text-sub; margin-top: 4px; }
+}
+
+.room-tag {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.time-display {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.1rem;
+    color: $text-main;
+    small { color: $text-sub; font-weight: 500; }
+    span { font-weight: 500; }
+}
+
+.amount-text { font-weight: 700; color: $text-main; font-size: 1.2rem;}
+
+// Status Badges
+.status-badge {
+    display: inline-flex;
+    padding: 6px 12px;
+    border-radius: 99px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: capitalize;
+
+    &.pending { background: #fef3c7; color: #92400e; }
+    &.confirmed { background: #d1fae5; color: #065f46; }
+    &.checked_in { background: #dcfce7; color: $success; }
+    &.completed { background: #f3f4f6; color: $text-sub; }
+    &.cancelled, &.rejected { background: #fee2e2; color: $danger; }
+}
+
+// UI Buttons
+.action-wrapper { display: flex; justify-content: center; }
+.action-group { display: flex; align-items: center; gap: 12px; }
+
+.btn-ui {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     gap: 8px;
-    
-    .action-btn {
-        padding: 8px 12px;
-        border-radius: $border-radius;
-        font-size: 0.8rem;
-        cursor: pointer;
-        border: none;
-        font-weight: 600;
-        transition: background-color 0.2s, transform 0.1s;
-        
-        svg {
-            margin-right: 5px;
-        }
+    transition: 0.2s ease;
 
-        &:active {
-            transform: scale(0.98);
-        }
+    &:active { transform: scale(0.96); }
 
-        &.confirm {
-            background-color: $color-green;
-            color: white;
-            &:hover { background-color: darken($color-green, 8%); }
-        }
-        &.cancel {
-            background-color: $color-red;
-            color: white;
-            &:hover { background-color: darken($color-red, 8%); }
-        }
-        &.checkin, &.checkout {
-            background-color: $color-orange;
-            color: white;
-            &:hover { background-color: darken($color-orange, 8%); }
-        }
+    &.btn-primary { background: $primary; color: $white; &:hover { background: darken($primary, 10%); } }
+    &.btn-success { background: $success; color: $white; &:hover { background: darken($success, 5%); } }
+    &.btn-warning { background: $warning; color: $white; &:hover { background: darken($warning, 5%); } }
+    &.btn-dark { background: $dark; color: $white; }
+    &.btn-outline-danger {
+        background: transparent; border: 1.5px solid #fca5a5; color: $danger;
+        &:hover { background: #fee2e2; }
+    }
+
+    &.is-frozen {
+        background: #e5e7eb !important;
+        color: #9ca3af !important;
+        cursor: not-allowed;
+        filter: grayscale(1);
+        opacity: 0.6;
     }
 }
 
-// 5. Loading và No Data State
-.loading-state, .no-data {
-    text-align: center;
-    padding: 60px;
-    color: $color-text-secondary;
-    font-style: italic;
-    background: white;
-    border-radius: $border-radius-large;
-    margin-top: 20px;
-    font-size: 1.1rem;
-    
-    svg {
-        margin-right: 10px;
-        color: $color-primary;
+.btn-link-danger {
+    background: transparent; border: none; color: $danger;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    &:hover { text-decoration: underline; }
+}
+
+// Modal Animation & Glassmorphism
+.modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    backdrop-filter: blur(8px);
+}
+
+.modal-glass {
+    background: $white; width: 100%; max-width: 480px;
+    border-radius: 20px; padding: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: reveal 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    .modal-header {
+        display: flex; gap: 16px; margin-bottom: 24px;
+        .icon-circle {
+            width: 48px; height: 48px; background: #fee2e2; color: $danger;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+        }
+        h3 { margin: 0; font-size: 1.25rem; }
+        p { margin: 4px 0 0; color: $text-sub; font-size: 1rem; }
     }
+
+    .modal-body {
+        margin-bottom: 24px;
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        textarea {
+            width: 100%; min-height: 120px; padding: 12px; border: 1.5px solid #e5e7eb;
+            border-radius: 6px; resize: none; outline: none; transition: 0.2s;
+            &:focus { border-color: $primary; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        }
+    }
+
+    .modal-actions {
+        display: flex; gap: 12px;
+        button { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; }
+        .btn-cancel { background: #f3f4f6; color: $text-main; }
+        .btn-submit { background: $danger; color: $white; &:hover { background: darken($danger, 10%); } }
+    }
+}
+
+@keyframes reveal {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.loading-wrapper {
+    padding: 60px; text-align: center; color: $primary;
+    p { margin-top: 16px; color: $text-sub; font-weight: 500; }
+}
+
+.empty-state {
+    padding: 80px 0; text-align: center; color: $text-sub; font-style: italic;
 }
