@@ -1,9 +1,10 @@
 .review-section {
     // width: 100%;
-    max-width: 400px; // Hoặc 100% tùy layout của bạn
+    max-width: 400px; 
     margin: 20px auto;
     padding: 0 15px;
-    overflow: hidden; // Rất quan trọng để chặn list vô tận
+    overflow: hidden;
+    border: 1px solid #e6dfdf;
 }
 
 .header {

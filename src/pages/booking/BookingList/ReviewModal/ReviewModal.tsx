@@ -45,18 +45,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, booking, onR
                 comment 
             };
             
-            // 💥 BƯỚC SỬ DỤNG SERVICE THẬT
-            // Giả định booking.id có thể truy cập được từ booking object
             await postReview(booking.id, reviewData); 
             
-            alert('Đánh giá của bạn đã được gửi thành công!');
-            
-            // Kích hoạt hàm callback để component cha (BookingList) refresh dữ liệu
             onReviewSuccess(); 
             onClose(); 
             
         } catch (error) {
-            // Xử lý lỗi chi tiết hơn nếu cần, ở đây sử dụng thông báo lỗi chung
             setSubmitError('Lỗi gửi đánh giá. Vui lòng thử lại sau.');
             console.error('Submission error:', error);
         } finally {
@@ -64,7 +58,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, booking, onR
         }
     };
     
-    // Hộp rating (5 sao)
     const renderStars = () => {
         return [1, 2, 3, 4, 5].map((starValue) => (
             <FontAwesomeIcon
