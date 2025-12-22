@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay, Navigation } from 'swiper/modules';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
-// Import Swiper styles
+import avar from '~/assets/img/avatar/user_avar.svg'
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -78,7 +78,7 @@ const WorkspaceReviewSwiper: React.FC<Props> = ({ workspaceId }) => {
 
                             <div className={cx('user-info')}>
                                 <img 
-                                    src={review.reviewerAvatar || 'https://via.placeholder.com/40'} 
+                                    src={avar} 
                                     alt={review.reviewerName} 
                                     className={cx('avatar')}
                                 />

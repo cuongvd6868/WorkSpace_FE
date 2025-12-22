@@ -27,7 +27,7 @@ const AppContent = () => {
       <Outlet/>
       
       
-      {!isAnyDashboardPage && isLoggedIn() && (
+      {!isAnyDashboardPage && (
         <FloatingChatWidget key={user?.userName || 'guest'} />
       )}
       
