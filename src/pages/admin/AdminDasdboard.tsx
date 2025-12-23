@@ -86,7 +86,7 @@ const AdminDasdboard: React.FC = () => {
 
                         {/* 2. Biểu Đồ Doanh Thu */}
                         <div className={cx('chart-box')}>
-                            <h3 className={cx('chart-title')}>DOANH THU THEO THÁNG</h3>
+                            <h3 className={cx('chart-title')}>DOANH THU THÁNG NÀY</h3>
                             <div className={cx('placeholder', 'chart-placeholder')}>
                                 {isLoading ? (
                                     <p className={cx('placeholder', 'chart-placeholder')}>Đang tải biểu đồ...</p>
