@@ -26,7 +26,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, change, icon: faIcon, c
                 <div className={cx('title')}>{title}</div>
                 <div className={cx('value')}>{value}</div>
                 <div className={cx('change', { positive: isPositive, negative: !isPositive })}>
-                    {change} so với tháng trước
+                    {change} 
                 </div>
             </div>
         </div>
