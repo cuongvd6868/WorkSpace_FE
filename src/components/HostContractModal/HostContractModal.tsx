@@ -320,23 +320,27 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
             
             <div className={cx('clause-item', 'long-text')}>
                 <strong className={cx('clause-heading')}>Điều 1. Phạm vi & Địa điểm:</strong>
-                <span>Bên B niêm yết các địa điểm của mình trên nền tảng của Bên A và cam kết chất lượng dịch vụ theo tiêu chuẩn 5 sao.</span>
+                <span>Bên B thực hiện niêm yết các địa điểm kinh doanh trên nền tảng của Bên A. Bên B cam kết cung cấp dịch vụ và cơ sở vật chất đảm bảo tiêu chuẩn chất lượng đã đăng ký, đáp ứng đầy đủ các yêu cầu về an toàn và trải nghiệm khách hàng.</span>
             </div>
+
             <div className={cx('clause-item', 'long-text')}>
                 <strong className={cx('clause-heading')}>Điều 2. Thanh toán & Hoa hồng:</strong>
-                <span>Mức hoa hồng **X%** được áp dụng trên tổng giá trị giao dịch thành công. Chu kỳ thanh toán được quy định chi tiết tại Phụ lục A.</span>
+                <span>Mức phí hoa hồng được ấn định là 10% tính trên tổng giá trị mỗi giao dịch thành công qua nền tảng. Quy trình đối soát và chu kỳ thanh toán sẽ được thực hiện định kỳ theo quy định chi tiết tại Phụ lục A của Hợp đồng này.</span>
             </div>
+
             <div className={cx('clause-item', 'long-text')}>
                 <strong className={cx('clause-heading')}>Điều 3. Bảo mật Thông tin:</strong>
-                <span>Cả hai bên cam kết bảo mật tuyệt đối thông tin khách hàng và dữ liệu kinh doanh. Mọi vi phạm về bảo mật đều dẫn đến chấm dứt hợp đồng và bồi thường thiệt hại. Đây là đoạn văn bản dài để tạo hiệu ứng cuộn qua nhiều trang. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. (Lặp lại đoạn này 3 lần để tạo độ dài cuộn).</span>
+                <span>Cả hai bên cam kết bảo mật tuyệt đối các thông tin khách hàng, chiến lược kinh doanh và thuật toán vận hành thu thập được trong quá trình hợp tác. Mọi hành vi tiết lộ thông tin cho bên thứ ba khi chưa có sự đồng ý bằng văn bản sẽ được coi là vi phạm nghiêm trọng, dẫn đến chấm dứt hợp đồng ngay lập tức và bồi thường thiệt hại thực tế phát sinh. (Nội dung này được duy trì xuyên suốt thời hạn hợp đồng và kể cả sau khi hợp đồng chấm dứt).</span>
             </div>
+
             <div className={cx('clause-item', 'long-text')}>
                 <strong className={cx('clause-heading')}>Điều 4. Trách nhiệm Dịch vụ:</strong>
-                <span>Bên B hoàn toàn chịu trách nhiệm về tính chính xác của thông tin và chất lượng thực tế của địa điểm, bao gồm cơ sở vật chất, an ninh và dịch vụ hỗ trợ.</span>
+                <span>Bên B hoàn toàn chịu trách nhiệm trước pháp luật và khách hàng về tính chính xác của thông tin đã cung cấp, cũng như chất lượng dịch vụ thực tế tại địa điểm. Bên B có nghĩa vụ giải quyết các khiếu nại của khách hàng liên quan đến cơ sở vật chất, an ninh và thái độ phục vụ của nhân viên.</span>
             </div>
+
             <div className={cx('clause-item', 'long-text')}>
                 <strong className={cx('clause-heading')}>Điều 5. Hiệu lực Hợp đồng:</strong>
-                <span>Hợp đồng này có hiệu lực kể từ ngày được ký kết điện tử và được coi là bằng chứng pháp lý ràng buộc.</span>
+                <span>Hợp đồng có hiệu lực kể từ thời điểm các bên hoàn tất quy trình ký kết điện tử. Các bản ghi điện tử, lịch sử giao dịch và xác nhận qua hệ thống được coi là bằng chứng pháp lý có giá trị ràng buộc trách nhiệm giữa hai bên.</span>
             </div>
             
             <div style={{ height: '300px' }}>&nbsp;</div>
