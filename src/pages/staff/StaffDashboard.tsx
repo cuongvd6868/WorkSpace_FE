@@ -21,6 +21,7 @@ import BookingTodayListTable from "~/components/StaffComponents/BookingTodayList
 import ReviewsPendingList from "~/components/StaffComponents/ReviewsPendingList/ReviewsPendingList";
 import WorkspacesPendingList from "~/components/StaffComponents/WorkspacesPendingList/WorkspacesPendingList";
 import PostManagementSection from "~/components/StaffComponents/PostManagementSection/PostManagementSection";
+import WorkspaceManagementSection from "~/components/StaffComponents/WorkspaceManagementSection/WorkspaceManagementSection";
 
 const cx = classNames.bind(styles);
 
@@ -29,6 +30,7 @@ enum StaffPage {
     ContentReview = 'contentReview',
     Monitoring = 'monitoring',
     Posts = 'posts',
+    WorkspaceManagement = 'WorkspaceManagement',
 }
 
 enum ReviewType {
@@ -205,6 +207,13 @@ const StaffDashboard: React.FC = () => {
                         <PostManagementSection />
                     </div>
                 );
+            case StaffPage.WorkspaceManagement:
+                return (
+                    <div className={cx('content-section')}>
+                        <h2 className={cx('section-title')}>Workspace</h2>
+                        <WorkspaceManagementSection/>
+                    </div>
+                );
             default:
                 return <div>Chào mừng, Staff!</div>;
         }
@@ -227,6 +236,9 @@ const StaffDashboard: React.FC = () => {
                     </li>
                     <li className={cx('nav-item', { active: activePage === StaffPage.Posts })} onClick={() => setActivePage(StaffPage.Posts)}>
                         <FontAwesomeIcon icon={faNewspaper} /> <span>Bài viết</span>
+                    </li>
+                    <li className={cx('nav-item', { active: activePage === StaffPage.WorkspaceManagement })} onClick={() => setActivePage(StaffPage.WorkspaceManagement)}>
+                        <FontAwesomeIcon icon={faBuilding} /> <span>Workspace</span>
                     </li>
                 </ul>
             </nav>

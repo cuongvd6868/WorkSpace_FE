@@ -91,3 +91,15 @@ export interface WorkspaceItem {
 
     rooms: Room[];
 }
+
+
+export interface WorkspaceStaffView {
+  id: number;
+  title: string;
+  description: string;
+  hostName: string;
+  workSpaceTypeName: string;
+  addressLine: string;
+  city: string;
+  isActive: boolean;  
+}

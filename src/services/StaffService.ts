@@ -115,7 +115,6 @@ export const getAllPendingWorkspaces = async () => {
     }
 }
 
-// StaffService.ts: Cấu hình lại yêu cầu PUT
 export const handleApproveWorkspace = async (id: number) => {
     try {
 
@@ -130,4 +129,27 @@ export const handleApproveWorkspace = async (id: number) => {
     }
 };
 
+export const getAllWorkspaceStaffView = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}v1/staff/workspaces`);
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+}
+
+export const ToggleWorkspace = async (id: number) => {
+    try {
+
+        const response = await axios.put(
+            `${API_BASE_URL}v1/staff/workspaces/${id}/Block-Workspace`,
+            {} 
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
 
