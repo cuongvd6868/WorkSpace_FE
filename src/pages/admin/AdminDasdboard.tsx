@@ -64,9 +64,9 @@ const AdminDasdboard: React.FC = () => {
     
     // Đảm bảo dữ liệu KPI luôn có fallback để không bị crash khi stats là null
     const kpiData: { title: string; value: string; change: string; icon: IconDefinition; color: 'green' | 'blue' | 'purple' | 'red' }[] = [
-    { title: "Tổng Doanh Thu (T.Này)", value: `${stats?.totalRevenue || 0} VND`, change: "+12.5%", icon: faDollarSign, color: "green" },
-    { title: "Booking Mới (T.Này)", value: `${stats?.newBookingsThisMonth || 0} Đơn`, change: "+8%", icon: faBuilding, color: "blue" },
-    { title: "Tài Khoản Mới", value: `${stats?.newUsersThisMonth || 0} Users`, change: "+3.2%", icon: faUsers, color: "purple" },
+    { title: "Tổng Doanh Thu (T.Này)", value: `${stats?.totalRevenue || 0} VND`, change: "+", icon: faDollarSign, color: "green" },
+    { title: "Booking Mới (T.Này)", value: `${stats?.newBookingsThisMonth || 0} Đơn`, change: "+", icon: faBuilding, color: "blue" },
+    { title: "Tài Khoản Mới", value: `${stats?.newUsersThisMonth || 0} Users`, change: "+", icon: faUsers, color: "purple" },
     { title: "Tất cả tài khoản", value: `${stats?.totalUsers || 0} Users`, change: "-----", icon: faTachometerAlt, color: "red" },
     ];
 

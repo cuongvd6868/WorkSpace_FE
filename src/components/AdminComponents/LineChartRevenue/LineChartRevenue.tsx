@@ -56,14 +56,14 @@ const LineChartRevenue: React.FC<LineChartRevenueProps> = ({ data }) => {
                 
                 <XAxis 
                     dataKey="label" 
-                    stroke="#555"
+                    stroke="#f8ededff"
                     padding={{ left: 10, right: 10 }}
                 />
                 
                 <YAxis 
-                    stroke="#555"
+                    stroke="#e6dedeff"
                     tickFormatter={formatYAxis} 
-                    label={{ value: 'VND (Triệu)', angle: -90, position: 'insideLeft', fill: '#555' }}
+                    label={{ value: 'VND (Triệu)', angle: -90, position: 'insideLeft', fill: '#e3d7d7ff' }}
                 />
                 
                 <Tooltip content={<CustomTooltip />} />
