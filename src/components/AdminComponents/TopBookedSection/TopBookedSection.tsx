@@ -73,7 +73,7 @@ const TopBookedSection: React.FC = () => {
                                 </td>
                                 <td className={cx('host-info')}>
                                     <div className={cx('host-flex')}>
-                                        <img src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${ws.hostAvatar}`} alt={ws.hostName} className={cx('host-avatar')} />
+                                        {/* <img src={`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${ws.hostAvatar}`} alt={ws.hostName} className={cx('host-avatar')} /> */}
                                         <div className={cx('host-text')}>
                                             <p className={cx('host-name')}>{ws.hostName}</p>
                                             <p className={cx('host-email')}>
