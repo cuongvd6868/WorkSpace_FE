@@ -12,7 +12,6 @@
     padding: 15px;
     margin-bottom: 12px;
     
-    // Phong cách thẻ (Card-based)
     background-color: #ffffff;
     border: 1px solid #ffe5e5;
     border-radius: 8px;
@@ -26,7 +25,6 @@
     }
 }
 
-// --- Header (Mã đơn hàng & Thời gian hủy) ---
 .header {
     display: flex;
     justify-content: space-between;
@@ -39,7 +37,7 @@
 .booking-code {
     font-weight: 700;
     font-size: 1.1rem;
-    color: #ff4d4f; /* Màu đỏ nổi bật */
+    color: #ff4d4f; 
 }
 
 .time {
@@ -52,10 +50,9 @@
     }
 }
 
-// --- Body (Tên Workspace & Metadata) ---
 .body {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Tên Workspace chiếm 2 phần, Metadata chiếm 1 phần */
+    grid-template-columns: 2fr 1fr; 
     align-items: center;
 }
 
@@ -75,7 +72,6 @@
     gap: 15px;
 }
 
-// --- Amount (Số tiền) ---
 .amount {
     display: flex;
     align-items: center;
@@ -89,17 +85,16 @@
 }
 
 .danger {
-    color: #ff4d4f; /* Màu đỏ */
+    color: #ff4d4f; 
 }
 
-// --- Reason Tooltip (Lý do hủy) ---
 .reason-tooltip {
     position: relative;
     display: inline-flex;
     align-items: center;
-    color: #1890ff; /* Màu xanh dương cho thông tin */
+    color: #1890ff; 
     font-size: 0.85rem;
-    cursor: help; /* Con trỏ giúp người dùng biết đây là tooltip */
+    cursor: help; 
 
     .info-icon {
         margin-right: 5px;
@@ -108,10 +103,8 @@
     .tooltip-box {
         visibility: hidden;
         opacity: 0;
-        
-        // Vị trí và style của tooltip
         position: absolute;
-        bottom: 120%; /* Đặt tooltip phía trên */
+        bottom: 120%; 
         right: 0;
         z-index: 10;
         
@@ -125,11 +118,9 @@
         line-height: 1.4;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         
-        // Hiệu ứng chuyển động
         transition: opacity 0.3s, visibility 0.3s;
 
         &::after {
-            // Tam giác trỏ xuống
             content: "";
             position: absolute;
             top: 100%;
@@ -146,7 +137,6 @@
     }
 }
 
-// --- No Data State ---
 .no-data {
     display: flex;
     flex-direction: column;

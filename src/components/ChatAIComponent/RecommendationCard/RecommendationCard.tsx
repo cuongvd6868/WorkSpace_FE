@@ -36,13 +36,11 @@ const handleViewOnMap = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Chuyển sang trang map và truyền dữ liệu workspace hiện tại
     navigate('/map-view', {
         state: {
-            // Chuyển đổi recommendation sang format mà trang Map yêu cầu (nếu cần)
             results: [{
                 ...recommendation,
-                id: workSpaceId, // Đảm bảo ID đồng nhất để Map dễ xử lý
+                id: workSpaceId, 
             }],
             focusId: workSpaceId
         }
@@ -67,7 +65,7 @@ const handleViewOnMap = (e: React.MouseEvent) => {
 <div 
     className={cx('map-container')} 
     onClick={handleViewOnMap} 
-    style={{ cursor: 'pointer' }} // Thêm con trỏ tay để người dùng biết click được
+    style={{ cursor: 'pointer' }} 
 >
     <FontAwesomeIcon icon={faMap} className={cx('map-icon')}/>
     <p className={cx('map-title')}>Xem trên bản đồ</p>

@@ -90,16 +90,13 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     }
   };
   
-  // Hàm chuyển đổi loại hình
   const handleChangeBookingType = (newType: BookingType) => {
       setLocalBookingType(newType);
-      // Giới hạn selectedDates nếu chuyển sang hourly
       if (newType === 'hourly') {
           setSelectedDates(selectedDates.slice(0, 1));
       }
   }
 
-  // === HÀM XÁC NHẬN VÀ LƯU THÔNG TIN VÀO CONTEXT ===
   const handleConfirm = () => {
     if (selectedDates.length === 0) {
       alert("Vui lòng chọn ngày làm việc");
@@ -113,7 +110,6 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     if (bookingType === 'hourly') {
       const selectedDate = selectedDates[0];
       
-      // TẠO DATE OBJECT CHÍNH XÁC (bao gồm cả giờ, phút)
       startDateTime = new Date(selectedDate);
       startDateTime.setHours(startTime.hour, startTime.minute, 0, 0);
       
@@ -143,7 +139,6 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
       const firstDate = sortedDates[0];
       const lastDate = sortedDates[sortedDates.length - 1];
 
-      // TẠO DATE OBJECT CHO DAILY (Đầu ngày và Cuối ngày)
       startDateTime = new Date(firstDate);
       startDateTime.setHours(0, 0, 0, 0); 
       
@@ -171,13 +166,11 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     onClose();
   };
 
-  // Hàm chọn nhanh khoảng thời gian (cho hourly)
   const handleQuickTimeSelect = (startHour: number, endHour: number) => {
     setStartTime({ hour: startHour, minute: 0 });
     setEndTime({ hour: endHour, minute: 0 });
   };
 
-  // Hàm chọn nhanh số ngày (cho daily)
   const handleQuickDaySelect = (days: number) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -190,7 +183,6 @@ const WorkspaceDatePicker: React.FC<WorkspaceDatePickerProps> = ({
     setSelectedDates(dates);
   };
 
-  // Hàm tạo lịch (Giữ nguyên)
   const generateCalendar = (month: Date) => {
     const year = month.getFullYear();
     const monthIndex = month.getMonth();

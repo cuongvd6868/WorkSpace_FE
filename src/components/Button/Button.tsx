@@ -56,7 +56,7 @@ const Button: React.FC<ButtonProps> = ({
     }
 
     const classes = cx('wrapper', {
-        [className as string]: className, // khi có className sẽ lấy [className] làm key (để custom riêng)
+        [className as string]: className, 
         primary,
         text,
         disabled

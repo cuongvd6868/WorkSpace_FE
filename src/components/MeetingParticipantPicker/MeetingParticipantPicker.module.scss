@@ -20,7 +20,6 @@
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-// --- Base Styles ---
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -303,8 +302,6 @@
     }
 }
 
-// --- Counter Component Styles (Giả định) ---
-// Counter component của bạn nên sử dụng các class này
 .counter {
     display: flex;
     align-items: center;
@@ -386,7 +383,6 @@
     }
 }
 
-// --- Scrollbar Styling ---
 .content::-webkit-scrollbar {
     width: 6px;
 }

@@ -78,9 +78,7 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     height: 100%; 
 }
 
-// ==========================================================
-// Header (Cố định)
-// ==========================================================
+
 .modalHeader {
     display: flex;
     justify-content: space-between;
@@ -134,14 +132,9 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
-// ==========================================================
-// Body (Phần cuộn)
-// ==========================================================
 .modalBody {
     flex: 1; 
     padding: 2rem;
-    
-    // [CẬP NHẬT QUAN TRỌNG] Đảm bảo cuộn hoạt động trong Flex container
     min-height: 0; 
     overflow-y: auto; 
     -webkit-overflow-scrolling: touch;
@@ -151,7 +144,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     gap: 2rem;
 }
 
-// Info Grid
 .info-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -258,7 +250,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
-// Quick Selection
 .quick-selection {
     background: $white;
     padding: 1.5rem;
@@ -329,7 +320,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
-// Time Picker
 .time-picker-section {
     background: $white;
     padding: 1.5rem;
@@ -419,7 +409,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     margin: 0 0.25rem;
 }
 
-// Calendar Section
 .calendar-section {
     background: $white;
     padding: 1.5rem;
@@ -651,9 +640,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     animation: spin 1s linear infinite;
 }
 
-// ==========================================================
-// Animations & Responsive Design
-// ==========================================================
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -683,7 +669,6 @@ $transition: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
 
-// Responsive Design
 @media (max-width: 768px) {
     .modalContent {
         max-width: 95%;
