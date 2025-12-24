@@ -91,6 +91,19 @@ export const handleApproveOwner = async (id: number) => {
     }
 };
 
+export const handleRejectOwner = async (id: number) => {
+    try {
+        const response = await axios.delete(
+            `${API_BASE_URL}v1/admin/reject-owner/${id}`, 
+            {}
+        );
+        return response.data;
+    } catch (error) {
+        handleError(error);
+        throw error;
+    }
+};
+
 
 export const getAllNotifications = async (): Promise<Notification[]> => {
     try {
