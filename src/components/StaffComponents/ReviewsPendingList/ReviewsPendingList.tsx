@@ -149,8 +149,6 @@ const ReviewsPendingList: React.FC = () => {
                                     </button>
                                 )}
                                 
-                                {/* 3. Nút Xóa (Luôn hiện) */}
-                                <button className={cx('action-btn', 'delete')} title="Xóa vĩnh viễn"><FontAwesomeIcon icon={faBan} /></button>
                             </td>
                         </tr>
                     ))}
