@@ -38,7 +38,6 @@
   --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* QUAN TRỌNG: Overlay full height */
 .date-picker-overlay {
   position: fixed !important;
   top: 0 !important;
@@ -66,17 +65,16 @@
   }
 }
 
-/* Modal với height cố định và scroll */
 .date-picker-modal {
   position: relative !important;
   background: var(--background-white) !important;
   border-radius: var(--radius-2xl) !important;
   padding: 0 !important;
-  max-width: 900px !important; /* Tăng width */
+  max-width: 900px !important; 
   width: 100% !important;
   height: auto !important;
-  max-height: 90vh !important; /* Tăng max-height */
-  min-height: 600px !important; /* Thêm min-height */
+  max-height: 90vh !important; 
+  min-height: 600px !important; 
   overflow: hidden !important;
   box-shadow: var(--shadow-xl) !important;
   border: 1px solid var(--border-light) !important;
@@ -114,7 +112,7 @@
   padding: 24px 32px;
   background: var(--background-white);
   border-bottom: 1px solid var(--border-light);
-  flex-shrink: 0; /* Không bị co lại */
+  flex-shrink: 0; 
 
   .header-title {
     font-size: 1.8rem;
@@ -145,28 +143,24 @@
   }
 }
 
-/* Main content - có thể scroll */
 .main-content {
   flex: 1;
   overflow-y: auto;
   padding: 0;
 }
 
-/* Booking Type Selector */
 .booking-type-selector {
   display: flex;
   gap: 12px;
   margin: 0 0px 24px;
   background: var(--background-light);
   padding: 6px;
-//   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
 
   .type-button {
     flex: 1;
     padding: 12px 20px;
     border: none;
-    // border-radius: var(--radius-md);
     background: transparent;
     cursor: pointer;
     transition: var(--transition);
@@ -186,7 +180,6 @@
   }
 }
 
-/* Selection Display */
 .selection-display {
   padding: 0 32px 24px;
   border-bottom: 1px solid var(--border-light);
@@ -216,7 +209,6 @@
   }
 }
 
-/* Quick Selection */
 .quick-selection {
   padding: 24px 32px;
   border-bottom: 1px solid var(--border-light);
@@ -255,7 +247,6 @@
   }
 }
 
-/* Time Picker Section */
 .time-picker-section {
   padding: 24px 32px;
   border-bottom: 1px solid var(--border-light);
@@ -332,16 +323,15 @@
   }
 }
 
-/* Calendar Section */
 .calendar-section {
-  padding: 20px 32px; /* Giảm padding top/bottom */
-  min-height: 80px; /* Giảm min-height */
+  padding: 20px 32px; 
+  min-height: 80px; 
 
   .section-title {
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 16px; /* Giảm margin-bottom */
+    margin-bottom: 16px; 
   }
 }
 
@@ -349,21 +339,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; /* Giảm margin-bottom */
+  margin-bottom: 16px; 
   
   .nav-button {
     background: var(--background-white);
     border: 1px solid var(--border-light);
     border-radius: var(--radius-lg);
-    width: 40px; /* Nhỏ hơn */
-    height: 40px; /* Nhỏ hơn */
+    width: 40px; 
+    height: 40px; 
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: var(--transition);
     color: var(--text-secondary);
-    font-size: 1.1rem; /* Nhỏ hơn */
+    font-size: 1.1rem; 
 
     &:hover:not(:disabled) {
       background: var(--primary-light);
@@ -382,41 +372,41 @@
     display: flex;
     justify-content: space-around;
     flex: 1;
-    gap: 30px; /* Giảm gap */
+    gap: 30px; 
     font-weight: 600;
     color: var(--text-primary);
-    font-size: 1.4rem; /* Nhỏ hơn */
-    margin: 0 10px; /* Thêm margin nhỏ */
+    font-size: 1.4rem; 
+    margin: 0 10px; 
   }
 }
 
 .calendars-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px; /* Giảm gap */
-  min-height: 180px; /* Giảm min-height */
+  gap: 24px; 
+  min-height: 180px; 
 
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
-    gap: 30px; /* Giảm gap */
+    gap: 30px; 
   }
 }
 
 .calendar-view {
-  min-height: 240px; /* Giảm min-height */
+  min-height: 240px; 
 
   .week-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 1px;
-    margin-bottom: 8px; /* Giảm margin-bottom */
+    margin-bottom: 8px; 
     
     .week-day-cell {
       text-align: center;
       font-weight: 600;
       color: var(--text-secondary);
-      font-size: 1rem; /* Nhỏ hơn */
-      padding: 8px 2px; /* Giảm padding */
+      font-size: 1rem; 
+      padding: 8px 2px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       background: var(--background-lighter);
@@ -428,11 +418,10 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    min-height: 160px; /* Giảm min-height */
+    min-height: 160px;
   }
 }
 
-/* Day Cell Styles - Compact hơn */
 .day-cell {
   aspect-ratio: 1;
   display: flex;
@@ -443,17 +432,17 @@
   transition: var(--transition);
   position: relative;
   font-weight: 500;
-  min-height: 36px; /* Nhỏ hơn */
+  min-height: 36px; 
   background: var(--background-white);
-  border: 1px solid transparent; /* Viền mỏng hơn */
-  font-size: 0.85rem; /* Nhỏ hơn */
+  border: 1px solid transparent; 
+  font-size: 0.85rem; 
 
   &.selectable {
     &:hover {
       background: var(--primary-light);
       color: var(--primary-color1);
       border-color: var(--primary-color1);
-      transform: scale(1.02); /* Hiệu ứng nhẹ hơn */
+      transform: scale(1.02);
     }
   }
 
@@ -511,18 +500,17 @@
 
   .today-indicator {
     position: absolute;
-    bottom: 2px; /* Cao hơn */
-    width: 3px; /* Nhỏ hơn */
-    height: 3px; /* Nhỏ hơn */
+    bottom: 2px; 
+    width: 3px; 
+    height: 3px; 
     background: var(--success-color);
     border-radius: 50%;
   }
 }
 
-/* Responsive cho mobile */
 @media (max-width: 768px) {
   .calendar-section {
-    padding: 16px 20px; /* Giảm thêm trên mobile */
+    padding: 16px 20px; 
     min-height: 240px;
   }
 
@@ -559,7 +547,6 @@
   }
 }
 
-/* Footer với action buttons - LUÔN HIỆN Ở DƯỚI */
 .footer {
   display: flex;
   justify-content: space-between;
@@ -567,8 +554,8 @@
   padding: 24px 32px;
   background: var(--background-white);
   border-top: 1px solid var(--border-light);
-  flex-shrink: 0; /* QUAN TRỌNG: Không bị co lại */
-  margin-top: auto; /* Đẩy footer xuống dưới cùng */
+  flex-shrink: 0; 
+  margin-top: auto; 
 
   .selection-summary {
     font-weight: 600;
@@ -635,7 +622,6 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .date-picker-overlay {
     padding: 10px;
@@ -717,7 +703,6 @@
   }
 }
 
-/* Scrollbar cho content */
 .main-content::-webkit-scrollbar {
   width: 6px;
 }
@@ -736,7 +721,6 @@
   background: #6b8379;
 }
 
-/* Đảm bảo modal không bị ảnh hưởng bởi global styles */
 .date-picker-modal {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
