@@ -38,12 +38,10 @@ const isDateSelectable = (date: Date) => {
     return checkDate >= today;
 };
 
-// Hàm tạo lịch (Giữ nguyên logic)
 const generateCalendar = (month: Date) => {
     const year = month.getFullYear();
     const monthIndex = month.getMonth();
     const firstDay = new Date(year, monthIndex, 1);
-    // getDay: CN=0, T2=1, ..., T7=6. Điều chỉnh để T2 là 0 trong mảng WEEK_DAYS
     const firstDayOfWeek = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; 
     
     const startDay = new Date(firstDay);
@@ -52,7 +50,6 @@ const generateCalendar = (month: Date) => {
     const calendar = [];
     const currentDate = new Date(startDay);
     
-    // Tạo 6 hàng * 7 cột = 42 ô
     while (calendar.length < 42) {
         calendar.push(new Date(currentDate));
         currentDate.setDate(currentDate.getDate() + 1);
@@ -60,7 +57,6 @@ const generateCalendar = (month: Date) => {
     
     return calendar;
 };
-// -------------------------------------------------------------
 
 const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     isOpen,
@@ -69,18 +65,14 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     onClear,
     isLoading
 }) => {
-    // --- STATE ĐÃ ĐƠN GIẢN HÓA (Chỉ giữ lại Hourly) ---
-    // Loại bỏ bookingType state
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Chỉ cần 1 ngày
     const [capacity, setCapacity] = useState(1);
     const [startTime, setStartTime] = useState({ hour: 9, minute: 0 });
     const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
 
-    // Đồng bộ lại ngày/giờ khi mở modal (tùy chọn)
     useEffect(() => {
         if (isOpen) {
-            // Đặt ngày chọn mặc định là ngày hôm nay nếu chưa chọn
             if (!selectedDate) {
                 setSelectedDate(new Date());
             }
@@ -91,19 +83,16 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
         }
     }, [isOpen]);
 
-    // Format đúng chuẩn ISO 8601 (không bao gồm giây)
     const formatDateTime = (date: Date | null): string => {
         if (!date) return '';
         return format(date, "yyyy-MM-dd'T'HH:mm"); 
     };
 
-    // Hàm xử lý chọn ngày (Chỉ cho phép chọn 1 ngày)
     const handleDateClick = (date: Date) => {
         if (!isDateSelectable(date)) return;
         setSelectedDate(date);
     };
     
-    // Hàm chọn nhanh khoảng thời gian
     const handleQuickTimeSelect = (startHour: number, endHour: number) => {
         setStartTime({ hour: startHour, minute: 0 });
         setEndTime({ hour: endHour, minute: 0 });
@@ -118,7 +107,6 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
         today.setHours(0, 0, 0, 0);
         
         if (direction === -1) {
-             // Chỉ cho phép quay lại tháng hiện tại (nếu đang ở tháng hiện tại)
             if (newMonth.getFullYear() < today.getFullYear() || (newMonth.getFullYear() === today.getFullYear() && newMonth.getMonth() < today.getMonth())) {
                 return;
             }
@@ -151,13 +139,11 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
     nextMonth.setMonth(currentMonth.getMonth() + 1);
     const nextMonthCalendar = generateCalendar(nextMonth);
 
-    // Kiểm tra xem có thể thực hiện tìm kiếm không
     const canSearch = selectedDate !== null && 
         capacity >= 1 && 
         (endTime.hour > startTime.hour || 
         (endTime.hour === startTime.hour && endTime.minute > startTime.minute));
 
-    // === HÀM XỬ LÝ TÌM KIẾM (onSubmit) ===
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -171,14 +157,12 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
         
         const selectedDateFinal = selectedDate!;
         
-        // TẠO DATE OBJECT CHÍNH XÁC (bao gồm cả giờ, phút)
         startDateTime = new Date(selectedDateFinal);
         startDateTime.setHours(startTime.hour, startTime.minute, 0, 0);
         
         endDateTime = new Date(selectedDateFinal);
         endDateTime.setHours(endTime.hour, endTime.minute, 0, 0);
 
-        // Kiểm tra thời gian bắt đầu có trước thời gian hiện tại không
         if (startDateTime < new Date()) {
             toast.error("Thời gian bắt đầu không thể là thời điểm đã qua.");
             return;
@@ -189,11 +173,9 @@ const SearchRoomModal: React.FC<SearchRoomModalProps> = ({
             endTime: formatDateTime(endDateTime),
             capacity: Number(capacity) || 1
         });
-        // Không đóng modal để người dùng có thể chỉnh sửa và tìm kiếm lại
     };
 
     const handleClear = () => {
-        // Đặt lại các state về giá trị mặc định của mode "Theo Giờ"
         setSelectedDate(null);
         setCurrentMonth(new Date());
         setCapacity(1);

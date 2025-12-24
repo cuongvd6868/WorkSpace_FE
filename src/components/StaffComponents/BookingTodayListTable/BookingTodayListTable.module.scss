@@ -5,7 +5,7 @@ $secondary-text: #6c757d;
 $border-color: #e9ecef;
 $bg-light: #f8f9fa;
 $header-bg: #e9ecef;
-$time-color: #ff9800; // Màu cam cho thời gian
+$time-color: #ff9800; 
 
 .table-container {
     background-color: #fff;
@@ -15,7 +15,6 @@ $time-color: #ff9800; // Màu cam cho thời gian
     margin-top: 20px;
 }
 
-// --- Loading, Error & No Data States ---
 .loading, .error-message, .no-data {
     padding: 30px;
     text-align: center;
@@ -37,7 +36,6 @@ $time-color: #ff9800; // Màu cam cho thời gian
     }
 }
 
-// --- Bảng Booking ---
 .booking-table {
     width: 100%;
     border-collapse: separate;
@@ -73,7 +71,6 @@ $time-color: #ff9800; // Màu cam cho thời gian
         }
     }
     
-    // Tùy chỉnh cột
     .booking-code {
         font-weight: 600;
         color: $primary-color;

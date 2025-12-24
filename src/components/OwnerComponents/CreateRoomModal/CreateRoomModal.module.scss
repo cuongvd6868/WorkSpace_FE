@@ -1,18 +1,16 @@
 /* CreateRoomModal.module.scss */
 
-// Định nghĩa biến màu
-$primary-color: #007bff; // Xanh dương
-$secondary-color: #6c757d; // Xám
-$success-color: #28a745; // Xanh lá
-$danger-color: #dc3545; // Đỏ
-$background-light: #f8f9fa; // Nền sáng
+$primary-color: #007bff; 
+$secondary-color: #6c757d; 
+$success-color: #28a745; 
+$danger-color: #dc3545; 
+$background-light: #f8f9fa; 
 $border-color: #e9ecef;
 $input-border: #ced4da;
 $card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 $modal-max-width: 900px; 
-$modal-max-height: 95vh; // Giới hạn chiều cao tổng thể của Modal
+$modal-max-height: 95vh; 
 
-// --- Cấu trúc Modal chung ---
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -53,13 +51,11 @@ select {
     }
     
     &[type="number"] {
-        // Loại bỏ các nút xoay của input number trên Chrome/Edge/Safari
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        // Loại bỏ nút xoay trên Firefox
         appearance: textfield; 
     }
 }
@@ -71,10 +67,10 @@ select {
     box-shadow: $card-shadow;
     width: 90%;
     max-width: $modal-max-width; 
-    max-height: $modal-max-height; // Đảm bảo Modal không tràn màn hình
+    max-height: $modal-max-height; 
     display: flex;
-    flex-direction: column; // Rất quan trọng
-    overflow: hidden; // Quan trọng để Modal-body cuộn bên trong
+    flex-direction: column; 
+    overflow: hidden; 
     animation: fadeInScale 0.3s ease-out;
 }
 
@@ -85,7 +81,7 @@ select {
     padding: 20px 30px;
     border-bottom: 1px solid $border-color;
     background-color: #fff;
-    flex-shrink: 0; // Không co lại
+    flex-shrink: 0;
     
     h2 {
         margin: 0;
@@ -116,20 +112,19 @@ select {
     }
 }
 
-// **Class mới cho Form để giải quyết vấn đề cuộn và lấp nút**
 .room-form {
     display: flex;
     flex-direction: column;
-    flex-grow: 1; // Cho phép form chiếm hết phần còn lại của container
-    min-height: 0; // Tránh lỗi tràn nội dung (flex-basis: auto)
+    flex-grow: 1; 
+    min-height: 0; 
     overflow: hidden; 
 }
 
 .modal-body {
     padding: 30px;
-    overflow-y: auto; // Cho phép nội dung cuộn khi tràn
-    flex-grow: 1; // Cho phép body chiếm hết không gian còn lại
-    flex-shrink: 1; // Cho phép co lại
+    overflow-y: auto; 
+    flex-grow: 1; 
+    flex-shrink: 1; 
     background-color: $background-light;
 }
 
@@ -140,10 +135,9 @@ select {
     justify-content: flex-end;
     gap: 15px;
     background-color: #fff;
-    flex-shrink: 0; // Không co lại (Giữ cố định)
+    flex-shrink: 0; 
 }
 
-// --- Grid Form Layout ---
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -191,8 +185,6 @@ select {
     }
 }
 
-// --- Input Styling ---
-
 
 textarea {
     resize: vertical;
@@ -218,7 +210,6 @@ textarea {
     }
 }
 
-// --- Amenities Checkboxes ---
 .amenities-checkboxes {
     display: flex;
     flex-wrap: wrap;
@@ -301,7 +292,6 @@ textarea {
     display: none;
 }
 
-// --- Image Preview ---
 .image-preview-list {
     display: flex;
     flex-wrap: wrap;

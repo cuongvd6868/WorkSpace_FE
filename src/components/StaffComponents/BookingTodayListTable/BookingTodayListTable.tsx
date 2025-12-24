@@ -43,13 +43,10 @@ const BookingTodayListTable: React.FC = () => {
             return "N/A";
         }
     };
-    
-    // Hàm định dạng tiền tệ
+
     const formatCurrency = (amount: number): string => {
         return amount.toLocaleString('vi-VN') + ' VND';
     }
-
-    // --- RENDER LOGIC ---
 
     if (isLoading) {
         return <div className={cx('loading')}><FontAwesomeIcon icon={faSpinner} spin /> Đang tải danh sách Booking hôm nay...</div>;

@@ -24,10 +24,6 @@ const formatCurrency = (value: number) => {
 
 const WeeklyRevenueChart: React.FC<WeeklyRevenueChartProps> = ({ data }) => {
     
-    // Đảm bảo dữ liệu được sắp xếp hoặc xử lý theo ý muốn trước khi truyền vào biểu đồ
-    // Ở đây, chúng ta dùng trực tiếp data.weeklyRevenueTrend
-    
-    // Nếu data có thể là null/undefined, cần xử lý để biểu đồ không bị lỗi.
     if (!data || data.length === 0) {
         return (
             <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
@@ -37,7 +33,7 @@ const WeeklyRevenueChart: React.FC<WeeklyRevenueChartProps> = ({ data }) => {
     }
 
     return (
-        // ResponsiveContainer giúp biểu đồ tự điều chỉnh kích thước theo parent div
+        
         <ResponsiveContainer width="100%" height={350}>
             <BarChart
                 data={data}
@@ -54,7 +50,6 @@ const WeeklyRevenueChart: React.FC<WeeklyRevenueChartProps> = ({ data }) => {
                 {/* Trục X: Hiển thị tuần (weekLabel) */}
                 <XAxis 
                     dataKey="weekLabel" 
-                    // Định dạng nếu muốn xoay hoặc rút gọn label
                     angle={-15} 
                     textAnchor="end" 
                     height={50} 
@@ -63,14 +58,12 @@ const WeeklyRevenueChart: React.FC<WeeklyRevenueChartProps> = ({ data }) => {
                 
                 {/* Trục Y: Hiển thị Doanh thu (totalRevenue) */}
                 <YAxis 
-                    // Định dạng giá trị trên trục Y
                     tickFormatter={(value) => formatCurrency(value)}
                     stroke="#555"
                 />
                 
                 {/* Tooltip: Hiển thị thông tin chi tiết khi hover */}
                 <Tooltip 
-                    // Tùy chỉnh nội dung tooltip
                     formatter={(value: number, name: string) => [formatCurrency(value), "Doanh Thu"]} 
                     labelFormatter={(label) => `Tuần: ${label}`}
                 />

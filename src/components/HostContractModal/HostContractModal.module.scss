@@ -30,9 +30,6 @@ $error-color: #f44336;
     100% { background-position: 468px 0; }
 }
 
-/* ---------------------------------- */
-/* --- 1. OVERLAY & MODAL STRUCTURE --- */
-/* ---------------------------------- */
 
 .modal-overlay {
     position: fixed;
@@ -40,7 +37,7 @@ $error-color: #f44336;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.85); // Nền tối hơn
+    background-color: rgba(0, 0, 0, 0.85); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,9 +92,6 @@ $error-color: #f44336;
     }
 }
 
-/* ---------------------------------- */
-/* --- 2. HEADER & PROGRESS BAR --- */
-/* ---------------------------------- */
 
 .contract-header {
     display: flex;
@@ -191,9 +185,6 @@ $error-color: #f44336;
     }
 }
 
-/* ---------------------------------- */
-/* --- 3. MAIN CONTENT AREA --- */
-/* ---------------------------------- */
 
 .contract-main-area {
     display: flex;
@@ -202,9 +193,8 @@ $error-color: #f44336;
     background-color: $background-dark;
 }
 
-/* --- Contract Viewport Panel (Left) --- */
 .contract-viewport-panel {
-    flex: 3; // Lớn hơn khu vực chức năng
+    flex: 3; 
     padding: 20px;
     transition: filter 0.3s;
 
@@ -215,8 +205,8 @@ $error-color: #f44336;
 }
 
 .contract-viewport {
-    background-color: #ffffff; // Nền trắng để mô phỏng giấy in
-    color: #333333; // Chữ đen trên nền trắng
+    background-color: #ffffff; 
+    color: #333333; 
     border-radius: 6px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     height: 100%;
@@ -340,7 +330,6 @@ $error-color: #f44336;
     font-size: 0.9rem;
 }
 
-/* --- REVIEW Step styles --- */
 .review-status-box {
     display: flex;
     align-items: center;
@@ -363,7 +352,7 @@ $error-color: #f44336;
 }
 
 .download-btn-secondary {
-    @extend .next-step-button; // Thừa hưởng kiểu dáng
+    @extend .next-step-button; 
     background-color: transparent;
     border: 1px solid $border-color-dark;
     color: #bdbdbd;
@@ -376,7 +365,6 @@ $error-color: #f44336;
     }
 }
 
-/* --- SIGNING Step styles --- */
 .contract-signature-section {
     padding: 15px;
     border: 1px solid $border-color-dark;
@@ -407,8 +395,6 @@ $error-color: #f44336;
     }
 
     .signature-canvas {
-        // Kích thước canvas được định nghĩa trong component, cần đảm bảo
-        // nó lấp đầy container.
         width: 100%;
         display: block;
     }
@@ -430,7 +416,6 @@ $error-color: #f44336;
 }
 
 
-/* --- CONFIRMATION Step styles --- */
 .confirmation-view {
     text-align: center;
     .confirmation {
@@ -481,8 +466,6 @@ $error-color: #f44336;
     }
 }
 
-
-/* --- Global Buttons --- */
 .next-step-button {
     width: 100%;
     padding: 15px 20px;
@@ -517,9 +500,6 @@ $error-color: #f44336;
     }
 }
 
-/* ---------------------------------- */
-/* --- 4. FOOTER --- */
-/* ---------------------------------- */
 
 .modal-footer-controls {
     padding: 10px 30px;

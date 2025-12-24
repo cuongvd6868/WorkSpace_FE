@@ -116,11 +116,8 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
     };
 
     const forceDOMReflow = (element: HTMLDivElement | null) => {
-        // Buộc trình duyệt tính toán lại layout (Reflow)
         if (element) {
             element.style.display = 'none';
-            // Đọc offsetHeight để buộc Reflow
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const _ = element.offsetHeight; 
             element.style.display = 'block';
         }
@@ -133,14 +130,11 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
              return;
         }
 
-        // --- BƯỚC 1: Đảm bảo phần tử cuộn về đầu và ổn định DOM ---
         if (contentRef.current) {
             contentRef.current.scrollTo(0, 0); 
         }
-        // Đảm bảo cả cửa sổ trình duyệt cũng không cuộn
         window.scrollTo(0, 0); 
         
-        // Buộc Reflow/Repaint để đảm bảo chữ ký đã được render hoàn chỉnh
         forceDOMReflow(pdfContentRef.current);
 
         const currentRef = pdfContentRef.current;
@@ -156,11 +150,10 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         toast.info("Đang tạo và tải xuống bản PDF đã ký...");
         
         try {
-            // --- BƯỚC 2: Chụp toàn bộ nội dung hợp đồng (Một lần) ---
             const canvas = await html2canvas(currentRef, { 
                 scale: 2, 
                 useCORS: true, 
-                logging: true, // Bật logging để debug trên console
+                logging: true, 
                 backgroundColor: '#fff', 
             });
 
@@ -178,9 +171,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                  return;
             }
 
-            // --- BƯỚC 3: CẮT ẢNH BẰNG API CANVAS CHUẨN ---
-            
-            // Hàm hỗ trợ cắt và thêm vào URLS
             const captureAndPush = (yStart: number, height: number, pageName: string) => {
                 const canvasPage = document.createElement('canvas');
                 canvasPage.width = originalWidth;
@@ -193,24 +183,20 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                     return false; 
                 }
 
-                // Vẽ phần đã cắt (Sử dụng canvas đã chụp toàn bộ làm nguồn)
                 ctx.drawImage(
                     canvas, 
-                    0, yStart, originalWidth, height, // Source: x, y, width, height
-                    0, 0, originalWidth, height      // Destination: x, y, width, height
+                    0, yStart, originalWidth, height, 
+                    0, 0, originalWidth, height      
                 );
                 
                 documentUrls.push(canvasPage.toDataURL('image/jpeg', 1.0));
                 return true; 
             };
 
-            // 1. TẠO ẢNH TRANG 1 (Từ đầu đến nửa ảnh)
             const page1Success = captureAndPush(0, splitPoint, 'Trang 1');
 
-            // 2. TẠO ẢNH TRANG 2 (Từ nửa ảnh đến cuối)
             const page2Success = captureAndPush(splitPoint, originalCaptureHeight - splitPoint, 'Trang 2');
             
-            // --- KIỂM TRA LỖI CUỐI CÙNG ---
             if (!page1Success || !page2Success || documentUrls.length < 2) {
                 console.error("Lỗi chia ảnh hợp đồng, không đủ 2 ảnh để lưu hồ sơ.", { documentUrlsLength: documentUrls.length });
                 toast.error("Lỗi chia ảnh hợp đồng, không đủ 2 ảnh để lưu hồ sơ.");
@@ -218,11 +204,9 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                 return;
             }
             
-            // 4. Gửi 2 Data URL lên Component cha
             onSetDocumentUrls(documentUrls); 
             toast.success(`Đã lưu ${documentUrls.length} ảnh hợp đồng đã ký vào hồ sơ Host.`);
 
-            // --- BƯỚC 4: Logic tạo PDF (Sử dụng ảnh chụp toàn bộ ban đầu) ---
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
             
             const pdf = new jsPDF('p', 'mm', 'a4');
@@ -265,10 +249,8 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
         setTriggerPdfDownload(true);
     };
     
-    // --- EFFECT: Kích hoạt tải PDF & Capture URL (TIMEOUT 500MS) ---
     useEffect(() => {
         if (triggerPdfDownload && signatureDataUrl && currentStep === 'CONFIRMATION') {
-            // Giữ timeout 500ms để đảm bảo DOM đã ổn định
             setTimeout(() => {
                 handleDownloadPdfAndCaptureUrl();
             }, 500); 
@@ -352,7 +334,6 @@ const HostContractModal: React.FC<HostContractModalProps> = ({
                         <img 
                             src={signatureDataUrl} 
                             alt={`Chữ ký điện tử của ${profileData.companyName}`}
-                            // Các style này là quan trọng để hình ảnh hiển thị đúng khi chụp
                             style={{ 
                                 width: '150px', 
                                 height: 'auto', 
